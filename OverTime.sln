@@ -1,11 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35707.178 d17.12
+VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Breeze", "Breeze\Breeze.vcxproj", "{1FF949FC-F49C-43B7-8382-F2715CC85280}"
+	ProjectSection(ProjectDependencies) = postProject
+		{54EF55F4-AE40-4FE9-AC2C-14671D395CBC} = {54EF55F4-AE40-4FE9-AC2C-14671D395CBC}
+	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OverTime", "OverTime.vcxproj", "{54EF55F4-AE40-4FE9-AC2C-14671D395CBC}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OverTime", "OverTime\OverTime.vcxproj", "{54EF55F4-AE40-4FE9-AC2C-14671D395CBC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,14 +18,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{54EF55F4-AE40-4FE9-AC2C-14671D395CBC}.Debug|x64.ActiveCfg = Debug|x64
-		{54EF55F4-AE40-4FE9-AC2C-14671D395CBC}.Debug|x64.Build.0 = Debug|x64
-		{54EF55F4-AE40-4FE9-AC2C-14671D395CBC}.Debug|x86.ActiveCfg = Debug|Win32
-		{54EF55F4-AE40-4FE9-AC2C-14671D395CBC}.Debug|x86.Build.0 = Debug|Win32
-		{54EF55F4-AE40-4FE9-AC2C-14671D395CBC}.Release|x64.ActiveCfg = Release|x64
-		{54EF55F4-AE40-4FE9-AC2C-14671D395CBC}.Release|x64.Build.0 = Release|x64
-		{54EF55F4-AE40-4FE9-AC2C-14671D395CBC}.Release|x86.ActiveCfg = Release|Win32
-		{54EF55F4-AE40-4FE9-AC2C-14671D395CBC}.Release|x86.Build.0 = Release|Win32
 		{1FF949FC-F49C-43B7-8382-F2715CC85280}.Debug|x64.ActiveCfg = Debug|x64
 		{1FF949FC-F49C-43B7-8382-F2715CC85280}.Debug|x64.Build.0 = Debug|x64
 		{1FF949FC-F49C-43B7-8382-F2715CC85280}.Debug|x86.ActiveCfg = Debug|Win32
@@ -31,6 +26,14 @@ Global
 		{1FF949FC-F49C-43B7-8382-F2715CC85280}.Release|x64.Build.0 = Release|x64
 		{1FF949FC-F49C-43B7-8382-F2715CC85280}.Release|x86.ActiveCfg = Release|Win32
 		{1FF949FC-F49C-43B7-8382-F2715CC85280}.Release|x86.Build.0 = Release|Win32
+		{54EF55F4-AE40-4FE9-AC2C-14671D395CBC}.Debug|x64.ActiveCfg = Debug|x64
+		{54EF55F4-AE40-4FE9-AC2C-14671D395CBC}.Debug|x64.Build.0 = Debug|x64
+		{54EF55F4-AE40-4FE9-AC2C-14671D395CBC}.Debug|x86.ActiveCfg = Debug|Win32
+		{54EF55F4-AE40-4FE9-AC2C-14671D395CBC}.Debug|x86.Build.0 = Debug|Win32
+		{54EF55F4-AE40-4FE9-AC2C-14671D395CBC}.Release|x64.ActiveCfg = Release|x64
+		{54EF55F4-AE40-4FE9-AC2C-14671D395CBC}.Release|x64.Build.0 = Release|x64
+		{54EF55F4-AE40-4FE9-AC2C-14671D395CBC}.Release|x86.ActiveCfg = Release|Win32
+		{54EF55F4-AE40-4FE9-AC2C-14671D395CBC}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
