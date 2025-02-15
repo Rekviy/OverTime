@@ -1,0 +1,3 @@
+[submodule "OverTime/external/spdlog"]
+	path = OverTime/external/spdlog
+	url = https://github.com/gabime/spdlog
