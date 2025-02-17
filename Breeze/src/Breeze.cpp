@@ -1,17 +1,18 @@
 #include "Breeze.h"
 
-class MyClass : public overtime::Application {
+class MyClass : public overtime::application {
 public:
-	MyClass() {
-	}
-	~MyClass() {
-	}
+	MyClass()
+	{}
+	~MyClass()
+	{}
 
 private:
 
 };
 
-overtime::Application* overtime::createApplication() {
+overtime::application* overtime::createApplication()
+{
 
 	return new MyClass();
 

@@ -1,16 +1,19 @@
-#include "Application.h"
+#include "application.h"
 
 namespace overtime {
 
-	Application::Application() {
+	application::application()
+	{
 
 	}
 
-	Application::~Application() {
+	application::~application()
+	{
 
 	}
 
-	void Application::Run() {
+	void application::Run()
+	{
 		while (true);
 	}
 

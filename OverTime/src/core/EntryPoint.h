@@ -1,10 +1,13 @@
 #pragma once
 #ifndef ENTRYPOINT_H
 #ifdef OT_PLATFORM_WINDOWS
-
-extern overtime::Application* overtime::createApplication();
-
-int main(int argc, char** argv) {
+extern overtime::application* overtime::createApplication();
+#include "log.h"
+int main(int argc, char** argv)
+{
+	overtime::log::init();
+	OT_CORE_CRIT("OSHIBKA STOP");
+	OT_CRIT("OSHIBKA STOP2");
 	auto app = overtime::createApplication();
 	app->Run();
 	delete app;
@@ -12,6 +15,6 @@ int main(int argc, char** argv) {
 
 
 #else
-	#error ONLY SUPPORT WINDOWS!!
+#error ONLY SUPPORT WINDOWS!!
 #endif
 #endif

@@ -3,15 +3,15 @@
 #define APPLICATION_H
 #include "core.h"
 namespace overtime {
-	class OVERTIME_API Application {
+	class OVERTIME_API application {
 	public:
-		Application();
-		virtual ~Application();
+		application();
+		virtual ~application();
 
 		void Run();
 
 	};
-Application* createApplication();
+	application* createApplication();
 
 
 }
