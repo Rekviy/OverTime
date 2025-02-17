@@ -1,0 +1,10 @@
+set(OT_CORE_HEADER
+	src/core/application.h
+	src/core/core.h
+	src/core/entryPoint.h
+	src/core/log.h
+)
+set(OT_CORE_SRC
+	src/core/application.cpp
+	src/core/log.cpp
+)
