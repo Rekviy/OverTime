@@ -19,11 +19,11 @@ include(src/core/CMakeLists.txt)
 include(src/events/CMakeLists.txt)
 
 
-set(OT_HEADER src/overtime.h
+set(OT_HEADER src/overtime.h src/pch.h
 	${OT_CORE_HEADER}
 	${OT_EVENTS_HEADER}
 )
-set(OT_SRC src/overtime.cpp
+set(OT_SRC src/overtime.cpp src/pch.h
 	${OT_CORE_SRC}
 	${OT_EVENTS_SRC}
 )
@@ -48,3 +48,7 @@ set_target_properties(overtime
                       )
 
 
+if(${CMAKE_VERSION} VERSION_GREATER "3.16.0")
+    message("CMake 3.16 target_precompile_headers")
+    target_precompile_headers(overtime PRIVATE src/pch.h)
+endif()

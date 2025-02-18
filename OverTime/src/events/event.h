@@ -2,9 +2,7 @@
 #ifndef EVENT_H
 #define EVENT_H
 #include "core/core.h"
-#include <functional>
-#include <string>
-#include <sstream>
+#include "pch.h"
 
 namespace overtime {
 

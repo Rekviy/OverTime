@@ -28,6 +28,13 @@ set(all_code_files
 
 add_executable(${APP_NAME} ${all_code_files})
 
+set_target_properties(${APP_NAME}
+                      PROPERTIES
+                      ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+                      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+                      FOLDER "Internal"
+                      )
+
 include_directories(${OVERTIME_ROOT_PATH}/OverTime/src)
 target_link_libraries(${APP_NAME} PRIVATE overtime)
 target_compile_definitions(${APP_NAME} PRIVATE
