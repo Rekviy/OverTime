@@ -15,11 +15,26 @@ namespace overtime {
 
 	}
 
+	void application::pushLayer(layer* layer)
+	{
+		m_LayerStack.pushLayer(layer);
+	}
+	void application::pushOverlay(layer* overlay)
+	{
+		m_LayerStack.pushOverlay(overlay);
+	}
+
 	void application::onEvent(event& event)
 	{
 		eventDispatcher dispatcher(event);
 		dispatcher.dispatch<windowCloseEvent>(BIND_EVENT_FN(onWindowClose));
-		OT_CORE_TRACE("{0}", event.toString());
+
+		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();) {
+			(*--it)->onEvent(event);
+			if (event.isHandled())
+				break;
+		}
+		//OT_CORE_TRACE("{0}", event.toString());
 	}
 
 	void application::run()
@@ -27,6 +42,9 @@ namespace overtime {
 		while (m_Running) {
 			glClearColor(0, 1, 1, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
+
+			for (layer* layer : m_LayerStack)
+				layer->onUpdate();
 			m_Window->onUpdate();
 		}
 	}

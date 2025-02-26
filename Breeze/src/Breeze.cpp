@@ -1,10 +1,23 @@
 #include "Breeze.h"
-
-class MyClass : public overtime::application {
+class testLayer : public overtime::layer {
 public:
-	MyClass()
-	{}
-	~MyClass()
+	testLayer() : layer("testLayer") {}
+	void onUpdate() override
+	{
+		OT_INFO("testLayer - Update");
+	}
+	void onEvent(overtime::event& event) override
+	{
+		OT_TRACE("{0}", event.toString());
+	}
+};
+class Breeze : public overtime::application {
+public:
+	Breeze()
+	{
+		pushLayer(new testLayer());
+	}
+	~Breeze()
 	{}
 
 private:
@@ -13,7 +26,6 @@ private:
 
 overtime::application* overtime::createApplication()
 {
-
-	return new MyClass();
+	return new Breeze();
 
 }

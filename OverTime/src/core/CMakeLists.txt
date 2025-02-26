@@ -4,8 +4,12 @@ set(OT_CORE_HEADER
 	src/core/entryPoint.h
 	src/core/log.h
 	src/core/window.h
+	src/core/layer.h
+	src/core/layerStack.h
 )
 set(OT_CORE_SRC
 	src/core/application.cpp
 	src/core/log.cpp
+	src/core/layer.cpp
+	src/core/layerStack.cpp
 )

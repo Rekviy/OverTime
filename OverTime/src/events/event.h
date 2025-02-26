@@ -37,7 +37,7 @@ namespace overtime {
 		virtual const char* getName() const = 0;
 		virtual int getCategoryFlags() const = 0;
 		virtual std::string toString() const { return getName(); }
-
+		inline bool isHandled() { return m_Handled; }
 		inline bool isInCategory(eventCategory category) { return getCategoryFlags() & category; }
 
 	protected:
