@@ -10,8 +10,16 @@
 
 
 	#else
-	#error ONLY SUPPORT WINDOWS!!
-#endif
+		#error ONLY SUPPORT WINDOWS!!
+	#endif
 
-#define BIT(x) (1 << x)
+	#define BIT(x) (1 << x)
+
+	#ifdef OT_ENABLE_ASSERTS
+		#define OT_ASSERT(x, ...) { if(!(x)) { OT_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
+		#define OT_CORE_ASSERT(x, ...) { if(!(x)) { OT_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
+	#else
+		#define OT_ASSERT(x, ...)
+		#define OT_CORE_ASSERT(x, ...)
+	#endif
 #endif

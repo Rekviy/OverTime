@@ -5,15 +5,15 @@
 #ifndef PRECHEADER_H
 #define PRECHEADER_H
 
-//#include "src/core/application.h"
-//#include "src/core/core.h"
-//#include "src/core/entryPoint.h"
-//#include "src/core/log.h"
+//#include "core/application.h"
+//#include "core/core.h"
+//#include "core/entryPoint.h"
+#include "core/log.h"
 //
-//#include "src/events/applicationEvent.h"
-//#include "src/events/event.h"
-//#include "src/events/keyEvent.h"
-//#include "src/events/mouseEvent.h"
+//#include "events/applicationEvent.h"
+//#include "events/event.h"
+//#include "events/keyEvent.h"
+//#include "events/mouseEvent.h"
 
 #include <iostream>
 #include <memory>

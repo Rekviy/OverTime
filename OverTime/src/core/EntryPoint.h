@@ -5,8 +5,11 @@ extern overtime::application* overtime::createApplication();
 #include "log.h"
 int main(int argc, char** argv)
 {
+	overtime::log::init();
+	OT_CORE_INFO("Log initialized.");
+	OT_INFO("Log initialized.");
 	auto app = overtime::createApplication();
-	app->Run();
+	app->run();
 	delete app;
 }
 

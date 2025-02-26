@@ -13,6 +13,11 @@
           "name": "BUILD_SHARED_LIBS",
           "value": "OFF",
           "type": "STRING"
+        },
+        {
+          "name": "GLFW_LIBRARY_TYPE",
+          "value": "STATIC",
+          "type": "STRING"
         }
       ]
     }

@@ -3,6 +3,7 @@ set(OT_CORE_HEADER
 	src/core/core.h
 	src/core/entryPoint.h
 	src/core/log.h
+	src/core/window.h
 )
 set(OT_CORE_SRC
 	src/core/application.cpp
