@@ -31,12 +31,15 @@ namespace overtime {
 		if (!s_GLFWInitialized) {
 			// TODO: glfwTerminate on system shutdown
 			int success = glfwInit();
-			OT_CORE_ASSERT(success, "Could not intialize GLFW!");
+			OT_CORE_ASSERT(success, "Failde to intialize GLFW!");
 			glfwSetErrorCallback(glfwErrorCallback);
 			s_GLFWInitialized = true;
 		}
 		m_Window = glfwCreateWindow((int)props.width, (int)props.height, m_Data.title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_Window);
+		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+		OT_CORE_ASSERT(status, "Failde to intialize Glad!");
+
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		setVSync(true);
 		//set glfw callbacks

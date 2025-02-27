@@ -3,6 +3,7 @@
 #define WWINDOW_H
 
 #include "core/window.h"
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 namespace overtime {
 	class windowsWindow : public window {
