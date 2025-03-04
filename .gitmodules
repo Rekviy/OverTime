@@ -8,3 +8,6 @@
 	path = OverTime/external/imgui
 	url = https://github.com/ocornut/imgui
 	branch = docking
+[submodule "OverTime/external/glm"]
+	path = OverTime/external/glm
+	url = https://github.com/g-truc/glm.git
