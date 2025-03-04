@@ -6,6 +6,9 @@ set(OT_CORE_HEADER
 	src/core/window.h
 	src/core/layer.h
 	src/core/layerStack.h
+	src/core/input.h
+	src/core/keyCodes.h
+	src/core/mouseButtonCodes.h
 )
 set(OT_CORE_SRC
 	src/core/application.cpp
