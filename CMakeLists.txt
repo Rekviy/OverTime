@@ -11,8 +11,7 @@ include(OverTimeConfigDefine)
 #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set("DEBUG=$<CONFIG:Debug>")
 if(DEBUG)
-add_compile_definitions("OT_ENABLE_ASSERTS"
-)
+
 endif(DEBUG)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 add_subdirectory(OverTime)

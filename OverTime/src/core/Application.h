@@ -3,7 +3,9 @@
 #define APPLICATION_H
 #include "core.h"
 #include "window.h"
+#include "input.h"
 #include "layerStack.h"
+#include "keyCodes.h"
 #include "events/event.h"
 #include "events/applicationEvent.h"
 
@@ -18,8 +20,11 @@ namespace overtime {
 
 		void pushLayer(layer* layer);
 		void pushOverlay(layer* overlay);
-
+		inline window& getWindow() { return *m_Window; }
+		static inline application& getInst() { return *s_Instance; }
 	private:
+		static application* s_Instance;
+
 		bool onWindowClose(windowCloseEvent &event);
 		std::unique_ptr<window> m_Window;
 		bool m_Running = true;

@@ -14,17 +14,14 @@ set(GAME_RES_FOLDER
 
 list(APPEND GAME_SOURCE src/Breeze.cpp)
 list(APPEND GAME_HEADER src/Breeze.h)
-set(all_code_files
-    ${GAME_HEADER}
-    ${GAME_SOURCE}
-    )
+
+list(APPEND GAME_SOURCE ${GAME_HEADER})
 
 
-add_executable(${APP_NAME} ${all_code_files})
+add_executable(${APP_NAME} ${GAME_SOURCE})
 
 set_target_properties(${APP_NAME}
                       PROPERTIES
-                      ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
                       RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
                       FOLDER "Internal"
                       )

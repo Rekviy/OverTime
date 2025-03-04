@@ -3,11 +3,14 @@
 #include <GLFW/glfw3.h>
 
 namespace overtime {
-#define BIND_EVENT_FN(x) std::bind(&application::x, this, std::placeholders::_1)
+
+	application* application::s_Instance = nullptr;
 	application::application()
 	{
+		OT_CORE_ASSERT(!s_Instance, "Application already exists!");
+		s_Instance = this;
 		m_Window = std::unique_ptr<window>(window::create());
-		m_Window->setEventCallback(BIND_EVENT_FN(onEvent));
+		m_Window->setEventCallback(OT_BIND_EVENT_FN(application::onEvent));
 	}
 
 	application::~application()
@@ -18,16 +21,18 @@ namespace overtime {
 	void application::pushLayer(layer* layer)
 	{
 		m_LayerStack.pushLayer(layer);
+		layer->onAttach();
 	}
 	void application::pushOverlay(layer* overlay)
 	{
 		m_LayerStack.pushOverlay(overlay);
+		overlay->onAttach();
 	}
 
 	void application::onEvent(event& event)
 	{
 		eventDispatcher dispatcher(event);
-		dispatcher.dispatch<windowCloseEvent>(BIND_EVENT_FN(onWindowClose));
+		dispatcher.dispatch<windowCloseEvent>(OT_BIND_EVENT_FN(application::onWindowClose));
 
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();) {
 			(*--it)->onEvent(event);
@@ -45,6 +50,7 @@ namespace overtime {
 
 			for (layer* layer : m_LayerStack)
 				layer->onUpdate();
+			auto [x, y] = input::getMousePos();
 			m_Window->onUpdate();
 		}
 	}
