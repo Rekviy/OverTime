@@ -140,7 +140,7 @@ enum keyCodes {
 };
 
 
-//OG glfw3.h keycodes
+//OG stolen glfw3.h keycodes
 /*#define OT_KEY_SPACE              32
 
 #define OT_KEY_APOSTROPHE         39 
