@@ -10,7 +10,7 @@ namespace overtime {
 		none = 0,
 		windowClose, windowResize, windowFocus, windowLostFocus, windowMoved,
 		appTick, appUpdate, appRender,
-		keyPressed, keyReleased,
+		keyPressed, keyReleased, keyTyped,
 		mouseButtonPressed, mouseButtonReleased, mouseMoved, mouseScrolled
 	};
 

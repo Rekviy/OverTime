@@ -6,17 +6,21 @@ set(OVERTIME_VERSION 0.1)
 
 
 project(OT_libs)
+
 include(src/core/CMakeLists.txt)
 include(src/events/CMakeLists.txt)
+include(src/imGui/CMakeLists.txt)
 include(src/platform/${PLATFORM_FOLDER}/CMakeLists.txt)
 set(OT_HEADER src/overtime.h src/pch.h
 	${OT_CORE_HEADER}
 	${OT_EVENTS_HEADER}
+    ${OT_IMGUI_HEADER}
     ${OT_PLATFORM_HEADER}
 )
 set(OT_SRC src/pch.h
 	${OT_CORE_SRC}
 	${OT_EVENTS_SRC}
+    ${OT_IMGUI_SRC}
     ${OT_PLATFORM_SRC}
 )
 list(APPEND OT_SRC ${OT_HEADER})
@@ -29,10 +33,10 @@ target_include_directories(overtime PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_compile_definitions(overtime PRIVATE
 	"OT_PLATFORM_WINDOWS"
 	"OT_BUILD_DLL"
+    "OT_DEBUG"
 )
 set_target_properties(overtime
                       PROPERTIES
-                      ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
                       RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
                       VERSION "${OVERTIME_VERSION}"
                       FOLDER "Internal"

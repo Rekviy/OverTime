@@ -17,10 +17,11 @@ namespace overtime {
 		inline void setEventCallback(const eventCallbackFn& callback) override { m_Data.eventCallback = callback; }
 		void setVSync(bool enabled) override;
 		bool isVSync() const override;
+		inline virtual void* getNativeWindow() const { return m_Window; }
 	private:
 		virtual void init(const windowProps& props);
 		virtual void shutdown();
-	private:
+
 		GLFWwindow* m_Window;
 		struct windowData {
 			std::string title;

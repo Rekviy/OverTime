@@ -44,9 +44,9 @@ namespace overtime {
 		setVSync(true);
 		//set glfw callbacks
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height) {
-			windowData& data = *(windowData*) glfwGetWindowUserPointer(window);
+			windowData& data = *(windowData*)glfwGetWindowUserPointer(window);
 			data.width = width; data.height = height;
-			
+
 			windowResizeEvent event(width, height);
 			data.eventCallback(event);
 		});
@@ -74,6 +74,11 @@ namespace overtime {
 					break;
 				}
 			}
+		});
+		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int keycode) {
+			windowData& data = *(windowData*)glfwGetWindowUserPointer(window);
+			keyTypedEvent event(keycode);
+			data.eventCallback(event);
 		});
 		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods) {
 			windowData& data = *(windowData*)glfwGetWindowUserPointer(window);
