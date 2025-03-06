@@ -1,19 +1,30 @@
 #include "Breeze.h"
 class testLayer : public overtime::layer {
 public:
-	testLayer() : layer("testLayer") {}
+	bool show_another_window = true;
+	testLayer() : layer("testLayer") {
+	}
 	void onUpdate() override
 	{
 		//OT_INFO("testLayer - Update");
 	}
+	void onImGuiRender() override
+	{
+		if (show_another_window) {
+			ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+			ImGui::Text("Hello from another window!");
+			if (ImGui::Button("Close Me"))
+				show_another_window = false;
+			ImGui::End();
+		}
+	}
 	void onEvent(overtime::event& event) override
 	{
-		//OT_TRACE("{0}", event.toString());
+		OT_TRACE("{0}", event.toString());
 		if (event.getEventType() == overtime::eventType::keyPressed) {
 			overtime::keyPressedEvent& e = (overtime::keyPressedEvent&)event;
 			OT_TRACE("Key pressed {0}, {1}", e.getKeyCode(), (char)e.getKeyCode());
 		}
-
 	}
 };
 class Breeze : public overtime::application {
@@ -21,7 +32,6 @@ public:
 	Breeze()
 	{
 		pushLayer(new testLayer());
-		pushOverlay(new overtime::imGuiLayer());
 	}
 	~Breeze()
 	{}

@@ -3,7 +3,7 @@
 namespace overtime {
 	layerStack::layerStack()
 	{
-		m_LayerInsert = m_Layers.begin();
+		m_Layers.reserve(3);
 	}
 	layerStack::~layerStack()
 	{
@@ -13,11 +13,14 @@ namespace overtime {
 
 	void layerStack::pushLayer(layer* layer)
 	{
-		m_LayerInsert = m_Layers.emplace(m_LayerInsert, layer);
+		m_Layers.emplace(m_Layers.begin() + m_LayerInsertIndex, layer);
+		m_LayerInsertIndex++;
+		layer->onAttach();
 	}
 	void layerStack::pushOverlay(layer* overlay)
 	{
 		m_Layers.emplace_back(overlay);
+		overlay->onAttach();
 	}
 	void layerStack::popLayer(layer* layer)
 	{
@@ -25,14 +28,16 @@ namespace overtime {
 
 		if (it != m_Layers.end()) {
 			m_Layers.erase(it);
-			--m_LayerInsert;
+			m_LayerInsertIndex--;
 		}
 	}
 	void layerStack::popOverlay(layer* overlay)
 	{
 		auto it = std::find(m_Layers.begin(), m_Layers.end(), overlay);
-		if (it != m_Layers.end())
+		if (it != m_Layers.end()) {
 			m_Layers.erase(it);
+			overlay->onDetach();
+		}
 
 	}
 }

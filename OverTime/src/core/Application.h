@@ -5,6 +5,7 @@
 #include "window.h"
 #include "input.h"
 #include "layerStack.h"
+#include "imGui/imguiLayer.h"
 #include "keyCodes.h"
 #include "events/event.h"
 #include "events/applicationEvent.h"
@@ -23,9 +24,12 @@ namespace overtime {
 		inline window& getWindow() { return *m_Window; }
 		static inline application& getInst() { return *s_Instance; }
 	private:
+		imGuiLayer* m_ImGuiLayer;
+		bool onWindowClose(windowCloseEvent &event);
+
 		static application* s_Instance;
 
-		bool onWindowClose(windowCloseEvent &event);
+		
 		std::unique_ptr<window> m_Window;
 		bool m_Running = true;
 		layerStack m_LayerStack;

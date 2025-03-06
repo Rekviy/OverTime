@@ -18,6 +18,11 @@
           "name": "GLFW_LIBRARY_TYPE",
           "value": "STATIC",
           "type": "STRING"
+        },
+        {
+          "name": "SPDLOG_BUILD_SHARED",
+          "value": "False",
+          "type": "BOOL"
         }
       ]
     }

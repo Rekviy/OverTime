@@ -11,6 +11,9 @@ namespace overtime {
 		s_Instance = this;
 		m_Window = std::unique_ptr<window>(window::create());
 		m_Window->setEventCallback(OT_BIND_EVENT_FN(application::onEvent));
+
+		m_ImGuiLayer = new overtime::imGuiLayer();
+		pushOverlay(m_ImGuiLayer);
 	}
 
 	application::~application()
@@ -21,12 +24,10 @@ namespace overtime {
 	void application::pushLayer(layer* layer)
 	{
 		m_LayerStack.pushLayer(layer);
-		layer->onAttach();
 	}
 	void application::pushOverlay(layer* overlay)
 	{
 		m_LayerStack.pushOverlay(overlay);
-		overlay->onAttach();
 	}
 
 	void application::onEvent(event& event)
@@ -50,7 +51,12 @@ namespace overtime {
 
 			for (layer* layer : m_LayerStack)
 				layer->onUpdate();
-			auto [x, y] = input::getMousePos();
+			
+			m_ImGuiLayer->begin();
+			for (layer* layer : m_LayerStack)
+				layer->onImGuiRender();
+			m_ImGuiLayer->end();
+
 			m_Window->onUpdate();
 		}
 	}
