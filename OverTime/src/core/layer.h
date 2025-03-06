@@ -6,7 +6,7 @@
 #include "events/event.h"
 
 namespace overtime {
-	class OVERTIME_API layer {
+	class  layer {
 	public:
 		layer(const std::string& name = "Layer");
 		virtual ~layer();

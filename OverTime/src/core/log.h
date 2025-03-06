@@ -8,7 +8,7 @@
 
 
 namespace overtime {
-	class OVERTIME_API log {
+	class log {
 	public:
 		static void init();
 		inline static std::shared_ptr<spdlog::logger>& getCoreLogger() { return s_coreLogger; }

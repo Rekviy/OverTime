@@ -2,7 +2,7 @@
 #include "Event.h"
 
 namespace overtime {
-	class OVERTIME_API mouseMovedEvent : public event {
+	class mouseMovedEvent : public event {
 	public:
 		mouseMovedEvent(float x, float y)
 			: m_MouseX(x), m_MouseY(y)
@@ -21,7 +21,7 @@ namespace overtime {
 		float m_MouseX, m_MouseY;
 	};
 
-	class OVERTIME_API mouseScrolledEvent : public event {
+	class mouseScrolledEvent : public event {
 	public:
 		mouseScrolledEvent(float xOffset, float yOffset)
 			: m_XOffset(xOffset), m_YOffset(yOffset)
@@ -40,7 +40,7 @@ namespace overtime {
 		float m_XOffset, m_YOffset;
 	};
 
-	class OVERTIME_API mouseButtonEvent : public event {
+	class mouseButtonEvent : public event {
 	public:
 		inline int getMouseButton() const { return m_Button; }
 		EVENT_CLASS_CATEGORY(eventCategoryMouse | eventCategoryInput)
@@ -51,7 +51,7 @@ namespace overtime {
 		int m_Button;
 	};
 
-	class OVERTIME_API mouseButtonPressedEvent : public mouseButtonEvent {
+	class mouseButtonPressedEvent : public mouseButtonEvent {
 	public:
 		mouseButtonPressedEvent(int button)
 			: mouseButtonEvent(button)
@@ -65,7 +65,7 @@ namespace overtime {
 		EVENT_CLASS_TYPE(mouseButtonPressed)
 	};
 
-	class OVERTIME_API mouseButtonReleasedEvent : public mouseButtonEvent {
+	class mouseButtonReleasedEvent : public mouseButtonEvent {
 	public:
 		mouseButtonReleasedEvent(int button)
 			: mouseButtonEvent(button)

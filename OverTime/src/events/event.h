@@ -29,7 +29,7 @@ namespace overtime {
 
 #define EVENT_CLASS_CATEGORY(category) virtual int getCategoryFlags() const override { return category; }
 
-	class OVERTIME_API event {
+	class event {
 		friend class eventDispatcher;
 
 	public:

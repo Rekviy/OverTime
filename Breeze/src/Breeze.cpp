@@ -20,11 +20,6 @@ public:
 	}
 	void onEvent(overtime::event& event) override
 	{
-		OT_TRACE("{0}", event.toString());
-		if (event.getEventType() == overtime::eventType::keyPressed) {
-			overtime::keyPressedEvent& e = (overtime::keyPressedEvent&)event;
-			OT_TRACE("Key pressed {0}, {1}", e.getKeyCode(), (char)e.getKeyCode());
-		}
 	}
 };
 class Breeze : public overtime::application {

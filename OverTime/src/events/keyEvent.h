@@ -4,7 +4,7 @@
 #include "event.h"
 
 namespace overtime {
-	class OVERTIME_API keyEvent : public event {
+	class keyEvent : public event {
 	public:
 		inline int getKeyCode() const { return m_KeyCode; }
 		EVENT_CLASS_CATEGORY(eventCategoryKeyboard | eventCategoryInput)
@@ -15,7 +15,7 @@ namespace overtime {
 		unsigned int m_KeyCode;
 	};
 	
-	class OVERTIME_API keyPressedEvent : public keyEvent {
+	class keyPressedEvent : public keyEvent {
 	public:
 		keyPressedEvent(unsigned int keycode, int repeatCount)
 			: keyEvent(keycode), m_RepeatCount(repeatCount)
@@ -32,7 +32,7 @@ namespace overtime {
 		int m_RepeatCount;
 	};
 
-	class OVERTIME_API keyReleasedEvent : public keyEvent {
+	class keyReleasedEvent : public keyEvent {
 	public:
 		keyReleasedEvent(unsigned int keycode)
 			: keyEvent(keycode)
@@ -45,7 +45,7 @@ namespace overtime {
 		}
 		EVENT_CLASS_TYPE(keyReleased)
 	};
-	class OVERTIME_API keyTypedEvent : public keyEvent {
+	class keyTypedEvent : public keyEvent {
 	public:
 		keyTypedEvent(unsigned int keycode)
 			: keyEvent(keycode)

@@ -3,7 +3,7 @@
 #define INPUT_H
 #include "core.h"
 namespace overtime {
-	class OVERTIME_API input {
+	class input {
 	public:
 		static inline bool isKeyPressed(int keycode) { return s_Instance->isKeyPressedImpl(keycode); }
 		static inline bool isMouseButtonPressed(int button) { return s_Instance->isMouseButtonPressedImpl(button); }

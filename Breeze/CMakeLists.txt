@@ -1,6 +1,4 @@
 # application
-cmake_minimum_required(VERSION 3.13)
-
 set(APP_NAME Breeze)
 
 project(${APP_NAME})
@@ -28,6 +26,9 @@ set_target_properties(${APP_NAME}
 
 #include_directories(${OVERTIME_ROOT_PATH}/OverTime/src)
 target_link_libraries(${APP_NAME} PRIVATE overtime)
-target_compile_definitions(${APP_NAME} PRIVATE
-    OT_PLATFORM_WINDOWS
-)
+if(WINDOWS)
+target_compile_definitions(${APP_NAME} PRIVATE OT_PLATFORM_WINDOWS)
+endif()
+if(LINUX)
+target_compile_definitions(${APP_NAME} PRIVATE OT_PLATFORM_LINUX)
+endif()

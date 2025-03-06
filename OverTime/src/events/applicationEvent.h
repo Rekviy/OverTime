@@ -4,7 +4,7 @@
 #include "event.h"
 
 namespace overtime {
-	class OVERTIME_API windowResizeEvent : public event {
+	class windowResizeEvent : public event {
 	public:
 		windowResizeEvent(unsigned int width, unsigned int height)
 			: m_Width(width), m_Height(height)
@@ -23,25 +23,25 @@ namespace overtime {
 		unsigned int m_Width, m_Height;
 	};
 
-	class OVERTIME_API windowCloseEvent : public event {
+	class windowCloseEvent : public event {
 	public:
 		windowCloseEvent() {}
 		EVENT_CLASS_TYPE(windowClose)
 		EVENT_CLASS_CATEGORY(eventCategoryApplication)
 	};
-	class OVERTIME_API appTickEvent : public event {
+	class appTickEvent : public event {
 	public:
 		appTickEvent() {}
 		EVENT_CLASS_TYPE(appTick)
 		EVENT_CLASS_CATEGORY(eventCategoryApplication)
 	};
-	class OVERTIME_API appUpdateEvent : public event {
+	class appUpdateEvent : public event {
 	public:
 		appUpdateEvent() {}
 		EVENT_CLASS_TYPE(appUpdate)
 		EVENT_CLASS_CATEGORY(eventCategoryApplication)
 	};
-	class OVERTIME_API appRenderEvent : public event {
+	class appRenderEvent : public event {
 	public:
 		appRenderEvent() {}
 		EVENT_CLASS_TYPE(appRender)

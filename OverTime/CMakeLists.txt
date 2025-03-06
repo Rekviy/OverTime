@@ -1,9 +1,5 @@
 # engine
-cmake_minimum_required(VERSION 3.13)
-
-
 set(OVERTIME_VERSION 0.1)
-
 
 project(OT_libs)
 
@@ -25,16 +21,20 @@ set(OT_SRC src/pch.h
 )
 list(APPEND OT_SRC ${OT_HEADER})
 
-add_library(overtime SHARED ${OT_SRC})
+add_library(overtime STATIC ${OT_SRC})
 
 add_subdirectory(external ${PROJECT_BINARY_DIR}/external)
 target_include_directories(overtime PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
-#target_link_libraries(overtime external)
+
 target_compile_definitions(overtime PRIVATE
-	"OT_PLATFORM_WINDOWS"
-	"OT_BUILD_DLL"
-    "OT_DEBUG"
+    "$<$<CONFIG:Debug>:OT_DEBUG>"
 )
+if(WINDOWS)
+target_compile_definitions(overtime PRIVATE OT_PLATFORM_WINDOWS)
+endif()
+if(LINUX)
+target_compile_definitions(overtime PRIVATE OT_PLATFORM_LINUX)
+endif()
 set_target_properties(overtime
                       PROPERTIES
                       RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"

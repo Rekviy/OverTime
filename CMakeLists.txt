@@ -1,19 +1,13 @@
 # project
 cmake_minimum_required(VERSION 3.13)
 
-
 project(OverTime)
 
 set(OVERTIME_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(CMAKE_MODULE_PATH ${OVERTIME_ROOT_PATH}/cmake/Modules/)
 include(OverTimeConfigDefine)
-#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set("DEBUG=$<CONFIG:Debug>")
-if(DEBUG)
 
-endif(DEBUG)
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${APP_NAME})
 add_subdirectory(OverTime)
 add_subdirectory(Breeze)
-set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${APP_NAME})

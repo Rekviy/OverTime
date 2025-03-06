@@ -18,7 +18,7 @@ namespace overtime {
 	};
 
 	// Interface representing a desktop system based Window
-	class OVERTIME_API window {
+	class window {
 	public:
 		using eventCallbackFn = std::function<void(event&)>;
 		virtual ~window() {}

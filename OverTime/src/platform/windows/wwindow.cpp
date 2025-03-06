@@ -31,7 +31,7 @@ namespace overtime {
 		if (!s_GLFWInitialized) {
 			// TODO: glfwTerminate on system shutdown
 			int success = glfwInit();
-			OT_CORE_ASSERT(success, "Failde to intialize GLFW!");
+			OT_CORE_ASSERT(success, "Failed to intialize GLFW!");
 			glfwSetErrorCallback(glfwErrorCallback);
 			s_GLFWInitialized = true;
 		}

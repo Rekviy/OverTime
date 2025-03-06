@@ -17,7 +17,7 @@
 #include "events/mouseEvent.h"
 
 namespace overtime {
-	class OVERTIME_API imGuiLayer : public layer {
+	class imGuiLayer : public layer {
 	public:
 		imGuiLayer();
 		~imGuiLayer() override;

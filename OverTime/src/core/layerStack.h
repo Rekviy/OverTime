@@ -5,7 +5,7 @@
 #include "layer.h"
 
 namespace overtime {
-	class OVERTIME_API layerStack {
+	class layerStack {
 	public:
 		layerStack();
 		~layerStack();

@@ -11,7 +11,7 @@
 #include "events/applicationEvent.h"
 
 namespace overtime {
-	class OVERTIME_API application {
+	class application {
 	public:
 		application();
 		virtual ~application();
