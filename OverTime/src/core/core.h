@@ -2,7 +2,6 @@
 #ifndef CORE_H
 #define CORE_H
 
-	#define BIT(x) (1 << x)
 	#ifdef OT_DEBUG
 		#define OT_ENABLE_ASSERTS
 	#endif
@@ -13,5 +12,8 @@
 		#define OT_ASSERT(x, ...)
 		#define OT_CORE_ASSERT(x, ...)
 	#endif
+
+#define BIT(x) (1 << x)
+
 #define OT_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
 #endif

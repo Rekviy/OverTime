@@ -1,9 +1,11 @@
 #pragma once
 #ifndef WINDOW_H
 #define WINDOW_H
-#include "pch.h"
+#include <string>
+
 #include "core.h"
 #include "events/event.h"
+
 namespace overtime {
 	struct windowProps {
 		windowProps(const std::string& title = "OverTime Engine",

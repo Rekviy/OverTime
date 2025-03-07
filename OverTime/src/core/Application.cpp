@@ -1,6 +1,8 @@
-#include "application.h"
-#include "core/log.h"
 #include <GLFW/glfw3.h>
+
+#include "application.h"
+#include "core.h"
+#include "core/log.h"
 
 namespace overtime {
 

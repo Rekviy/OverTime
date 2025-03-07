@@ -3,7 +3,7 @@
 namespace overtime {
 	layerStack::layerStack()
 	{
-		m_Layers.reserve(3);
+		m_Layers.reserve(4);
 	}
 	layerStack::~layerStack()
 	{

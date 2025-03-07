@@ -1,4 +1,6 @@
 #include "wwindow.h"
+#include "core/core.h"
+#include "core/log.h"
 #include "events/applicationEvent.h"
 #include "events/keyEvent.h"
 #include "events/mouseEvent.h"

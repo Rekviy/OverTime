@@ -1,13 +1,13 @@
 #pragma once
 #ifndef APPLICATION_H
 #define APPLICATION_H
-#include "core.h"
+#include <memory>
+
 #include "window.h"
-#include "input.h"
+//#include "input.h"
 #include "layerStack.h"
 #include "imGui/imguiLayer.h"
-#include "keyCodes.h"
-#include "events/event.h"
+//#include "keyCodes.h"
 #include "events/applicationEvent.h"
 
 namespace overtime {

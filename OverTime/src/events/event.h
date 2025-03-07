@@ -1,8 +1,11 @@
 #pragma once
 #ifndef EVENT_H
 #define EVENT_H
+#include <iostream>
+#include <sstream>
+#include <functional>
+
 #include "core/core.h"
-#include "pch.h"
 
 namespace overtime {
 

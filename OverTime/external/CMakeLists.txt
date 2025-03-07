@@ -16,9 +16,8 @@ if(WINDOWS OR MACOSX OR LINUX)
 	find_package(OpenGL REQUIRED)
 
 	include_directories(${OPENGL_INCLUDE_DIRS})
-    target_link_libraries(overtime glfw OpenGL::GL glad glm::glm-header-only)
+	target_link_libraries(overtime glfw OpenGL::GL glad glm::glm-header-only)
 	set_target_properties(glad PROPERTIES FOLDER "External")
-	#set_target_properties(glfw PROPERTIES FOLDER "External")
 endif()
 
 if(BUILD_IMGUI)

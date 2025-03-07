@@ -1,6 +1,8 @@
+#include <GLFW/glfw3.h>
+
 #include "winput.h"
 #include "core/application.h"
-#include <GLFW/glfw3.h>
+
 namespace overtime {
 	input* input::s_Instance = new windowsInput();
 	bool windowsInput::isKeyPressedImpl(int keycode)

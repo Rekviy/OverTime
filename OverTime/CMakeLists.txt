@@ -8,14 +8,14 @@ include(src/events/CMakeLists.txt)
 include(src/imGui/CMakeLists.txt)
 include(src/platform/${PLATFORM_FOLDER}/CMakeLists.txt)
 set(OT_HEADER src/overtime.h src/pch.h
-	${OT_CORE_HEADER}
-	${OT_EVENTS_HEADER}
+    ${OT_CORE_HEADER}
+    ${OT_EVENTS_HEADER}
     ${OT_IMGUI_HEADER}
     ${OT_PLATFORM_HEADER}
 )
 set(OT_SRC src/pch.h
-	${OT_CORE_SRC}
-	${OT_EVENTS_SRC}
+    ${OT_CORE_SRC}
+    ${OT_EVENTS_SRC}
     ${OT_IMGUI_SRC}
     ${OT_PLATFORM_SRC}
 )
@@ -35,12 +35,11 @@ endif()
 if(LINUX)
 target_compile_definitions(overtime PRIVATE OT_PLATFORM_LINUX)
 endif()
-set_target_properties(overtime
-                      PROPERTIES
-                      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
-                      VERSION "${OVERTIME_VERSION}"
-                      FOLDER "Internal"
-                      )
+set_target_properties(overtime PROPERTIES
+                    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+                    VERSION "${OVERTIME_VERSION}"
+                    FOLDER "Internal"
+                    )
 
 
 if(${CMAKE_VERSION} VERSION_GREATER "3.16.0")

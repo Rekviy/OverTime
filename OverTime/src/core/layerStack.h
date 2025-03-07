@@ -1,7 +1,9 @@
 #pragma once
 #ifndef LAYERSTACK_H
 #define LAYERSTACK_H
-#include "core.h"
+
+#include <vector>
+
 #include "layer.h"
 
 namespace overtime {
@@ -22,6 +24,5 @@ namespace overtime {
 		unsigned int m_LayerInsertIndex = 0;
 	};
 }
-
 
 #endif 

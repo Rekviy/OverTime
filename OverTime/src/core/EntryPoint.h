@@ -1,6 +1,8 @@
 #pragma once
 #ifndef ENTRYPOINT_H
+
 #ifdef OT_PLATFORM_WINDOWS
+//add application.h?
 extern overtime::application* overtime::createApplication();
 #include "log.h"
 int main(int argc, char** argv)

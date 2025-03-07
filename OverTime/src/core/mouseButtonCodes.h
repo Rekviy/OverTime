@@ -18,7 +18,7 @@ enum mouseButtonCodes {
 	OT_MOUSE_BUTTON_RIGHT = OT_MOUSE_BUTTON_2,
 	OT_MOUSE_BUTTON_MIDDLE = OT_MOUSE_BUTTON_3
 };
-//OG stolen glfw3.h mousecodes
+//Almost OG stolen glfw3.h mousecodes
 /*
 #define OT_MOUSE_BUTTON_1,
 #define OT_MOUSE_BUTTON_2,

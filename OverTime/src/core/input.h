@@ -1,7 +1,8 @@
 #pragma once
 #ifndef INPUT_H
 #define INPUT_H
-#include "core.h"
+#include <utility>
+
 namespace overtime {
 	class input {
 	public:

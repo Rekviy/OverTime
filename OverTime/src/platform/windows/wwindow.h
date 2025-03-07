@@ -1,10 +1,12 @@
 #pragma once
 #ifndef WWINDOW_H
 #define WWINDOW_H
-
-#include "core/window.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <string>
+
+#include "core/window.h"
+
 namespace overtime {
 	class windowsWindow : public window {
 	public:

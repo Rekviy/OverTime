@@ -18,11 +18,10 @@ list(APPEND GAME_SOURCE ${GAME_HEADER})
 
 add_executable(${APP_NAME} ${GAME_SOURCE})
 
-set_target_properties(${APP_NAME}
-                      PROPERTIES
-                      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
-                      FOLDER "Internal"
-                      )
+set_target_properties(${APP_NAME} PROPERTIES
+                    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+                    FOLDER "Internal"
+                    )
 
 #include_directories(${OVERTIME_ROOT_PATH}/OverTime/src)
 target_link_libraries(${APP_NAME} PRIVATE overtime)

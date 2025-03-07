@@ -1,6 +1,8 @@
 #pragma once
 #ifndef WINPUT_H
 #define WINPUT_H
+#include <utility>
+
 #include "core/input.h"
 namespace overtime {
 	class windowsInput : public input{
@@ -9,9 +11,6 @@ namespace overtime {
 		virtual std::pair<float, float> getMousePosImpl() override;
 		virtual float getMouseXImpl() override;
 		virtual float getMouseYImpl() override;
-
 	};
 }
-
-
 #endif

@@ -1,8 +1,8 @@
 #pragma once
 #ifndef LAYER_H
 #define LAYER_H
+#include <string>
 
-#include "core.h"
 #include "events/event.h"
 
 namespace overtime {
@@ -22,4 +22,4 @@ namespace overtime {
 		std::string m_DebugName;
 	};
 }
-#endif // !1
+#endif
