@@ -5,7 +5,6 @@
 #ifndef PRECHEADER_H
 #define PRECHEADER_H
 
-
 #include "core/core.h"
 #include "core/application.h"
 #include "core/window.h"
@@ -29,6 +28,8 @@
 
 #include "platform/windows/winput.h"
 #include "platform/windows/wwindow.h"
+
+#include "renderer/renderContext.h"
 
 //#include <iostream>
 //#include <memory>

@@ -7,17 +7,22 @@ include(src/core/CMakeLists.txt)
 include(src/events/CMakeLists.txt)
 include(src/imGui/CMakeLists.txt)
 include(src/platform/${PLATFORM_FOLDER}/CMakeLists.txt)
+include(src/renderer/CMakeLists.txt)
+
 set(OT_HEADER src/overtime.h src/pch.h
     ${OT_CORE_HEADER}
     ${OT_EVENTS_HEADER}
     ${OT_IMGUI_HEADER}
     ${OT_PLATFORM_HEADER}
+    ${OT_RENDERER_HEADER}
+
 )
 set(OT_SRC src/pch.h
     ${OT_CORE_SRC}
     ${OT_EVENTS_SRC}
     ${OT_IMGUI_SRC}
     ${OT_PLATFORM_SRC}
+    ${OT_RENDERER_SRC}
 )
 list(APPEND OT_SRC ${OT_HEADER})
 

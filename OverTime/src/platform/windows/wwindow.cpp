@@ -1,9 +1,13 @@
+#include <GLFW/glfw3.h>
+
 #include "wwindow.h"
 #include "core/core.h"
 #include "core/log.h"
 #include "events/applicationEvent.h"
 #include "events/keyEvent.h"
 #include "events/mouseEvent.h"
+
+#include "renderer/openGL/openGLContext.h"
 
 namespace overtime {
 
@@ -38,9 +42,9 @@ namespace overtime {
 			s_GLFWInitialized = true;
 		}
 		m_Window = glfwCreateWindow((int)props.width, (int)props.height, m_Data.title.c_str(), nullptr, nullptr);
-		glfwMakeContextCurrent(m_Window);
-		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		OT_CORE_ASSERT(status, "Failde to intialize Glad!");
+
+		m_Context = new openGLContext(m_Window);
+		m_Context->init();
 
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		setVSync(true);
@@ -115,7 +119,7 @@ namespace overtime {
 	void windowsWindow::onUpdate()
 	{
 		glfwPollEvents();
-		glfwSwapBuffers(m_Window);
+		m_Context->swap();
 	}
 	void windowsWindow::setVSync(bool enabled)
 	{

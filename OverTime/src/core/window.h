@@ -3,7 +3,6 @@
 #define WINDOW_H
 #include <string>
 
-#include "core.h"
 #include "events/event.h"
 
 namespace overtime {

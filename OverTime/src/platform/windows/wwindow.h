@@ -1,11 +1,13 @@
 #pragma once
 #ifndef WWINDOW_H
 #define WWINDOW_H
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+
 #include <string>
 
+#include "renderer/renderContext.h"
 #include "core/window.h"
+
+struct GLFWwindow;
 
 namespace overtime {
 	class windowsWindow : public window {
@@ -24,6 +26,7 @@ namespace overtime {
 		virtual void init(const windowProps& props);
 		virtual void shutdown();
 
+		renderContext* m_Context;
 		GLFWwindow* m_Window;
 		struct windowData {
 			std::string title;
