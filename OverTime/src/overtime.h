@@ -4,7 +4,6 @@
 #include <imgui.h>
 
 #include "core/application.h"
-#include "core/entryPoint.h"
 #include "core/layer.h"
 #include "core/input.h"
 #include "core/keyCodes.h"
@@ -12,4 +11,5 @@
 #include "events/event.h"
 #include "imGui/imguiLayer.h"
 
+#include "core/entryPoint.h"
 #endif

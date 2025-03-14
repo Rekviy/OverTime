@@ -65,7 +65,7 @@ namespace overtime {
 		application& app = application::getInst();
 		ImGuiIO& io = ImGui::GetIO();
 
-		io.DisplaySize = ImVec2(app.getWindow().getWidth(), app.getWindow().getHeight());
+		io.DisplaySize = ImVec2((float)app.getWindow().getWidth(), (float)app.getWindow().getHeight());
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

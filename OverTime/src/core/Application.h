@@ -29,10 +29,11 @@ namespace overtime {
 
 		static application* s_Instance;
 
-		
 		std::unique_ptr<window> m_Window;
 		bool m_Running = true;
 		layerStack m_LayerStack;
+		unsigned m_VertexArray, m_VertexBuffer, m_IndexBuffer;
+	
 	};
 
 	// To be defined in CLIENT
