@@ -1,7 +1,9 @@
 set(OT_RENDERER_HEADER
 	src/renderer/renderContext.h
 	src/renderer/openGL/openGLContext.h
+	src/renderer/shader.h
 )
 set(OT_RENDERER_SRC
 	src/renderer/openGL/openGLContext.cpp
+	src/renderer/shader.cpp
 )

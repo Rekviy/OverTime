@@ -39,6 +39,41 @@ namespace overtime {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBuffer);
 		unsigned indices[3] = { 0,1,2 };
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+		std::string vertexSrc = R"(
+
+			layout(location = 0) in vec3 a_Position;
+
+			out vec3 v_Position;
+
+			void main()
+			{
+				v_Position = a_Position;
+				gl_Position = vec4(a_Position, 1.0);
+			}
+		)";
+
+		std::string fragmentSrc = R"(
+			layout(location = 0) out vec4 color;
+			in vec3 v_Position;
+			uniform float time;
+			vec3 fragCoord = gl_FragCoord.xyz;
+
+			void main()
+			{
+				// Normalized pixel coordinates (from 0 to 1)
+				vec3 uv = fragCoord/v_Position.xyz;
+
+				// Time varying pixel color
+				vec3 col = 0.5 + 0.5*cos(time+uv.xyx+vec3(0,2,4));
+
+				// Output to screen
+				color = vec4(col,1.0);
+			}
+		)";
+
+
+		m_Shader.reset(new shader(vertexSrc,fragmentSrc));
 	}
 
 	application::~application()
@@ -73,7 +108,8 @@ namespace overtime {
 		while (m_Running) {
 			glClearColor(0, 0.6f, 0.6f, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
-			
+			m_Shader->bind();
+			glUniform1f(glGetUniformLocation(m_Shader->getRendererId(), "time"), glfwGetTime());
 			glBindVertexArray(m_VertexArray);
 			glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
 

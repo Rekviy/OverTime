@@ -9,6 +9,7 @@
 #include "imGui/imguiLayer.h"
 //#include "keyCodes.h"
 #include "events/applicationEvent.h"
+#include "renderer/shader.h"
 
 namespace overtime {
 	class application {
@@ -33,7 +34,7 @@ namespace overtime {
 		bool m_Running = true;
 		layerStack m_LayerStack;
 		unsigned m_VertexArray, m_VertexBuffer, m_IndexBuffer;
-	
+		std::unique_ptr<shader> m_Shader;
 	};
 
 	// To be defined in CLIENT
