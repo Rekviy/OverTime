@@ -10,6 +10,7 @@
 //#include "keyCodes.h"
 #include "events/applicationEvent.h"
 #include "renderer/shader.h"
+#include "renderer/buffer.h"
 
 namespace overtime {
 	class application {
@@ -33,7 +34,10 @@ namespace overtime {
 		std::unique_ptr<window> m_Window;
 		bool m_Running = true;
 		layerStack m_LayerStack;
-		unsigned m_VertexArray, m_VertexBuffer, m_IndexBuffer;
+		unsigned m_VertexArray;
+		std::unique_ptr<vertexBuffer> m_VertexBuffer;
+		std::unique_ptr<indexBuffer> m_IndexBuffer;
+
 		std::unique_ptr<shader> m_Shader;
 	};
 

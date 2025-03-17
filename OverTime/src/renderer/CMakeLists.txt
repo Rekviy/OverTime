@@ -1,9 +1,15 @@
 set(OT_RENDERER_HEADER
+	src/renderer/renderer.h
 	src/renderer/renderContext.h
-	src/renderer/openGL/openGLContext.h
 	src/renderer/shader.h
+	src/renderer/buffer.h
+	src/renderer/openGL/openGLContext.h
+	src/renderer/openGL/openGLBuffer.h
 )
 set(OT_RENDERER_SRC
-	src/renderer/openGL/openGLContext.cpp
+	src/renderer/renderer.cpp
 	src/renderer/shader.cpp
+	src/renderer/buffer.cpp
+	src/renderer/openGL/openGLContext.cpp
+	src/renderer/openGL/openGLBuffer.cpp
 )
