@@ -11,20 +11,20 @@
 namespace overtime {
 
 	enum class eventType {
-		none = 0,
-		windowClose, windowResize, windowFocus, windowLostFocus, windowMoved,
-		appTick, appUpdate, appRender,
-		keyPressed, keyReleased, keyTyped,
-		mouseButtonPressed, mouseButtonReleased, mouseMoved, mouseScrolled
+		None = 0,
+		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
+		AppTick, AppUpdate, AppRender,
+		KeyPressed, KeyReleased, KeyTyped,
+		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
 	};
 
 	enum eventCategory {
-		none = 0,
-		eventCategoryApplication = BIT(0),
-		eventCategoryInput = BIT(1),
-		eventCategoryKeyboard = BIT(2),
-		eventCategoryMouse = BIT(3),
-		eventCategoryMouseButton = BIT(4)
+		None = 0,
+		EventCategoryApplication = BIT(0),
+		EventCategoryInput = BIT(1),
+		EventCategoryKeyboard = BIT(2),
+		EventCategoryMouse = BIT(3),
+		EventCategoryMouseButton = BIT(4)
 	};
 
 #define EVENT_CLASS_TYPE(type) static eventType getStaticType() { return eventType::type; }\

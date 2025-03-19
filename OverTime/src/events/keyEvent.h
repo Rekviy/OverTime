@@ -7,7 +7,7 @@ namespace overtime {
 	class keyEvent : public event {
 	public:
 		inline int getKeyCode() const { return m_KeyCode; }
-		EVENT_CLASS_CATEGORY(eventCategoryKeyboard | eventCategoryInput)
+		EVENT_CLASS_CATEGORY(EventCategoryKeyboard | EventCategoryInput)
 	protected:
 		keyEvent(unsigned int keycode)
 			: m_KeyCode(keycode)
@@ -27,7 +27,7 @@ namespace overtime {
 			ss << "keyPressedEvent: " << m_KeyCode << " (" << m_RepeatCount << " repeats)";
 			return ss.str();
 		}
-		EVENT_CLASS_TYPE(keyPressed)
+		EVENT_CLASS_TYPE(KeyPressed)
 	private:
 		int m_RepeatCount;
 	};
@@ -43,7 +43,7 @@ namespace overtime {
 			ss << "keyReleasedEvent: " << m_KeyCode;
 			return ss.str();
 		}
-		EVENT_CLASS_TYPE(keyReleased)
+		EVENT_CLASS_TYPE(KeyReleased)
 	};
 	class keyTypedEvent : public keyEvent {
 	public:
@@ -56,7 +56,7 @@ namespace overtime {
 			ss << "keyTypedEvent: " << m_KeyCode;
 			return ss.str();
 		}
-		EVENT_CLASS_TYPE(keyTyped)
+		EVENT_CLASS_TYPE(KeyTyped)
 	};
 }
 #endif

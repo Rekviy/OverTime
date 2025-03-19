@@ -15,8 +15,8 @@ namespace overtime {
 			ss << "mouseMovedEvent: " << m_MouseX << ", " << m_MouseY;
 			return ss.str();
 		}
-		EVENT_CLASS_TYPE(mouseMoved)
-		EVENT_CLASS_CATEGORY(eventCategoryMouse | eventCategoryInput)
+		EVENT_CLASS_TYPE(MouseMoved)
+		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
 	private:
 		float m_MouseX, m_MouseY;
 	};
@@ -34,8 +34,8 @@ namespace overtime {
 			ss << "mouseScrolledEvent: " << getXOffset() << ", " << getYOffset();
 			return ss.str();
 		}
-		EVENT_CLASS_TYPE(mouseScrolled)
-		EVENT_CLASS_CATEGORY(eventCategoryMouse | eventCategoryInput)
+		EVENT_CLASS_TYPE(MouseScrolled)
+		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
 	private:
 		float m_XOffset, m_YOffset;
 	};
@@ -43,7 +43,7 @@ namespace overtime {
 	class mouseButtonEvent : public event {
 	public:
 		inline int getMouseButton() const { return m_Button; }
-		EVENT_CLASS_CATEGORY(eventCategoryMouse | eventCategoryInput)
+		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
 	protected:
 		mouseButtonEvent(int button)
 			: m_Button(button)
@@ -62,7 +62,7 @@ namespace overtime {
 			ss << "mouseButtonPressedEvent: " << m_Button;
 			return ss.str();
 		}
-		EVENT_CLASS_TYPE(mouseButtonPressed)
+		EVENT_CLASS_TYPE(MouseButtonPressed)
 	};
 
 	class mouseButtonReleasedEvent : public mouseButtonEvent {
@@ -76,6 +76,6 @@ namespace overtime {
 			ss << "mouseButtonReleasedEvent: " << m_Button;
 			return ss.str();
 		}
-		EVENT_CLASS_TYPE(mouseButtonReleased)
+		EVENT_CLASS_TYPE(MouseButtonReleased)
 	};
 }
