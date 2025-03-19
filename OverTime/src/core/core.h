@@ -1,11 +1,12 @@
 #pragma once
 #ifndef CORE_H
 #define CORE_H
-
+	
 	#ifdef OT_DEBUG
 		#define OT_ENABLE_ASSERTS
 	#endif
 	#ifdef OT_ENABLE_ASSERTS
+		#include "log.h"
 		#define OT_ASSERT(x, ...) { if(!(x)) { OT_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
 		#define OT_CORE_ASSERT(x, ...) { if(!(x)) { OT_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
 	#else

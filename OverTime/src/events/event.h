@@ -1,11 +1,12 @@
 #pragma once
 #ifndef EVENT_H
 #define EVENT_H
+
+#include "core/core.h"
+
 #include <iostream>
 #include <sstream>
 #include <functional>
-
-#include "core/core.h"
 
 namespace overtime {
 

@@ -1,6 +1,9 @@
 #pragma once
 #ifndef BUFFER_H
 #define BUFFER_H 
+
+#include <stdint.h>
+
 namespace overtime {
 	class vertexBuffer {
 	public:

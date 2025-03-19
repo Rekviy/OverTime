@@ -3,7 +3,7 @@
 #include "renderer/buffer.h"
 
 namespace overtime {
-	class openGLVertexBuffer :public vertexBuffer {
+	class openGLVertexBuffer : public vertexBuffer {
 	public:
 		openGLVertexBuffer(float* vertices, uint32_t size);
 		virtual ~openGLVertexBuffer() override;
@@ -13,7 +13,7 @@ namespace overtime {
 	private:
 		uint32_t m_RendererId;
 	};
-	class openGLIndexBuffer :public indexBuffer {
+	class openGLIndexBuffer : public indexBuffer {
 	public:
 		openGLIndexBuffer(uint32_t* indices, uint32_t count);
 		virtual ~openGLIndexBuffer() override;

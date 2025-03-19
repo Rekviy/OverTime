@@ -26,25 +26,14 @@
 
 #include "imGui/imguiLayer.h"
 
-#include "platform/windows/winput.h"
-#include "platform/windows/wwindow.h"
-
 #include "renderer/renderContext.h"
-
-//#include <iostream>
-//#include <memory>
-//#include <utility>
-//#include <algorithm>
-//#include <functional>
-//#include <string>
-//#include <sstream>
-//#include <vector>
-//#include <unordered_map>
-//#include <unordered_set>
+#include "renderer/buffer.h"
+#include "renderer/renderer.h"
+#include "renderer/shader.h"
 
 #ifdef OT_PLATFORM_WINDOWS
-	#include <Windows.h>
-#else
-
+	#include "platform/windows/winput.h"
+	#include "platform/windows/wwindow.h"
 #endif
+
 #endif 

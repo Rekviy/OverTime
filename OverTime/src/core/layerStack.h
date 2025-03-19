@@ -2,9 +2,9 @@
 #ifndef LAYERSTACK_H
 #define LAYERSTACK_H
 
-#include <vector>
-
 #include "layer.h"
+
+#include <vector>
 
 namespace overtime {
 	class layerStack {

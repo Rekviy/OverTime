@@ -1,7 +1,10 @@
+#include "openGLContext.h"
+#include "core/log.h"
+#include "core/core.h"
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "openGLContext.h"
 namespace overtime {
 	openGLContext::openGLContext(GLFWwindow* windowHandle)
 		: m_WindowHandle(windowHandle) {}

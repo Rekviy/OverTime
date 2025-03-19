@@ -2,7 +2,6 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
-
 namespace overtime {
 	enum class rendererAPI { None = 0, OpenGL = 1 };
 

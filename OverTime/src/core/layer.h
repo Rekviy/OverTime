@@ -1,9 +1,9 @@
 #pragma once
 #ifndef LAYER_H
 #define LAYER_H
-#include <string>
-
 #include "events/event.h"
+
+#include <string>
 
 namespace overtime {
 	class  layer {

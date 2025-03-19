@@ -1,6 +1,6 @@
-#include <spdlog/sinks/stdout_color_sinks.h>
-
 #include "log.h"
+
+#include <spdlog/sinks/stdout_color_sinks.h>
 
 namespace overtime {
 	std::shared_ptr<spdlog::logger> log::s_clientLogger;

@@ -1,9 +1,9 @@
 #pragma once
 #ifndef WINDOW_H
 #define WINDOW_H
-#include <string>
-
 #include "events/event.h"
+
+#include <string>
 
 namespace overtime {
 	struct windowProps {

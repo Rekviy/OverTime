@@ -1,7 +1,6 @@
 #pragma once
 #ifndef APPLICATION_H
 #define APPLICATION_H
-#include <memory>
 
 #include "window.h"
 //#include "input.h"
@@ -11,6 +10,8 @@
 #include "events/applicationEvent.h"
 #include "renderer/shader.h"
 #include "renderer/buffer.h"
+
+#include <memory>
 
 namespace overtime {
 	class application {

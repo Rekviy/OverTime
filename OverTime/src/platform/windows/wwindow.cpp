@@ -1,13 +1,12 @@
-#include <GLFW/glfw3.h>
-
 #include "wwindow.h"
 #include "core/core.h"
 #include "core/log.h"
 #include "events/applicationEvent.h"
 #include "events/keyEvent.h"
 #include "events/mouseEvent.h"
-
 #include "renderer/openGL/openGLContext.h"
+
+#include <GLFW/glfw3.h>
 
 namespace overtime {
 

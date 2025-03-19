@@ -1,12 +1,12 @@
+#include "imguiLayer.h"
+#include "core/application.h"
+
 //temp
 #define IMGUI_IMPL_OPENGL_LOADER_CUSTOM
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <backends/imgui_impl_opengl3.h>
 #include <backends/imgui_impl_glfw.h>
-
-#include "imguiLayer.h"
-#include "core/application.h"
 
 namespace overtime {
 

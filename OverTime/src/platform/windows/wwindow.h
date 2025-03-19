@@ -2,10 +2,10 @@
 #ifndef WWINDOW_H
 #define WWINDOW_H
 
-#include <string>
-
 #include "renderer/renderContext.h"
 #include "core/window.h"
+
+#include <string>
 
 struct GLFWwindow;
 
@@ -30,8 +30,8 @@ namespace overtime {
 		GLFWwindow* m_Window;
 		struct windowData {
 			std::string title;
-			unsigned int width, height;
-			bool VSync;
+			unsigned int width = 640, height = 480;
+			bool VSync = 0;
 			eventCallbackFn eventCallback;
 		};
 		windowData m_Data;

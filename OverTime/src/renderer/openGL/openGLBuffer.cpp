@@ -1,6 +1,6 @@
-#include <glad/glad.h>
-
 #include "openGLBuffer.h"
+
+#include <glad/glad.h>
 
 namespace overtime {
 

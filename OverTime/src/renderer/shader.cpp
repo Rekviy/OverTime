@@ -1,7 +1,9 @@
-#include <glad/glad.h>
-
 #include "shader.h"
+#include "core/log.h"
+#include "core/core.h"
 
+#include <vector>
+#include <glad/glad.h>
 
 namespace overtime {
 	shader::shader(const std::string& vertexSrc, const std::string& fragmentSrc)

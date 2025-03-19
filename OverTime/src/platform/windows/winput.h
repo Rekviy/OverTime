@@ -1,9 +1,11 @@
 #pragma once
 #ifndef WINPUT_H
 #define WINPUT_H
-#include <utility>
 
 #include "core/input.h"
+
+#include <utility>
+
 namespace overtime {
 	class windowsInput : public input{
 		virtual bool isKeyPressedImpl(int keycode) override;
