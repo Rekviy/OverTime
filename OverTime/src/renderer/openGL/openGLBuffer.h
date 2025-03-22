@@ -1,5 +1,6 @@
 #pragma once
 #ifndef OPENGLBUFFER_H
+#define OPENGLBUFFER_H
 #include "renderer/buffer.h"
 
 namespace overtime {
@@ -8,10 +9,14 @@ namespace overtime {
 		openGLVertexBuffer(float* vertices, uint32_t size);
 		virtual ~openGLVertexBuffer() override;
 
-		virtual void bind() const override;
 		virtual void unbind() const override;
+		virtual void bind() const override;
+
+		virtual const bufferLayout& getLayout() const override { return m_Layout; };
+		virtual void setLayout(const bufferLayout& layout) override { m_Layout = layout; };
 	private:
 		uint32_t m_RendererId;
+		bufferLayout m_Layout;
 	};
 	class openGLIndexBuffer : public indexBuffer {
 	public:
