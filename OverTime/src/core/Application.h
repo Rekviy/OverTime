@@ -10,6 +10,7 @@
 #include "events/applicationEvent.h"
 #include "renderer/shader.h"
 #include "renderer/buffer.h"
+#include "renderer/vertexArray.h"
 
 #include <memory>
 
@@ -35,11 +36,8 @@ namespace overtime {
 		std::unique_ptr<window> m_Window;
 		bool m_Running = true;
 		layerStack m_LayerStack;
-		unsigned m_VertexArray;
-		std::unique_ptr<vertexBuffer> m_VertexBuffer;
-		std::unique_ptr<indexBuffer> m_IndexBuffer;
-
-		std::unique_ptr<shader> m_Shader;
+		std::shared_ptr<vertexArray> m_VertexArray;
+		std::shared_ptr<shader> m_Shader;
 	};
 
 	// To be defined in CLIENT

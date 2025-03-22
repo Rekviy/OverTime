@@ -1,15 +1,24 @@
 set(OT_RENDERER_HEADER
 	src/renderer/renderer.h
+	src/renderer/rendererAPI.h
 	src/renderer/renderContext.h
+	src/renderer/renderCommand.h
 	src/renderer/shader.h
 	src/renderer/buffer.h
+	src/renderer/vertexArray.h
 	src/renderer/openGL/openGLContext.h
 	src/renderer/openGL/openGLBuffer.h
+	src/renderer/openGL/openGLVertexArray.h
+	src/renderer/openGL/openGLRenderCommand.h
 )
 set(OT_RENDERER_SRC
 	src/renderer/renderer.cpp
+	src/renderer/rendererAPI.cpp
 	src/renderer/shader.cpp
 	src/renderer/buffer.cpp
+	src/renderer/vertexArray.cpp
 	src/renderer/openGL/openGLContext.cpp
 	src/renderer/openGL/openGLBuffer.cpp
+	src/renderer/openGL/openGLVertexArray.cpp
+	src/renderer/openGL/openGLRenderCommand.cpp
 )

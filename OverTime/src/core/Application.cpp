@@ -1,8 +1,8 @@
 #include "application.h"
 #include "core.h"
 #include "core/log.h"
+#include "renderer/renderer.h"
 
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 namespace overtime {
@@ -18,25 +18,26 @@ namespace overtime {
 		m_ImGuiLayer = new overtime::imGuiLayer();
 		pushOverlay(m_ImGuiLayer);
 		
-		
-		glGenVertexArrays(1, &m_VertexArray);
-		glBindVertexArray(m_VertexArray);
-
-	
-		float vertices[3*3] = {
+		m_VertexArray.reset(vertexArray::create());
+		float vertices[3 * 3] = {
 			-0.5f, -0.5f, 0.0f,
-			0.5f, -0.5f, 0.0f,
-			0.0f, 0.5f, 0.0f,
+			 0.5f, -0.5f, 0.0f,
+			  0.0f, 0.5f, 0.0f,
 		};
-		m_VertexBuffer.reset(vertexBuffer::create(vertices, sizeof(vertices)));
-		
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+		std::shared_ptr<vertexBuffer> vBuffer;
+		vBuffer.reset(vertexBuffer::create(vertices, sizeof(vertices)));
 
+		bufferLayout layout = {
+			{shaderDataType::Float3, "a_Pos"}
+		};
+
+		vBuffer->setLayout(layout);
+		m_VertexArray->addVertexBuffer(vBuffer);
 
 		unsigned indices[3] = { 0,1,2 };
-		m_IndexBuffer.reset(indexBuffer::create(indices, 3));
-
+		std::shared_ptr<indexBuffer> iBuffer;
+		iBuffer.reset(indexBuffer::create(indices, 3));
+		m_VertexArray->setIndexBuffer(iBuffer);
 
 		std::string vertexSrc = R"(
 
@@ -54,16 +55,10 @@ namespace overtime {
 		std::string fragmentSrc = R"(
 			layout(location = 0) out vec4 color;
 			in vec3 v_Position;
-			uniform float time;
-			vec3 fragCoord = gl_FragCoord.xyz;
 
 			void main()
 			{
-				// Normalized pixel coordinates (from 0 to 1)
-				vec3 uv = fragCoord/v_Position.xyz;
-
-				// Time varying pixel color
-				vec3 col = 0.5 + 0.5*cos(time+uv.xyx+vec3(0,2,4));
+				vec3 col = 0.5 + 0.5*cos(v_Position.xyx+vec3(0,2,4));
 
 				// Output to screen
 				color = vec4(col,1.0);
@@ -71,7 +66,7 @@ namespace overtime {
 		)";
 
 
-		m_Shader.reset(new shader(vertexSrc,fragmentSrc));
+		m_Shader.reset(new shader(vertexSrc, fragmentSrc));
 	}
 
 	application::~application()
@@ -104,16 +99,15 @@ namespace overtime {
 	void application::run()
 	{
 		while (m_Running) {
-			glClearColor(0, 0.6f, 0.6f, 1);
-			glClear(GL_COLOR_BUFFER_BIT);
+			rendererAPI::setClearColor({ 0, 0.6f, 0.6f, 1 });
+			rendererAPI::clear();
 			m_Shader->bind();
-			glUniform1f(glGetUniformLocation(m_Shader->getRendererId(), "time"), glfwGetTime());
-			glBindVertexArray(m_VertexArray);
-			glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
 
+			renderer::submit(m_VertexArray);
+			
 			for (layer* layer : m_LayerStack)
 				layer->onUpdate();
-			
+
 			m_ImGuiLayer->begin();
 			for (layer* layer : m_LayerStack)
 				layer->onImGuiRender();
@@ -122,7 +116,7 @@ namespace overtime {
 			m_Window->onUpdate();
 		}
 	}
-	bool application::onWindowClose(windowCloseEvent &event)
+	bool application::onWindowClose(windowCloseEvent& event)
 	{
 		m_Running = false;
 		return true;
