@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <glad/glad.h>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace overtime {
 	shader::shader(const std::string& vertexSrc, const std::string& fragmentSrc)
@@ -52,21 +53,6 @@ namespace overtime {
 		glDetachShader(m_RendererId, fs);
 	}
 
-	shader::~shader()
-	{
-		glDeleteProgram(m_RendererId);
-	}
-
-	void shader::bind() const
-	{
-		glUseProgram(m_RendererId);
-	}
-
-	void shader::unbind() const
-	{
-		glUseProgram(0);
-	}
-
 	uint32_t shader::compileShader(uint32_t shaderType, const std::string& src)
 	{
 		// Create an empty vertex shader handle
@@ -99,4 +85,30 @@ namespace overtime {
 		}
 		return id;
 	}
+
+	shader::~shader()
+	{
+		glDeleteProgram(m_RendererId);
+	}
+
+	void shader::bind() const
+	{
+		glUseProgram(m_RendererId);
+	}
+
+	void shader::unbind() const
+	{
+		glUseProgram(0);
+	}
+
+	void shader::uploadUniformMat4(const std::string& name, const glm::mat4& matrix)
+	{
+		GLint location = glGetUniformLocation(m_RendererId, name.c_str());
+		if (location == -1) {
+			OT_CORE_ASSERT(false, "Couldn't find uniform location of {0}", name);
+			return;
+		}
+		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
+	}
+
 }

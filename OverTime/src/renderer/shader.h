@@ -3,6 +3,7 @@
 #define SHADER_H
 
 #include <string>
+#include <glm/glm.hpp>
 
 namespace overtime {
 	class shader {
@@ -11,6 +12,8 @@ namespace overtime {
 		~shader();
 		void bind() const;
 		void unbind() const;
+
+		void uploadUniformMat4(const std::string& name, const glm::mat4& matrix);
 
 		inline const uint32_t& getRendererId() { return m_RendererId; }
 	private:
