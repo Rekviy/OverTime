@@ -7,9 +7,6 @@ public:
 	void onUpdate() override
 	{
 		//OT_INFO("testLayer - Update");
-	}
-	void onImGuiRender() override
-	{
 		if (show_another_window) {
 			ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
 			ImGui::Text("Hello from another window!");
@@ -26,7 +23,7 @@ class Breeze : public overtime::application {
 public:
 	Breeze()
 	{
-		pushLayer(new testLayer());
+		pushImGuiLayer(new testLayer());
 	}
 	~Breeze()
 	{}

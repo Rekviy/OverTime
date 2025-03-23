@@ -24,7 +24,8 @@ namespace overtime {
 		void onEvent(event& event);
 
 		void pushLayer(layer* layer);
-		void pushOverlay(layer* overlay);
+		void pushOverlay(layer* layer);
+		void pushImGuiLayer(layer* layer);
 		inline window& getWindow() { return *m_Window; }
 		static inline application& getInst() { return *s_Instance; }
 	private:
