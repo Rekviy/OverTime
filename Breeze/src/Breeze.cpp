@@ -1,4 +1,5 @@
 #include "Breeze.h"
+#include <glm/gtc/matrix_transform.hpp>
 class testLayer : public overtime::layer {
 public:
 	testLayer() : layer("testLayer"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f, -1.0f, 1.0f), m_CamPos(0.0f)
@@ -28,13 +29,14 @@ public:
 			layout(location = 0) in vec3 position;
 			
 			uniform mat4 u_ViewProj;
-			
+			uniform mat4 u_Transform;			
+
 			out vec3 v_Pos;
 
 			void main()
 			{
 				v_Pos = position;
-				gl_Position = u_ViewProj * vec4(position, 1.0);
+				gl_Position = u_ViewProj * u_Transform * vec4(position, 1.0);
 			}
 		)";
 
@@ -79,8 +81,17 @@ public:
 		m_Camera.setRotation(m_CamRotation);
 
 		overtime::renderer::beginScene(m_Camera);
-
-		overtime::renderer::submit(m_VertexArray, m_Shader);
+		glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
+		for (int y = 0; y < 10; y++)
+		{
+			for (int x = 0; x < 10; x++)
+			{
+				glm::vec3 pos(x * 0.11f, y * 0.11f, 0.0f);
+				glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * scale;
+				overtime::renderer::submit(m_VertexArray, m_Shader, transform);
+			}
+		}
+		
 
 		overtime::renderer::endScene();
 
