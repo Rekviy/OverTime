@@ -81,14 +81,14 @@ namespace overtime {
 	{
 		m_LayerStack.pushOverlay(layer);
 	}
-	void imGuiLayer::onUpdate()
+	void imGuiLayer::onUpdate(timeStep ts)
 	{
 		begin();
 		static bool show = true;
 		ImGui::ShowDemoWindow(&show);
 
 		for (layer* layer : m_LayerStack)
-			layer->onUpdate();
+			layer->onUpdate(ts);
 		end();
 	}
 }

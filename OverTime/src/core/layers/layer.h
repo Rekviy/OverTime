@@ -2,6 +2,7 @@
 #ifndef LAYER_H
 #define LAYER_H
 #include "events/event.h"
+#include "core/timeStep.h"
 
 #include <string>
 
@@ -13,7 +14,7 @@ namespace overtime {
 
 		virtual void onAttach() {}
 		virtual void onDetach() {}
-		virtual void onUpdate() {}
+		virtual void onUpdate(timeStep ts) {}
 		virtual void onEvent(event& event) {}
 		inline const std::string& GetName() const { return m_DebugName; }
 

@@ -8,10 +8,8 @@
 #include "imGui/imguiLayer.h"
 #include "codes/keyCodes.h"
 #include "events/applicationEvent.h"
-#include "renderer/shader.h"
-#include "renderer/buffer.h"
-#include "renderer/vertexArray.h"
-#include "renderer/camera.h"
+#include "timeStep.h"
+
 #include <memory>
 
 namespace overtime {
@@ -36,10 +34,7 @@ namespace overtime {
 		layerStack m_LayerStack;
 		std::unique_ptr<window> m_Window;
 		bool m_Running = true;
-		layerStack m_LayerStack;
-		std::shared_ptr<vertexArray> m_VertexArray;
-		std::shared_ptr<shader> m_Shader;
-		orthographCamera m_Camera;
+
 	};
 
 	// To be defined in CLIENT

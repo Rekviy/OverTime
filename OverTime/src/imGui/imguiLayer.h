@@ -12,7 +12,7 @@ namespace overtime {
 
 		virtual void onAttach() override;
 		virtual void onDetach() override;
-		virtual void onUpdate() override;
+		virtual void onUpdate(timeStep ts) override;
 		void pushLayer(layer* layer);
 		void begin();
 		void end();
