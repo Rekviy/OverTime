@@ -6,7 +6,7 @@ project(OT_libs)
 include(src/core/CMakeLists.txt)
 include(src/events/CMakeLists.txt)
 include(src/imGui/CMakeLists.txt)
-include(src/platform/${PLATFORM_FOLDER}/CMakeLists.txt)
+include(src/platform/CMakeLists.txt)
 include(src/renderer/CMakeLists.txt)
 
 set(OT_HEADER src/overtime.h src/pch.h

@@ -2,7 +2,7 @@
 #ifndef WINPUT_H
 #define WINPUT_H
 
-#include "core/input.h"
+#include "platform/input.h"
 
 #include <utility>
 

@@ -3,7 +3,7 @@
 #define WWINDOW_H
 
 #include "renderer/renderContext.h"
-#include "core/window.h"
+#include "platform/window.h"
 
 #include <string>
 

@@ -3,16 +3,14 @@ set(OT_CORE_HEADER
 	src/core/core.h
 	src/core/entryPoint.h
 	src/core/log.h
-	src/core/window.h
-	src/core/layer.h
-	src/core/layerStack.h
-	src/core/input.h
-	src/core/keyCodes.h
-	src/core/mouseButtonCodes.h
+	src/core/layers/layer.h
+	src/core/layers/layerStack.h
+	src/core/codes/keyCodes.h
+	src/core/codes/mouseButtonCodes.h
 )
 set(OT_CORE_SRC
 	src/core/application.cpp
 	src/core/log.cpp
-	src/core/layer.cpp
-	src/core/layerStack.cpp
+	src/core/layers/layer.cpp
+	src/core/layers/layerStack.cpp
 )

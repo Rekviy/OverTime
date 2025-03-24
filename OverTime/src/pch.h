@@ -5,31 +5,31 @@
 #ifndef PRECHEADER_H
 #define PRECHEADER_H
 
+#include "core/log.h"
 #include "core/core.h"
 #include "core/application.h"
-#include "core/window.h"
 
-#include "core/log.h"
+#include "core/layers/layer.h"
+#include "core/layers/layerStack.h"
 
-#include "core/layer.h"
-#include "core/layerStack.h"
+#include "core/codes/keyCodes.h"
+#include "core/codes/mouseButtonCodes.h"
 
-#include "core/input.h"
-#include "core/keyCodes.h"
-#include "core/mouseButtonCodes.h"
-
-
-#include "events/event.h"
 #include "events/applicationEvent.h"
 #include "events/keyEvent.h"
 #include "events/mouseEvent.h"
 
 #include "imGui/imguiLayer.h"
 
-#include "renderer/renderContext.h"
-#include "renderer/buffer.h"
-#include "renderer/renderer.h"
 #include "renderer/shader.h"
+#include "renderer/buffer.h"
+#include "renderer/vertexArray.h"
+#include "renderer/rendererAPI.h"
+#include "renderer/renderer.h"
+#include "renderer/camera.h"
+
+#include "platform/window.h"
+#include "platform/input.h"
 
 #ifdef OT_PLATFORM_WINDOWS
 	#include "platform/windows/winput.h"

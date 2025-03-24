@@ -2,11 +2,11 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-#include "window.h"
-//#include "input.h"
-#include "layerStack.h"
+#include "platform/window.h"
+#include "platform/input.h"
+#include "layers/layerStack.h"
 #include "imGui/imguiLayer.h"
-//#include "keyCodes.h"
+#include "codes/keyCodes.h"
 #include "events/applicationEvent.h"
 #include "renderer/shader.h"
 #include "renderer/buffer.h"
@@ -33,7 +33,7 @@ namespace overtime {
 		bool onWindowClose(windowCloseEvent &event);
 
 		static application* s_Instance;
-
+		layerStack m_LayerStack;
 		std::unique_ptr<window> m_Window;
 		bool m_Running = true;
 		layerStack m_LayerStack;
