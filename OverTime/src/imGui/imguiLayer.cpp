@@ -77,19 +77,11 @@ namespace overtime {
 			glfwMakeContextCurrent(backup_current_context);
 		}
 	}
-	void imGuiLayer::pushLayer(layer* layer)
+
+	void imGuiLayer::onImGuiRender()
 	{
-		m_LayerStack.pushOverlay(layer);
-	}
-	void imGuiLayer::onUpdate(timeStep ts)
-	{
-		begin();
 		static bool show = true;
 		ImGui::ShowDemoWindow(&show);
-
-		for (layer* layer : m_LayerStack)
-			layer->onUpdate(ts);
-		end();
 	}
 }
 

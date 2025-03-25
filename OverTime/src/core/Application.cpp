@@ -15,24 +15,24 @@ namespace overtime {
 		m_Window = std::unique_ptr<window>(window::create());
 		m_Window->setEventCallback(OT_BIND_EVENT_FN(application::onEvent));
 
-		m_ImGuiLayer = new imGuiLayer();
+		m_ImGuiLayer = new overtime::imGuiLayer();
 		pushOverlay(m_ImGuiLayer);
 	}
 
-	application::~application() {}
+	application::~application()
+	{
+
+	}
 
 	void application::pushLayer(layer* layer)
 	{
 		m_LayerStack.pushLayer(layer);
 	}
-	void application::pushOverlay(layer* layer)
+	void application::pushOverlay(layer* overlay)
 	{
-		m_LayerStack.pushOverlay(layer);
+		m_LayerStack.pushOverlay(overlay);
 	}
-	void application::pushImGuiLayer(layer* layer)
-	{
-		m_ImGuiLayer->pushLayer(layer);
-	}
+
 	void application::onEvent(event& event)
 	{
 		eventDispatcher dispatcher(event);
@@ -56,6 +56,11 @@ namespace overtime {
 
 			for (layer* layer : m_LayerStack)
 				layer->onUpdate(ts);
+
+			m_ImGuiLayer->begin();
+			for (layer* layer : m_LayerStack)
+				layer->onImGuiRender();
+			m_ImGuiLayer->end();
 
 			m_Window->onUpdate();
 		}
