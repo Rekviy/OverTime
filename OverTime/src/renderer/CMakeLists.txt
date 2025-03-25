@@ -23,6 +23,7 @@ set(OT_OPENGL_RENDERER_HEADER
 	src/renderer/openGL/openGLBuffer.h
 	src/renderer/openGL/openGLVertexArray.h
 	src/renderer/openGL/openGLRenderCommand.h
+	src/renderer/openGL/openGLShader.h
 )
 
 set(OT_OPENGL_RENDERER_SRC
@@ -30,6 +31,7 @@ set(OT_OPENGL_RENDERER_SRC
 	src/renderer/openGL/openGLBuffer.cpp
 	src/renderer/openGL/openGLVertexArray.cpp
 	src/renderer/openGL/openGLRenderCommand.cpp
+	src/renderer/openGL/openGLShader.cpp
 )
 
 list(APPEND OT_RENDERER_HEADER ${OT_OPENGL_RENDERER_HEADER})
