@@ -17,6 +17,7 @@ if(WINDOWS OR MACOSX OR LINUX)
 
 	include_directories(${OPENGL_INCLUDE_DIRS})
 	target_link_libraries(overtime glfw OpenGL::GL glad glm::glm-header-only)
+	set_target_properties(glm PROPERTIES FOLDER "External")
 	set_target_properties(glad PROPERTIES FOLDER "External")
 endif()
 
@@ -25,5 +26,4 @@ add_subdirectory(imgui)
 target_link_libraries(imgui glfw OpenGL::GL)
 target_link_libraries(overtime imgui)
 set_target_properties(imgui PROPERTIES FOLDER "External")
-set_target_properties(glm PROPERTIES FOLDER "External")
 endif(BUILD_IMGUI)
