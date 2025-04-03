@@ -13,7 +13,7 @@ public:
 			 0.5f, -0.5f, 0.0f,
 			  0.0f, 0.5f, 0.0f,
 		};
-		std::shared_ptr<overtime::vertexBuffer> vBuffer;
+		overtime::ref<overtime::vertexBuffer> vBuffer;
 		vBuffer.reset(overtime::vertexBuffer::create(vertices, sizeof(vertices)));
 
 		overtime::bufferLayout layout = {
@@ -24,7 +24,7 @@ public:
 		m_VertexArray->addVertexBuffer(vBuffer);
 
 		unsigned indices[3] = { 0,1,2 };
-		std::shared_ptr<overtime::indexBuffer> iBuffer;
+		overtime::ref<overtime::indexBuffer> iBuffer;
 		iBuffer.reset(overtime::indexBuffer::create(indices, 3));
 		m_VertexArray->setIndexBuffer(iBuffer);
 
@@ -116,8 +116,8 @@ private:
 	float m_CamRotation = 0.0f;
 	float m_CamRotationSpeed = 45.0f;
 
-	std::shared_ptr<overtime::vertexArray> m_VertexArray;
-	std::shared_ptr<overtime::shader> m_Shader;
+	overtime::ref<overtime::vertexArray> m_VertexArray;
+	overtime::ref<overtime::shader> m_Shader;
 	overtime::orthographCamera m_Camera;
 
 	glm::vec3 m_SquareColor = { 0.4f, 0.8f, 0.2f };

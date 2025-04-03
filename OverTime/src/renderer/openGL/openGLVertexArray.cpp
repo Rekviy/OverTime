@@ -20,7 +20,7 @@ namespace overtime {
 		glBindVertexArray(0);
 
 	}
-	void openGLVertexArray::addVertexBuffer(const std::shared_ptr<vertexBuffer>& vBuff)
+	void openGLVertexArray::addVertexBuffer(const ref<vertexBuffer>& vBuff)
 	{
 		OT_CORE_ASSERT(vBuff->getLayout().getElements().size(), "Vertex buffer has no layout!");
 		glBindVertexArray(m_RendererId);
@@ -52,7 +52,7 @@ namespace overtime {
 		}
 		m_VertexBuffers.push_back(vBuff);
 	}
-	void openGLVertexArray::setIndexBuffer(const std::shared_ptr<indexBuffer>& iBuff)
+	void openGLVertexArray::setIndexBuffer(const ref<indexBuffer>& iBuff)
 	{
 		glBindVertexArray(m_RendererId);
 		iBuff->bind();

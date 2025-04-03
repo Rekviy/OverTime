@@ -11,7 +11,7 @@ namespace overtime {
 	public:
 		static void beginScene(orthographCamera& camera);
 		static void endScene();
-		static void submit(const std::shared_ptr<vertexArray>& vertexArray, const std::shared_ptr<shader>& shader, const glm::mat4& transform = glm::mat4(1.0f));
+		static void submit(const ref<vertexArray>& vertexArray, const ref<shader>& shader, const glm::mat4& transform = glm::mat4(1.0f));
 
 	private:
 		struct sceneData {

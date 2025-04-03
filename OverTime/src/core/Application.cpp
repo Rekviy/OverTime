@@ -11,7 +11,7 @@ namespace overtime {
 	{
 		OT_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
-		m_Window = std::unique_ptr<window>(window::create());
+		m_Window = scope<window>(window::create());
 		m_Window->setEventCallback(OT_BIND_EVENT_FN(application::onEvent));
 
 		m_ImGuiLayer = new overtime::imGuiLayer();

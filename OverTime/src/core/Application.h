@@ -31,7 +31,7 @@ namespace overtime {
 
 		static application* s_Instance;
 		layerStack m_LayerStack;
-		std::unique_ptr<window> m_Window;
+		scope<window> m_Window;
 		bool m_Running = true;
 
 	};

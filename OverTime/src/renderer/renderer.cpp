@@ -11,7 +11,7 @@ namespace overtime {
 	void renderer::endScene()
 	{}
 
-	void renderer::submit(const std::shared_ptr<vertexArray>& vertexArray, const std::shared_ptr<shader>& shader, const glm::mat4& transform)
+	void renderer::submit(const ref<vertexArray>& vertexArray, const ref<shader>& shader, const glm::mat4& transform)
 	{
 		shader->bind();
 		std::static_pointer_cast<openGLShader>(shader)->uploadUniformMat4("u_ViewProj", s_SceneData->PVMatrix);

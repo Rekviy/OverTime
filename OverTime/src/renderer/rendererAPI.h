@@ -12,7 +12,7 @@ namespace overtime {
 	public:
 		static inline void setClearColor(const glm::vec4& color) { s_RenderCommands->setClearColor(color); }
 		static inline void clear() { s_RenderCommands->clear(); }
-		static inline void drawIndexed(const std::shared_ptr<vertexArray>& vertexArray) { s_RenderCommands->drawIndexed(vertexArray); }
+		static inline void drawIndexed(const ref<vertexArray>& vertexArray) { s_RenderCommands->drawIndexed(vertexArray); }
 
 		enum class API { None = 0, OpenGL = 1 };
 		inline static API getAPI() { return s_RendererAPI; }

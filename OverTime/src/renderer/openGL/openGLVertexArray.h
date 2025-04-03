@@ -14,16 +14,16 @@ namespace overtime {
 		virtual void bind() const override;
 		virtual void unbind() const override;
 
-		virtual void addVertexBuffer(const std::shared_ptr<vertexBuffer>& vBuff) override;
-		virtual void setIndexBuffer(const std::shared_ptr<indexBuffer>& iBuff) override;
+		virtual void addVertexBuffer(const ref<vertexBuffer>& vBuff) override;
+		virtual void setIndexBuffer(const ref<indexBuffer>& iBuff) override;
 
-		virtual const std::vector<std::shared_ptr<vertexBuffer>>& getVertexBuffers() const { return m_VertexBuffers; };
-		virtual const std::shared_ptr<indexBuffer>& getIndexBuffer() const { return m_IndexBuffer; } ;
+		virtual const std::vector<ref<vertexBuffer>>& getVertexBuffers() const { return m_VertexBuffers; };
+		virtual const ref<indexBuffer>& getIndexBuffer() const { return m_IndexBuffer; } ;
 
 	private:
 		uint32_t m_RendererId;
-		std::vector<std::shared_ptr<vertexBuffer>> m_VertexBuffers;
-		std::shared_ptr<indexBuffer> m_IndexBuffer;
+		std::vector<ref<vertexBuffer>> m_VertexBuffers;
+		ref<indexBuffer> m_IndexBuffer;
 	};
 }
 #endif

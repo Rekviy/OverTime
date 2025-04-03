@@ -9,7 +9,7 @@ namespace overtime {
 	public:
 		void setClearColor(const glm::vec4& color) override;
 		void clear() override;
-		void drawIndexed(const std::shared_ptr<vertexArray>& vertexArray) override;
+		void drawIndexed(const ref<vertexArray>& vertexArray) override;
 	private:
 
 	};
