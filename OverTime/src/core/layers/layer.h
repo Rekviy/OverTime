@@ -17,7 +17,7 @@ namespace overtime {
 		virtual void onUpdate(timeStep ts) {}
 		virtual void onImGuiRender() {}
 		virtual void onEvent(event& event) {}
-		inline const std::string& GetName() const { return m_DebugName; }
+		inline const std::string& getName() const { return m_DebugName; }
 
 	protected:
 		std::string m_DebugName;

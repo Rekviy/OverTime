@@ -8,7 +8,6 @@ namespace overtime {
 
 	application* application::s_Instance = nullptr;
 	application::application()
-
 	{
 		OT_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
