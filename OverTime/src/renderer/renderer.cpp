@@ -3,6 +3,11 @@
 namespace overtime {
 	renderer::sceneData* renderer::s_SceneData = new renderer::sceneData;
 
+	void renderer::init()
+	{
+		rendererAPI::init();
+	}
+
 	void renderer::beginScene(orthographCamera& camera)
 	{
 		s_SceneData->PVMatrix = camera.getPVMatrix();

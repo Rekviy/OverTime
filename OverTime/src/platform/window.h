@@ -10,7 +10,7 @@ namespace overtime {
 		windowProps(const std::string& title = "OverTime Engine",
 			unsigned int width = 1280,
 			unsigned int height = 720)
-			: title(title), width(width), height(height) 
+			: title(title), width(width), height(height)
 		{}
 
 		std::string title;
@@ -33,7 +33,7 @@ namespace overtime {
 
 		virtual void* getNativeWindow() const = 0;
 
-		static window* create(const windowProps& props = windowProps());
+		static scope<window> create(const windowProps& props = windowProps());
 	};
 }
 #endif

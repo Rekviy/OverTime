@@ -25,7 +25,6 @@ namespace overtime {
 		OT_CORE_ASSERT(vBuff->getLayout().getElements().size(), "Vertex buffer has no layout!");
 		glBindVertexArray(m_RendererId);
 		vBuff->bind();
-		uint32_t index = 0;
 		auto shaderDataTypeToOpenGLType = [](shaderDataType type) ->GLenum {
 			switch (type) {
 				case shaderDataType::Bool:   return GL_BOOL;
@@ -45,10 +44,10 @@ namespace overtime {
 		};
 		auto& layout = vBuff->getLayout();
 		for (const auto& elem : layout) {
-			glEnableVertexAttribArray(index);
-			glVertexAttribPointer(index, elem.getComponentCount(), shaderDataTypeToOpenGLType(elem.type),
+			glEnableVertexAttribArray(m_VertexBufferIndex);
+			glVertexAttribPointer(m_VertexBufferIndex, elem.getComponentCount(), shaderDataTypeToOpenGLType(elem.type),
 				elem.normalized ? GL_TRUE : GL_FALSE, layout.getStride(), (const void*)elem.offset);
-			index++;
+			m_VertexBufferIndex++;
 		}
 		m_VertexBuffers.push_back(vBuff);
 	}

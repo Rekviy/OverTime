@@ -9,10 +9,10 @@
 namespace overtime {
 	class renderer {
 	public:
+		static void init();
 		static void beginScene(orthographCamera& camera);
 		static void endScene();
 		static void submit(const ref<vertexArray>& vertexArray, const ref<shader>& shader, const glm::mat4& transform = glm::mat4(1.0f));
-
 	private:
 		struct sceneData {
 			glm::mat4 PVMatrix;

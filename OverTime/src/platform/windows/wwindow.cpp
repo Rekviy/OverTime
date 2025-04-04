@@ -15,9 +15,9 @@ namespace overtime {
 	{
 		OT_CORE_ERROR("GLFW ERROR: [{0}] - {1}", error, description);
 	}
-	window* window::create(const windowProps& props)
+	scope<window> window::create(const windowProps& props)
 	{
-		return new windowsWindow(props);
+		return std::make_unique<windowsWindow>(props);
 	}
 	windowsWindow::windowsWindow(const windowProps& props)
 	{

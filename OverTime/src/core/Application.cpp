@@ -14,6 +14,8 @@ namespace overtime {
 		m_Window = scope<window>(window::create());
 		m_Window->setEventCallback(OT_BIND_EVENT_FN(application::onEvent));
 
+		renderer::init();
+
 		m_ImGuiLayer = new overtime::imGuiLayer();
 		pushOverlay(m_ImGuiLayer);
 	}

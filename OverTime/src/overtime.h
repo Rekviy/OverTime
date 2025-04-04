@@ -21,6 +21,7 @@
 #include "renderer/rendererAPI.h"
 #include "renderer/renderer.h"
 #include "renderer/camera.h"
+#include "renderer/texture.h"
 
 #include "platform/input.h"
 

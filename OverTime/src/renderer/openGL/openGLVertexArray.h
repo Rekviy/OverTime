@@ -22,6 +22,7 @@ namespace overtime {
 
 	private:
 		uint32_t m_RendererId;
+		uint32_t m_VertexBufferIndex = 0;
 		std::vector<ref<vertexBuffer>> m_VertexBuffers;
 		ref<indexBuffer> m_IndexBuffer;
 	};

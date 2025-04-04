@@ -11,7 +11,7 @@ namespace overtime {
 		virtual void bind() const = 0;
 		virtual void unbind() const = 0;
 
-		static shader* create(const std::string& vertexSrc, const std::string& fragmentSrc);
+		static ref<shader> create(const std::string& vertexSrc, const std::string& fragmentSrc);
 	};
 }
 #endif

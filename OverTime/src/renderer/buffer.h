@@ -38,7 +38,7 @@ namespace overtime {
 		uint32_t size;
 		uint32_t offset;
 		bool normalized;
-		bufferElement() 
+		bufferElement()
 			:type(shaderDataType::None), size(shaderDataTypeSize(type)), offset(0), normalized(false)
 		{}
 		bufferElement(shaderDataType type, const std::string& name, bool normalized = false)
@@ -104,7 +104,7 @@ namespace overtime {
 		virtual const bufferLayout& getLayout() const = 0;
 		virtual void setLayout(const bufferLayout& layout) = 0;
 
-		static vertexBuffer* create(float* vertices, uint32_t size);
+		static ref<vertexBuffer> create(float* vertices, uint32_t size);
 	};
 
 	class indexBuffer {
@@ -115,7 +115,7 @@ namespace overtime {
 
 		virtual uint32_t GetCount() const = 0;
 
-		static indexBuffer* create(uint32_t* indices, uint32_t size);
+		static ref<indexBuffer> create(uint32_t* indices, uint32_t size);
 	};
 }
 

@@ -10,6 +10,7 @@
 namespace overtime {
 	class rendererAPI {
 	public:
+		static inline void init() { s_RenderCommands->init(); }
 		static inline void setClearColor(const glm::vec4& color) { s_RenderCommands->setClearColor(color); }
 		static inline void clear() { s_RenderCommands->clear(); }
 		static inline void drawIndexed(const ref<vertexArray>& vertexArray) { s_RenderCommands->drawIndexed(vertexArray); }

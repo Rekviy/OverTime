@@ -2,14 +2,15 @@
 #include "openGL/openGLShader.h"
 #include "core/log.h"
 #include "core/core.h"
+#include "rendererAPI.h"
 
 
 namespace overtime {
-	shader* shader::create(const std::string& vertexSrc, const std::string& fragmentSrc)
+	ref<shader> shader::create(const std::string& vertexSrc, const std::string& fragmentSrc)
 	{
 		switch (rendererAPI::getAPI()) {
 			case rendererAPI::API::None: return nullptr;
-			case rendererAPI::API::OpenGL: return new openGLShader(vertexSrc, fragmentSrc);
+			case rendererAPI::API::OpenGL: return std::make_shared<openGLShader>(vertexSrc, fragmentSrc);
 
 		}
 		OT_CORE_ASSERT(false, "Unknown renderAPI!");

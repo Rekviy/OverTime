@@ -7,8 +7,9 @@ set(OT_RENDERER_HEADER
 	src/renderer/buffer.h
 	src/renderer/vertexArray.h
 	src/renderer/camera.h
-	
+	src/renderer/texture.h	
 )
+
 set(OT_RENDERER_SRC
 	src/renderer/renderer.cpp
 	src/renderer/rendererAPI.cpp
@@ -16,6 +17,7 @@ set(OT_RENDERER_SRC
 	src/renderer/buffer.cpp
 	src/renderer/vertexArray.cpp
 	src/renderer/camera.cpp
+	src/renderer/texture.cpp
 )
 
 set(OT_OPENGL_RENDERER_HEADER
@@ -24,6 +26,7 @@ set(OT_OPENGL_RENDERER_HEADER
 	src/renderer/openGL/openGLVertexArray.h
 	src/renderer/openGL/openGLRenderCommand.h
 	src/renderer/openGL/openGLShader.h
+	src/renderer/openGL/openGLTexture.h
 )
 
 set(OT_OPENGL_RENDERER_SRC
@@ -32,6 +35,7 @@ set(OT_OPENGL_RENDERER_SRC
 	src/renderer/openGL/openGLVertexArray.cpp
 	src/renderer/openGL/openGLRenderCommand.cpp
 	src/renderer/openGL/openGLShader.cpp
+	src/renderer/openGL/openGLTexture.cpp
 )
 
 list(APPEND OT_RENDERER_HEADER ${OT_OPENGL_RENDERER_HEADER})

@@ -18,7 +18,7 @@ namespace overtime {
 		virtual const std::vector<ref<vertexBuffer>>& getVertexBuffers() const = 0;
 		virtual const ref<indexBuffer>& getIndexBuffer() const = 0;
 
-		static vertexArray* create();
+		static ref<vertexArray> create();
 	};
 }
 #endif
