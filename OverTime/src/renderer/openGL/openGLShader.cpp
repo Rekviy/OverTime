@@ -3,6 +3,7 @@
 #include "core/core.h"
 
 #include <vector>
+#include <fstream>
 #include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -11,59 +12,35 @@ namespace overtime {
 	{
 		uint32_t vs = compileShader(GL_VERTEX_SHADER, vertexSrc);
 		uint32_t fs = compileShader(GL_FRAGMENT_SHADER, fragmentSrc);
-		if (vs == UINT32_MAX || fs == UINT32_MAX)
-			return;
-
-		// Vertex and fragment shaders are successfully compiled.
-		// Now time to link them together into a program.
-		// Get a program object.
-		m_RendererId = glCreateProgram();
-
-		// Attach our shaders to our program
-		glAttachShader(m_RendererId, vs);
-		glAttachShader(m_RendererId, fs);
-
-		// Link our program
-		glLinkProgram(m_RendererId);
-
-		// Note the different functions here: glGetProgram* instead of glGetShader*.
-		GLint isLinked = 0;
-		glGetProgramiv(m_RendererId, GL_LINK_STATUS, (int*)&isLinked);
-		if (isLinked == GL_FALSE) {
-			GLint maxLength = 0;
-			glGetProgramiv(m_RendererId, GL_INFO_LOG_LENGTH, &maxLength);
-
-			// The maxLength includes the NULL character
-			std::vector<GLchar> infoLog(maxLength);
-			glGetProgramInfoLog(m_RendererId, maxLength, &maxLength, &infoLog[0]);
-
-			// We don't need the program anymore.
-			glDeleteProgram(m_RendererId);
-			// Don't leak shaders either.
-			glDeleteShader(vs);
-			glDeleteShader(fs);
-
-			OT_CORE_CRIT("{0}", infoLog.data());
-			OT_CORE_ASSERT(false, "Shader linking falure!");
-			return;
-		}
-
-		// Always detach shaders after a successful link.
-		glDetachShader(m_RendererId, vs);
-		glDetachShader(m_RendererId, fs);
+		m_RendererId = linkShader(vs, fs);
 	}
+	openGLShader::openGLShader(const std::filesystem::path& vertex, const std::filesystem::path& fragment)
+	{
+		uint32_t vs = compileShader(GL_VERTEX_SHADER, readFile(vertex));
+		uint32_t fs = compileShader(GL_FRAGMENT_SHADER, readFile(fragment));
+		m_RendererId = linkShader(vs, fs);
+	}
+	std::string openGLShader::readFile(const std::filesystem::path& shader)
+	{
+		std::string res;
+		std::ifstream in(shader, std::ios::in | std::ios::binary);
+		if (!in)
+			OT_CORE_ERROR("Failed to open file '{0}'", shader.string());
+		in.seekg(0, std::ios::end);
+		res.resize(in.tellg());
+		in.seekg(0, std::ios::beg);
+		in.read(&res[0], res.size());
+		in.close();
 
+		return res;
+	}
 	uint32_t openGLShader::compileShader(uint32_t shaderType, const std::string& src)
 	{
-		// Create an empty vertex shader handle
 		uint32_t id = glCreateShader(shaderType);
 
-		// Send the shader source code to GL
-		// Note that std::string's .c_str is NULL character terminated.
 		const GLchar* source = src.c_str();
 		glShaderSource(id, 1, &source, nullptr);
 
-		// Compile the shader
 		glCompileShader(id);
 		GLint isCompiled = 0;
 
@@ -72,11 +49,9 @@ namespace overtime {
 			GLint maxLength = 0;
 			glGetShaderiv(id, GL_INFO_LOG_LENGTH, &maxLength);
 
-			// The maxLength includes the NULL character
 			std::vector<GLchar> infoLog(maxLength);
 			glGetShaderInfoLog(id, maxLength, &maxLength, &infoLog[0]);
 
-			// We don't need the shader anymore.
 			glDeleteShader(id);
 
 			OT_CORE_CRIT("{0}", infoLog.data());
@@ -85,7 +60,42 @@ namespace overtime {
 		}
 		return id;
 	}
+	uint32_t openGLShader::linkShader(uint32_t vertexSource, uint32_t fragmentSource)
+	{
+		uint32_t id = glCreateProgram();
 
+		if (vertexSource == UINT32_MAX || fragmentSource == UINT32_MAX)
+			return -1;
+
+
+		glAttachShader(id, vertexSource);
+		glAttachShader(id, fragmentSource);
+
+		glLinkProgram(id);
+
+		GLint isLinked = 0;
+		glGetProgramiv(id, GL_LINK_STATUS, (int*)&isLinked);
+		if (isLinked == GL_FALSE) {
+			GLint maxLength = 0;
+			glGetProgramiv(id, GL_INFO_LOG_LENGTH, &maxLength);
+
+			std::vector<GLchar> infoLog(maxLength);
+			glGetProgramInfoLog(id, maxLength, &maxLength, &infoLog[0]);
+
+			glDeleteProgram(id);
+
+			glDeleteShader(vertexSource);
+			glDeleteShader(fragmentSource);
+
+			OT_CORE_CRIT("{0}", infoLog.data());
+			OT_CORE_ASSERT(false, "Shader linking falure!");
+			return -1;
+		}
+
+		glDetachShader(id, vertexSource);
+		glDetachShader(id, fragmentSource);
+		return id;
+	}
 	openGLShader::~openGLShader()
 	{
 		glDeleteProgram(m_RendererId);

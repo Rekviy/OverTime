@@ -10,6 +10,7 @@ namespace overtime {
 	class openGLShader : public shader{
 	public:
 		openGLShader(const std::string& vertexSrc, const std::string& fragmentSrc);
+		openGLShader(const std::filesystem::path& vertex, const std::filesystem::path& fragment);
 		virtual ~openGLShader() override;
 		virtual void bind() const override;
 		virtual void unbind() const override;
@@ -26,7 +27,9 @@ namespace overtime {
 
 		inline const uint32_t& getRendererId() { return m_RendererId; }
 	private:
+		std::string readFile(const std::filesystem::path&);
 		uint32_t compileShader(uint32_t shaderType, const std::string& src);
+		uint32_t linkShader(uint32_t vertexSource, uint32_t fragmentSource);
 		uint32_t m_RendererId;
 	};
 }

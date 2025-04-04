@@ -7,20 +7,25 @@ set(GAME_SOURCE)
 set(GAME_HEADER)
 
 set(GAME_RES
-    "resources/cherry.png"
-    "resources/Screenshot.png"
+    "assets/resources/cherry.png"
+    "assets/resources/Screenshot.png"    
 )
+set(GAME_SHADERS
+    "assets/shaders/texture.vert"
+    "assets/shaders/texture.frag"
+)
+
+foreach(item IN LISTS GAME_RES)
+        FILE(COPY ${item} DESTINATION "${CMAKE_BINARY_DIR}/bin/assets/resources")
+endforeach()
+foreach(item IN LISTS GAME_SHADERS)
+        FILE(COPY ${item} DESTINATION "${CMAKE_BINARY_DIR}/bin/assets/shaders")
+endforeach()
+
+list(APPEND GAME_SOURCE ${GAME_HEADER})
 
 list(APPEND GAME_SOURCE src/Breeze.cpp)
 list(APPEND GAME_HEADER src/Breeze.h)
-
-list(APPEND GAME_SOURCE ${GAME_HEADER} ${GAME_RES_FOLDER})
-
-
-foreach(item IN LISTS GAME_RES)
-        message(STATUS ${item})
-        FILE(COPY ${item} DESTINATION "${CMAKE_BINARY_DIR}/bin/resources")
-endforeach()
 
 add_executable(${APP_NAME} ${GAME_SOURCE})
 

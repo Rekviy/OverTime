@@ -3,6 +3,7 @@
 #define SHADER_H
 
 #include <string>
+#include <filesystem>
 
 namespace overtime {
 	class shader {
@@ -12,6 +13,7 @@ namespace overtime {
 		virtual void unbind() const = 0;
 
 		static ref<shader> create(const std::string& vertexSrc, const std::string& fragmentSrc);
+		static ref<shader> create(const std::filesystem::path& vertex, const std::filesystem::path& fragment);
 	};
 }
 #endif

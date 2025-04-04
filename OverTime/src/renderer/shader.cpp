@@ -16,5 +16,15 @@ namespace overtime {
 		OT_CORE_ASSERT(false, "Unknown renderAPI!");
 		return nullptr;
 	}
+	ref<shader> shader::create(const std::filesystem::path& vertex, const std::filesystem::path& fragment)
+	{
+		switch (rendererAPI::getAPI()) {
+			case rendererAPI::API::None: return nullptr;
+			case rendererAPI::API::OpenGL: return std::make_shared<openGLShader>(vertex, fragment);
+
+		}
+		OT_CORE_ASSERT(false, "Unknown renderAPI!");
+		return nullptr;
+	}
 
 }
