@@ -32,8 +32,8 @@ namespace overtime {
 		:m_Count(count)
 	{
 		glCreateBuffers(1, &m_RendererId);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererId);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, count*sizeof(uint32_t), indices, GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, m_RendererId);
+		glBufferData(GL_ARRAY_BUFFER, count*sizeof(uint32_t), indices, GL_STATIC_DRAW);
 	}
 	openGLIndexBuffer::~openGLIndexBuffer()
 	{

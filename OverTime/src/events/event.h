@@ -49,17 +49,15 @@ namespace overtime {
 	};
 
 	class eventDispatcher {
-		template<typename T>
-		using eventFn = std::function<bool(T&)>;
 	public:
 		eventDispatcher(event& event) : m_Event(event) {}
 
-		template<typename T>
-		bool dispatch(eventFn<T> func)
+		template<typename T, typename F>
+		bool dispatch(const F& func)
 		{
 			if (m_Event.getEventType() == T::getStaticType()) {
 				//ascend parrent to derived class and give it to given func
-				m_Event.m_Handled = func(*(T*)&m_Event);
+				m_Event.m_Handled = func(static_cast<T&>(m_Event));
 				return true;
 			}
 			return false;

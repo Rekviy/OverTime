@@ -10,7 +10,7 @@ namespace overtime {
 	class  layer {
 	public:
 		layer(const std::string& name = "Layer");
-		virtual ~layer();
+		virtual ~layer() = default;
 
 		virtual void onAttach() {}
 		virtual void onDetach() {}

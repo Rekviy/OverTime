@@ -7,7 +7,7 @@
 namespace overtime {
 	class shader {
 	public:
-		virtual ~shader() {};
+		virtual ~shader() = default;
 		virtual void bind() const = 0;
 		virtual void unbind() const = 0;
 

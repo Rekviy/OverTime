@@ -67,7 +67,7 @@ namespace overtime {
 	};
 	class bufferLayout {
 	public:
-		bufferLayout() {}
+		bufferLayout() = default;
 		bufferLayout(const std::initializer_list<bufferElement>& elements)
 			:m_Elements(elements)
 		{
@@ -97,7 +97,7 @@ namespace overtime {
 
 	class vertexBuffer {
 	public:
-		virtual ~vertexBuffer() {}
+		virtual ~vertexBuffer() = default;
 		virtual void bind() const = 0;
 		virtual void unbind() const = 0;
 
@@ -109,7 +109,7 @@ namespace overtime {
 
 	class indexBuffer {
 	public:
-		virtual ~indexBuffer() {}
+		virtual ~indexBuffer() = default;
 		virtual void bind() const = 0;
 		virtual void unbind() const = 0;
 

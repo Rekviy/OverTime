@@ -22,7 +22,7 @@ namespace overtime {
 	class window {
 	public:
 		using eventCallbackFn = std::function<void(event&)>;
-		virtual ~window() {}
+		virtual ~window() = default;
 		virtual void onUpdate() = 0;
 		virtual unsigned int getWidth() const = 0;
 		virtual unsigned int getHeight() const = 0;
