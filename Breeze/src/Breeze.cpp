@@ -77,35 +77,11 @@ public:
 		)";
 		_colorShader = overtime::shader::create(colorVertexSrc, colorFragmentSrc);
 
-		std::string texVertexSrc = R"(
-			#version 330 core
-			layout(location = 0) in vec3 position;
-			layout(location = 1) in vec2 texCoord;
-			
-			uniform mat4 u_ViewProj;
-			uniform mat4 u_Transform;			
+		_texShader = overtime::shader::create((std::filesystem::path)"assets/shaders/texture.vert", 
+											  (std::filesystem::path)"assets/shaders/texture.frag");
 
-			out vec2 v_texCoord;
-
-			void main()
-			{
-				v_texCoord = texCoord;
-				gl_Position = u_ViewProj * u_Transform * vec4(position, 1.0);
-			}
-		)";
-		std::string texFragmentSrc = R"(
-			#version 330 core
-			layout(location = 0) out vec4 color;
-			in vec2 v_texCoord;
-			uniform sampler2D u_Texture;
-			void main()
-			{
-				color = texture(u_Texture,v_texCoord);
-			}
-		)";
-		_texShader = overtime::shader::create(texVertexSrc, texFragmentSrc);
-		_texture = overtime::texture2D::create("resources/Screenshot.png");
-		_cherryTexture = overtime::texture2D::create("resources/cherry.png");
+		_texture = overtime::texture2D::create("assets/resources/Screenshot.png");
+		_cherryTexture = overtime::texture2D::create("assets/resources/cherry.png");
 		std::dynamic_pointer_cast<overtime::openGLShader>(_texShader)->bind();
 		std::dynamic_pointer_cast<overtime::openGLShader>(_texShader)->uploadUniformInt("u_Texture", 0);
 
