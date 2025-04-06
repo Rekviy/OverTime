@@ -8,18 +8,26 @@
 #include <glm/gtc/type_ptr.hpp>
 
 namespace overtime {
-	openGLShader::openGLShader(const std::string& vertexSrc, const std::string& fragmentSrc)
+	openGLShader::openGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
+		:m_Name(name)
 	{
-		uint32_t vs = compileShader(GL_VERTEX_SHADER, vertexSrc);
-		uint32_t fs = compileShader(GL_FRAGMENT_SHADER, fragmentSrc);
-		m_RendererId = linkShader(vs, fs);
+		std::unordered_map<type, const std::string> shaderSrcs;
+		shaderSrcs.reserve(2);
+		shaderSrcs.emplace((type)GL_VERTEX_SHADER, vertexSrc);
+		shaderSrcs.emplace((type)GL_FRAGMENT_SHADER, fragmentSrc);
+		compileShader(shaderSrcs);
 	}
-	openGLShader::openGLShader(const std::filesystem::path& vertex, const std::filesystem::path& fragment)
+
+	openGLShader::openGLShader(const std::unordered_map<type, const std::filesystem::path>& shaders)
 	{
-		uint32_t vs = compileShader(GL_VERTEX_SHADER, readFile(vertex));
-		uint32_t fs = compileShader(GL_FRAGMENT_SHADER, readFile(fragment));
-		m_RendererId = linkShader(vs, fs);
+		std::unordered_map<type, const std::string> shaderSrcs;
+		shaderSrcs.reserve(shaders.size());
+		for (auto& shader : shaders)
+			shaderSrcs.emplace(shader.first, readFile(shader.second));
+		compileShader(shaderSrcs);
+		m_Name = shaders.begin()->second.stem().string();;
 	}
+
 	std::string openGLShader::readFile(const std::filesystem::path& shader)
 	{
 		std::string res;
@@ -34,67 +42,62 @@ namespace overtime {
 
 		return res;
 	}
-	uint32_t openGLShader::compileShader(uint32_t shaderType, const std::string& src)
+
+	void openGLShader::compileShader(const std::unordered_map<type, const std::string>& shaderSrcs)
 	{
-		uint32_t id = glCreateShader(shaderType);
+		uint32_t program = glCreateProgram();
+		std::vector<uint32_t> shaderIds;
+		shaderIds.reserve(shaderSrcs.size());
 
-		const GLchar* source = src.c_str();
-		glShaderSource(id, 1, &source, nullptr);
+		for (auto& shader : shaderSrcs) {
+			uint32_t shaderId = glCreateShader(shader.first);
+			const GLchar* source = shader.second.c_str();
+			glShaderSource(shaderId, 1, &source, nullptr);
 
-		glCompileShader(id);
-		GLint isCompiled = 0;
+			glCompileShader(shaderId);
+			GLint isCompiled = 0;
 
-		glGetShaderiv(id, GL_COMPILE_STATUS, &isCompiled);
-		if (isCompiled == GL_FALSE) {
-			GLint maxLength = 0;
-			glGetShaderiv(id, GL_INFO_LOG_LENGTH, &maxLength);
+			glGetShaderiv(shaderId, GL_COMPILE_STATUS, &isCompiled);
+			if (isCompiled == GL_FALSE) {
+				GLint maxLength = 0;
+				glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &maxLength);
 
-			std::vector<GLchar> infoLog(maxLength);
-			glGetShaderInfoLog(id, maxLength, &maxLength, &infoLog[0]);
+				std::vector<GLchar> infoLog(maxLength);
+				glGetShaderInfoLog(shaderId, maxLength, &maxLength, &infoLog[0]);
 
-			glDeleteShader(id);
+				glDeleteShader(shaderId);
 
-			OT_CORE_CRIT("{0}", infoLog.data());
-			OT_CORE_ASSERT(false, "Shader compilation falure!");
-			return -1;
+				OT_CORE_CRIT("{0}", infoLog.data());
+				OT_CORE_ASSERT(false, "Shader compilation falure!");
+				return;
+			}
+			glAttachShader(program, shaderId);
+			shaderIds.push_back(shaderId);
 		}
-		return id;
-	}
-	uint32_t openGLShader::linkShader(uint32_t vertexSource, uint32_t fragmentSource)
-	{
-		uint32_t id = glCreateProgram();
 
-		if (vertexSource == UINT32_MAX || fragmentSource == UINT32_MAX)
-			return -1;
-
-
-		glAttachShader(id, vertexSource);
-		glAttachShader(id, fragmentSource);
-
-		glLinkProgram(id);
+		glLinkProgram(program);
 
 		GLint isLinked = 0;
-		glGetProgramiv(id, GL_LINK_STATUS, (int*)&isLinked);
+		glGetProgramiv(program, GL_LINK_STATUS, (int*)&isLinked);
 		if (isLinked == GL_FALSE) {
 			GLint maxLength = 0;
-			glGetProgramiv(id, GL_INFO_LOG_LENGTH, &maxLength);
+			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
 
 			std::vector<GLchar> infoLog(maxLength);
-			glGetProgramInfoLog(id, maxLength, &maxLength, &infoLog[0]);
+			glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
 
-			glDeleteProgram(id);
-
-			glDeleteShader(vertexSource);
-			glDeleteShader(fragmentSource);
+			glDeleteProgram(program);
+			for (auto id : shaderIds)
+				glDeleteShader(id);
 
 			OT_CORE_CRIT("{0}", infoLog.data());
 			OT_CORE_ASSERT(false, "Shader linking falure!");
-			return -1;
+			return;
 		}
+		for (auto id : shaderIds)
+			glDetachShader(program, id);
 
-		glDetachShader(id, vertexSource);
-		glDetachShader(id, fragmentSource);
-		return id;
+		m_RendererId = program;
 	}
 	openGLShader::~openGLShader()
 	{
@@ -131,7 +134,7 @@ namespace overtime {
 		glUniform1f(location, vector);
 	}
 
-	void openGLShader::uploadUniformFloat2(const std::string & name, const glm::vec2 & vector)
+	void openGLShader::uploadUniformFloat2(const std::string& name, const glm::vec2& vector)
 	{
 		GLint location = glGetUniformLocation(m_RendererId, name.c_str());
 		if (location == -1) {

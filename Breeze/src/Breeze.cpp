@@ -75,15 +75,15 @@ public:
 				color = vec4(u_Color, 1.0);
 			}
 		)";
-		_colorShader = overtime::shader::create(colorVertexSrc, colorFragmentSrc);
+		_colorShader = overtime::shader::create("colorShader", colorVertexSrc, colorFragmentSrc);
 
-		_texShader = overtime::shader::create((std::filesystem::path)"assets/shaders/texture.vert", 
-											  (std::filesystem::path)"assets/shaders/texture.frag");
+		auto textureShader = _shaderLib.load({ {overtime::shader::type::vertex, "assets/shaders/texture.vert"},
+						  {overtime::shader::type::fragment, "assets/shaders/texture.frag"} });
 
 		_texture = overtime::texture2D::create("assets/resources/Screenshot.png");
 		_cherryTexture = overtime::texture2D::create("assets/resources/cherry.png");
-		std::dynamic_pointer_cast<overtime::openGLShader>(_texShader)->bind();
-		std::dynamic_pointer_cast<overtime::openGLShader>(_texShader)->uploadUniformInt("u_Texture", 0);
+		std::dynamic_pointer_cast<overtime::openGLShader>(textureShader)->bind();
+		std::dynamic_pointer_cast<overtime::openGLShader>(textureShader)->uploadUniformInt("u_Texture", 0);
 
 	}
 	void onUpdate(overtime::timeStep ts) override
@@ -124,10 +124,11 @@ public:
 			}
 		}
 		_texture->bind();
-		overtime::renderer::submit(_squareVA, _texShader, glm::scale(glm::mat4(1.0f), glm::vec3(0.9f)));
+		auto textureShader = _shaderLib.get("texture");
+		overtime::renderer::submit(_squareVA, textureShader, glm::scale(glm::mat4(1.0f), glm::vec3(0.9f)));
 		_cherryTexture->bind();
 		//overtime::renderer::submit(_triangleVA, _colorShader, transform);
-		overtime::renderer::submit(_squareVA, _texShader, glm::scale(glm::mat4(1.0f), glm::vec3(0.9f)));
+		overtime::renderer::submit(_squareVA, textureShader, glm::scale(glm::mat4(1.0f), glm::vec3(0.9f)));
 
 
 
@@ -149,10 +150,10 @@ private:
 	float _camRotation = 0.0f;
 	float _camRotationSpeed = 45.0f;
 
+	overtime::shaderLibrary _shaderLib;
 	overtime::ref<overtime::vertexArray> _triangleVA;
 	overtime::ref<overtime::vertexArray> _squareVA;
 	overtime::ref<overtime::shader> _colorShader;
-	overtime::ref<overtime::shader> _texShader;
 	overtime::ref<overtime::texture2D> _texture;
 	overtime::ref<overtime::texture2D> _cherryTexture;
 

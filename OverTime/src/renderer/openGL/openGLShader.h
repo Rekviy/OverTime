@@ -9,11 +9,14 @@
 namespace overtime {
 	class openGLShader : public shader{
 	public:
-		openGLShader(const std::string& vertexSrc, const std::string& fragmentSrc);
-		openGLShader(const std::filesystem::path& vertex, const std::filesystem::path& fragment);
+		openGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
+		openGLShader(const std::unordered_map<type, const std::filesystem::path>& shaders);
+
 		virtual ~openGLShader() override;
 		virtual void bind() const override;
 		virtual void unbind() const override;
+		virtual const std::string& getName() const override { return m_Name; };
+
 
 		void uploadUniformInt(const std::string& name, int vector);
 
@@ -28,8 +31,8 @@ namespace overtime {
 		inline const uint32_t& getRendererId() { return m_RendererId; }
 	private:
 		std::string readFile(const std::filesystem::path&);
-		uint32_t compileShader(uint32_t shaderType, const std::string& src);
-		uint32_t linkShader(uint32_t vertexSource, uint32_t fragmentSource);
+		void compileShader(const std::unordered_map<type, const std::string>& shaderSrcs);
+		std::string m_Name;
 		uint32_t m_RendererId;
 	};
 }
