@@ -2,6 +2,8 @@
 #ifndef SHADER_H
 #define SHADER_H
 
+#include "core/core.h"
+
 #include <string>
 #include <filesystem>
 #include <unordered_map>
