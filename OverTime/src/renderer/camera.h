@@ -7,7 +7,7 @@
 namespace overtime {
 	class orthographCamera {
 	public:
-		orthographCamera(float left, float right, float bottom, float top, float near, float far);
+		orthographCamera(float left, float right, float bottom, float top, float near = -1.0f, float far = 1.0f);
 
 		const glm::vec3& getPosition() const { return m_Pos; }
 		void setPosition(const glm::vec3& position) { m_Pos = position; onUpdate(); }
@@ -15,6 +15,7 @@ namespace overtime {
 		const float getRotation() const { return m_Rotation; }
 		void setRotation(float rotation) { m_Rotation = rotation; onUpdate(); }
 
+		void setProjectionMatrix(float left, float right, float bottom, float top, float near = -1.0f, float far = 1.0f);
 		const glm::mat4& getProjectionMatrix() const { return m_ProjectionMatrix; }
 		const glm::mat4& getViewMatrix() const { return m_ViewMatrix; }
 		const glm::mat4& getPVMatrix() const { return m_PVMatrix; }

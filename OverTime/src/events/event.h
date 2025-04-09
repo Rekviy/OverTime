@@ -56,7 +56,7 @@ namespace overtime {
 		bool dispatch(const F& func)
 		{
 			if (m_Event.getEventType() == T::getStaticType()) {
-				//ascend parrent to derived class and give it to given func
+				//ascend parent to derived class and give it to given func
 				m_Event.m_Handled = func(static_cast<T&>(m_Event));
 				return true;
 			}

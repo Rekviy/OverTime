@@ -23,6 +23,8 @@
 #include "renderer/camera.h"
 #include "renderer/texture.h"
 
+#include "scripting/oCameraController.h"
+
 #include "platform/input.h"
 
 #include "imGui/imguiLayer.h"
