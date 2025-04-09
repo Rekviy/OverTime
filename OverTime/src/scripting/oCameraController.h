@@ -14,12 +14,14 @@ namespace overtime {
 		orthographCameraController(float aspectRatio, bool rotationEnable = false);
 		void onUpdate(timeStep ts);
 		void onEvent(event& e);
+		inline float getZoomLevel() const { return m_ZoomLevel; }
+		void setZoomLevel(float level) { m_ZoomLevel = level; }
 		orthographCamera& getCamera() { return m_Camera; }
 		const orthographCamera& getCamera() const { return m_Camera; }
 
 	private:
-		bool onMouseScrolled(mouseScrolledEvent& e);
-		bool onWindowResized(windowResizeEvent& e);
+		bool onMouseScrolled(mouseScrolledEvent& event);
+		bool onWindowResized(windowResizeEvent& event);
 
 		bool m_RotationEnable;
 		float m_AspectRatio;

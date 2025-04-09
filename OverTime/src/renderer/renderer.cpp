@@ -24,4 +24,8 @@ namespace overtime {
 		vertexArray->bind();
 		rendererAPI::drawIndexed(vertexArray);
 	}
+	void renderer::onWindowResize(uint32_t width, uint32_t height)
+	{
+		rendererAPI::setViewport(0, 0, width, height);
+	}
 }
