@@ -5,7 +5,7 @@
 
 class testLayer : public overtime::layer {
 public:
-	testLayer() : layer("testLayer"), _camera(-1.6f, 1.6f, -0.9f, 0.9f, -1.0f, 1.0f), _camPos(0.0f)
+	testLayer() : layer("testLayer"), _cameraControls(1280.0f/720.0f,true)
 	{
 		float triangleVertices[3 * 3] = {
 			-0.5f, -0.5f, 0.0f,
@@ -88,38 +88,23 @@ public:
 	}
 	void onUpdate(overtime::timeStep ts) override
 	{
-		//OT_INFO("FrameTime: {0}s; {1}ms", ts.getSeconds(), ts.getMilliseconds());
-		if (overtime::input::isKeyPressed(OT_KEY_W))
-			_camPos.y += _camMoveSpeed * ts;
-		else if (overtime::input::isKeyPressed(OT_KEY_S))
-			_camPos.y -= _camMoveSpeed * ts;
-		if (overtime::input::isKeyPressed(OT_KEY_A))
-			_camPos.x -= _camMoveSpeed * ts;
-		else if (overtime::input::isKeyPressed(OT_KEY_D))
-			_camPos.x += _camMoveSpeed * ts;
-		if (overtime::input::isKeyPressed(OT_KEY_E))
-			_camRotation += _camRotationSpeed * ts;
-		else if (overtime::input::isKeyPressed(OT_KEY_Q))
-			_camRotation -= _camRotationSpeed * ts;
+		_cameraControls.onUpdate(ts);
 
-		OT_INFO("camera x:{0} y:{1} angle:{2}", _camPos.x, _camPos.y, _camRotation);
+		
 
 		overtime::rendererAPI::setClearColor({ 0, 0.6f, 0.6f, 1 });
 		overtime::rendererAPI::clear();
 
-		//_camera.setPosition(_camPos);
-		_camera.setRotation(_camRotation);
-
-		overtime::renderer::beginScene(_camera);
+		overtime::renderer::beginScene(_cameraControls.getCamera());
 		std::dynamic_pointer_cast<overtime::openGLShader>(_colorShader)->bind();
 		std::dynamic_pointer_cast<overtime::openGLShader>(_colorShader)->uploadUniformFloat3("u_Color", _squareColor);
 
 		glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 10; j++) {
-				glm::vec3 pos(_camPos.x + i * 0.11f, _camPos.y + j * 0.11f, 0.0f);
+				glm::vec3 pos(i * 0.11f, j * 0.11f, 0.0f);
 				glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * scale;
-				transform = glm::rotate(transform, glm::radians(_camRotation), glm::vec3(0, 0, 1));
+				//transform = glm::rotate(transform, glm::radians(_camRotation), glm::vec3(0, 0, 1));
 				overtime::renderer::submit(_squareVA, _colorShader, transform);
 			}
 		}
@@ -142,13 +127,11 @@ public:
 		ImGui::End();
 	}
 	void onEvent(overtime::event& event) override
-	{}
+	{
+		_cameraControls.onEvent(event);
+	}
 
 private:
-	glm::vec3 _camPos;
-	float _camMoveSpeed = 5.0f;
-	float _camRotation = 0.0f;
-	float _camRotationSpeed = 45.0f;
 
 	overtime::shaderLibrary _shaderLib;
 	overtime::ref<overtime::vertexArray> _triangleVA;
@@ -157,7 +140,7 @@ private:
 	overtime::ref<overtime::texture2D> _texture;
 	overtime::ref<overtime::texture2D> _cherryTexture;
 
-	overtime::orthographCamera _camera;
+	overtime::orthographCameraController _cameraControls;
 
 
 	glm::vec3 _squareColor = { 0.4f, 0.8f, 0.2f };
