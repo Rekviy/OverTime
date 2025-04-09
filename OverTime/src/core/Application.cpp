@@ -37,6 +37,7 @@ namespace overtime {
 	void application::onEvent(event& event)
 	{
 		eventDispatcher dispatcher(event);
+		dispatcher.dispatch<windowResizeEvent>(OT_BIND_EVENT_FN(application::onWindowResize));
 		dispatcher.dispatch<windowCloseEvent>(OT_BIND_EVENT_FN(application::onWindowClose));
 
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();) {
@@ -51,12 +52,14 @@ namespace overtime {
 	{
 		float lastFrameTime = 0.0f;
 		while (m_Running) {
-			float time = glfwGetTime();
-			timeStep ts = time - lastFrameTime;
-			lastFrameTime = time;
+			if (!m_Minimized) {
+				float time = glfwGetTime();
+				timeStep ts = time - lastFrameTime;
+				lastFrameTime = time;
 
-			for (layer* layer : m_LayerStack)
-				layer->onUpdate(ts);
+				for (layer* layer : m_LayerStack)
+					layer->onUpdate(ts);
+			}
 
 			m_ImGuiLayer->begin();
 			for (layer* layer : m_LayerStack)
@@ -71,6 +74,15 @@ namespace overtime {
 		m_Running = false;
 		return true;
 	}
-
+	bool application::onWindowResize(windowResizeEvent& event)
+	{
+		if (!(event.getWidth() || event.getHeight())) {
+			m_Minimized = true;
+			return false;
+		}
+		m_Minimized = false;
+		renderer::onWindowResize(event.getWidth(), event.getHeight());
+		return false;
+	}
 }
 

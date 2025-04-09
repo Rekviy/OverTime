@@ -28,12 +28,13 @@ namespace overtime {
 	private:
 		imGuiLayer* m_ImGuiLayer;
 		bool onWindowClose(windowCloseEvent &event);
+		bool onWindowResize(windowResizeEvent& event);
 
 		static application* s_Instance;
 		layerStack m_LayerStack;
 		scope<window> m_Window;
 		bool m_Running = true;
-
+		bool m_Minimized = false;
 	};
 
 	// To be defined in CLIENT

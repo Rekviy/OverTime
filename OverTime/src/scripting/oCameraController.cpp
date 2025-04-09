@@ -30,24 +30,24 @@ namespace overtime {
 		m_Camera.setPosition(m_Position);
 		m_TranslationSpeed = m_ZoomLevel;
 	}
-	void orthographCameraController::onEvent(event& e)
+	void orthographCameraController::onEvent(event& event)
 	{
-		eventDispatcher dispatcher(e);
+		eventDispatcher dispatcher(event);
 		dispatcher.dispatch<mouseScrolledEvent>(OT_BIND_EVENT_FN(orthographCameraController::onMouseScrolled));
 		dispatcher.dispatch<windowResizeEvent>(OT_BIND_EVENT_FN(orthographCameraController::onWindowResized));
 
 
 	}
-	bool orthographCameraController::onMouseScrolled(mouseScrolledEvent& e)
+	bool orthographCameraController::onMouseScrolled(mouseScrolledEvent& event)
 	{
-		m_ZoomLevel -= e.getYOffset() * 0.5f;
+		m_ZoomLevel -= event.getYOffset() * 0.5f;
 		m_ZoomLevel = std::max(m_ZoomLevel, 0.25f);
 		m_Camera.setProjectionMatrix(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 		return false;
 	}
-	bool orthographCameraController::onWindowResized(windowResizeEvent& e)
+	bool orthographCameraController::onWindowResized(windowResizeEvent& event)
 	{
-		m_AspectRatio = (float)e.getWidth() /(float) e.getHeight();
+		m_AspectRatio = (float)event.getWidth() /(float) event.getHeight();
 		m_Camera.setProjectionMatrix(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 		return false;
 	}
