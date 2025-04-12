@@ -4,10 +4,10 @@ set(APP_NAME Breeze)
 project(${APP_NAME})
 
 set(GAME_SOURCE src/Breeze.cpp
-
+    src/test2d.cpp
 )
 set(GAME_HEADER src/Breeze.h
-
+    src/test2d.h
 )
 
 set(GAME_RES
@@ -17,6 +17,8 @@ set(GAME_RES
 set(GAME_SHADERS
     "assets/shaders/texture.vert"
     "assets/shaders/texture.frag"
+    "assets/shaders/color.vert"
+    "assets/shaders/color.frag"
 )
 
 list(APPEND GAME_RES ${GAME_SHADERS})

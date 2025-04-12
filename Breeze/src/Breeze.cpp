@@ -1,8 +1,10 @@
 #include "Breeze.h"
-#include "renderer/openGL/openGLShader.h"
+
+#include <core/entryPoint.h>
+
+#include "test2d.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
 class testLayer : public overtime::layer {
 public:
 	testLayer() : layer("testLayer"), _cameraControls(1280.0f/720.0f,true)
@@ -51,7 +53,7 @@ public:
 			#version 330 core
 			layout(location = 0) in vec3 position;
 			
-			uniform mat4 u_ViewProj;
+			uniform mat4 u_ProjView;
 			uniform mat4 u_Transform;			
 
 			out vec3 v_Pos;
@@ -59,7 +61,7 @@ public:
 			void main()
 			{
 				v_Pos = position;
-				gl_Position = u_ViewProj * u_Transform * vec4(position, 1.0);
+				gl_Position = u_ProjView * u_Transform * vec4(position, 1.0);
 			}
 		)";
 		std::string colorFragmentSrc = R"(
@@ -82,8 +84,8 @@ public:
 
 		_texture = overtime::texture2D::create("assets/resources/Screenshot.png");
 		_cherryTexture = overtime::texture2D::create("assets/resources/cherry.png");
-		std::dynamic_pointer_cast<overtime::openGLShader>(textureShader)->bind();
-		std::dynamic_pointer_cast<overtime::openGLShader>(textureShader)->uploadUniformInt("u_Texture", 0);
+		textureShader->bind();
+		textureShader->setInt("u_Texture", 0);
 
 	}
 	void onUpdate(overtime::timeStep ts) override
@@ -96,8 +98,8 @@ public:
 		overtime::rendererAPI::clear();
 
 		overtime::renderer::beginScene(_cameraControls.getCamera());
-		std::dynamic_pointer_cast<overtime::openGLShader>(_colorShader)->bind();
-		std::dynamic_pointer_cast<overtime::openGLShader>(_colorShader)->uploadUniformFloat3("u_Color", _squareColor);
+		_colorShader->bind();
+		_colorShader->setFloat4("u_Color", _squareColor);
 
 		glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 		for (int i = 0; i < 10; i++) {
@@ -123,7 +125,7 @@ public:
 	void onImGuiRender()
 	{
 		ImGui::Begin("Settings");
-		ImGui::ColorEdit3("Color", glm::value_ptr(_squareColor));
+		ImGui::ColorEdit4("Color", glm::value_ptr(_squareColor));
 		ImGui::End();
 	}
 	void onEvent(overtime::event& event) override
@@ -142,15 +144,15 @@ private:
 
 	overtime::orthographCameraController _cameraControls;
 
-
-	glm::vec3 _squareColor = { 0.4f, 0.8f, 0.2f };
+	glm::vec4 _squareColor = { 0.4f, 0.8f, 0.2f, 1.0f };
 };
 
 class Breeze : public overtime::application {
 public:
 	Breeze()
 	{
-		pushLayer(new testLayer());
+		//pushLayer(new testLayer());
+		pushLayer(new test2dLayer());
 	}
 	~Breeze()
 	{}
