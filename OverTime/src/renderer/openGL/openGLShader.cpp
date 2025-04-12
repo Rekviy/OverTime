@@ -94,8 +94,10 @@ namespace overtime {
 			OT_CORE_ASSERT(false, "Shader linking falure!");
 			return;
 		}
-		for (auto id : shaderIds)
+		for (auto id : shaderIds) {
 			glDetachShader(program, id);
+			glDeleteShader(id);
+		}
 
 		m_RendererId = program;
 	}
@@ -114,6 +116,35 @@ namespace overtime {
 		glUseProgram(0);
 	}
 
+	void openGLShader::setInt(const std::string& name, int vector)
+	{
+		uploadUniformInt(name, vector);
+	}
+	void openGLShader::setFloat(const std::string & name, float vector)
+	{
+		uploadUniformFloat(name, vector);
+	}
+	void openGLShader::setFloat2(const std::string & name, const glm::vec2 & vector)
+	{
+		uploadUniformFloat2(name, vector);
+	}
+	void openGLShader::setFloat3(const std::string & name, const glm::vec3 & vector)
+	{
+		uploadUniformFloat3(name, vector);
+	}
+	void openGLShader::setFloat4(const std::string & name, const glm::vec4 & vector)
+	{
+		uploadUniformFloat4(name, vector);
+	}
+	void openGLShader::setMat3(const std::string & name, const glm::mat3 & matrix)
+	{
+		uploadUniformMat3(name, matrix);
+	}
+	void openGLShader::setMat4(const std::string & name, const glm::mat4 & matrix)
+	{
+		uploadUniformMat4(name, matrix);
+	}
+
 	void openGLShader::uploadUniformInt(const std::string& name, int vector)
 	{
 		GLint location = glGetUniformLocation(m_RendererId, name.c_str());
@@ -123,7 +154,6 @@ namespace overtime {
 		}
 		glUniform1i(location, vector);
 	}
-
 	void openGLShader::uploadUniformFloat(const std::string& name, float vector)
 	{
 		GLint location = glGetUniformLocation(m_RendererId, name.c_str());
@@ -133,7 +163,6 @@ namespace overtime {
 		}
 		glUniform1f(location, vector);
 	}
-
 	void openGLShader::uploadUniformFloat2(const std::string& name, const glm::vec2& vector)
 	{
 		GLint location = glGetUniformLocation(m_RendererId, name.c_str());
@@ -143,7 +172,6 @@ namespace overtime {
 		}
 		glUniform2f(location, vector.x, vector.y);
 	}
-
 	void openGLShader::uploadUniformFloat3(const std::string& name, const glm::vec3& vector)
 	{
 		GLint location = glGetUniformLocation(m_RendererId, name.c_str());
@@ -153,7 +181,6 @@ namespace overtime {
 		}
 		glUniform3f(location, vector.x, vector.y, vector.z);
 	}
-
 	void openGLShader::uploadUniformFloat4(const std::string& name, const glm::vec4& vector)
 	{
 		GLint location = glGetUniformLocation(m_RendererId, name.c_str());
@@ -163,7 +190,6 @@ namespace overtime {
 		}
 		glUniform4f(location, vector.x, vector.y, vector.z, vector.w);
 	}
-
 	void openGLShader::uploadUniformMat3(const std::string& name, const glm::mat3& matrix)
 	{
 		GLint location = glGetUniformLocation(m_RendererId, name.c_str());
@@ -173,7 +199,6 @@ namespace overtime {
 		}
 		glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 	}
-
 	void openGLShader::uploadUniformMat4(const std::string& name, const glm::mat4& matrix)
 	{
 		GLint location = glGetUniformLocation(m_RendererId, name.c_str());

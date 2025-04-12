@@ -23,12 +23,12 @@
 #include "renderer/camera.h"
 #include "renderer/texture.h"
 
+#include "renderer/renderer2D.h"
+
 #include "scripting/oCameraController.h"
 
 #include "platform/input.h"
 
 #include "imGui/imguiLayer.h"
 #include <imgui.h>
-
-#include "core/entryPoint.h"
 #endif

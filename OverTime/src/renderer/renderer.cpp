@@ -1,11 +1,14 @@
 #include "renderer.h"
+#include "renderer2D.h"
 #include "openGL/openGLShader.h"
+
 namespace overtime {
 	renderer::sceneData* renderer::s_SceneData = new renderer::sceneData;
 
 	void renderer::init()
 	{
 		rendererAPI::init();
+		renderer2D::init();
 	}
 
 	void renderer::beginScene(orthographCamera& camera)
@@ -19,8 +22,8 @@ namespace overtime {
 	void renderer::submit(const ref<vertexArray>& vertexArray, const ref<shader>& shader, const glm::mat4& transform)
 	{
 		shader->bind();
-		std::static_pointer_cast<openGLShader>(shader)->uploadUniformMat4("u_ViewProj", s_SceneData->PVMatrix);
-		std::static_pointer_cast<openGLShader>(shader)->uploadUniformMat4("u_Transform", transform);
+		shader->setMat4("u_ProjView", s_SceneData->PVMatrix);
+		shader->setMat4("u_Transform", transform);
 		vertexArray->bind();
 		rendererAPI::drawIndexed(vertexArray);
 	}

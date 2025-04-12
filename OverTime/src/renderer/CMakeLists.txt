@@ -19,7 +19,15 @@ set(OT_RENDERER_SRC
 	src/renderer/camera.cpp
 	src/renderer/texture.cpp
 )
+set(OT_RENDERER2D_HEADER
+	src/renderer/renderer2D.h
 
+)
+
+set(OT_RENDERER2D_SRC
+	src/renderer/renderer2D.cpp
+
+)
 set(OT_OPENGL_RENDERER_HEADER
 	src/renderer/openGL/openGLContext.h
 	src/renderer/openGL/openGLBuffer.h
@@ -38,5 +46,5 @@ set(OT_OPENGL_RENDERER_SRC
 	src/renderer/openGL/openGLTexture.cpp
 )
 
-list(APPEND OT_RENDERER_HEADER ${OT_OPENGL_RENDERER_HEADER})
-list(APPEND OT_RENDERER_SRC ${OT_OPENGL_RENDERER_SRC})
+list(APPEND OT_RENDERER_HEADER ${OT_OPENGL_RENDERER_HEADER} ${OT_RENDERER2D_HEADER})
+list(APPEND OT_RENDERER_SRC ${OT_OPENGL_RENDERER_SRC} ${OT_RENDERER2D_SRC})

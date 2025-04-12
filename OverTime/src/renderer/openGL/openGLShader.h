@@ -17,6 +17,15 @@ namespace overtime {
 		virtual void unbind() const override;
 		virtual const std::string& getName() const override { return m_Name; };
 
+		virtual void setInt(const std::string& name, int vector) override;
+
+		virtual void setFloat(const std::string& name, float vector) override;
+		virtual void setFloat2(const std::string& name, const glm::vec2& vector) override;
+		virtual void setFloat3(const std::string& name, const glm::vec3& vector) override;
+		virtual void setFloat4(const std::string& name, const glm::vec4& vector) override;
+
+		virtual void setMat3(const std::string& name, const glm::mat3& matrix) override;
+		virtual void setMat4(const std::string& name, const glm::mat4& matrix) override;
 
 		void uploadUniformInt(const std::string& name, int vector);
 

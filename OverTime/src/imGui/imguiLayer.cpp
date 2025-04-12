@@ -15,9 +15,10 @@ namespace overtime {
 
 	imGuiLayer::~imGuiLayer()
 	{
-		ImGui_ImplOpenGL3_Shutdown();
+		//we don't need this anymore, because we now call onDetach before deleting in layerStack 
+		/*ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
-		ImGui::DestroyContext();
+		ImGui::DestroyContext();*/
 	}
 
 	void imGuiLayer::onAttach()

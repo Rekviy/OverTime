@@ -7,8 +7,10 @@ namespace overtime {
 	}
 	layerStack::~layerStack()
 	{
-		for (layer* layer : m_Layers)
+		for (layer* layer : m_Layers) {
+			layer->onDetach();
 			delete layer;
+		}
 	}
 
 	void layerStack::pushLayer(layer* layer)

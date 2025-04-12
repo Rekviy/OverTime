@@ -29,7 +29,7 @@ namespace overtime {
 
 		glm::vec3 m_Position = { 0.0f,0.0f, 0.0f };
 		float m_Rotation = 0.0f;
-		float m_TranslationSpeed = 5.0f, m_RotationSpeed = 45.0f;
+		float m_TranslationSpeed = 5.0f, m_RotationSpeed = 180.0f;
 
 		orthographCamera m_Camera;
 	};
