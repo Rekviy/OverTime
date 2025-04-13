@@ -3,7 +3,7 @@
 #define RENDERER2D_H
 
 #include "camera.h"
-
+#include "texture.h"
 #include <glm/glm.hpp>
 
 namespace overtime {
@@ -19,6 +19,8 @@ namespace overtime {
 
 		static void drawSquad(const glm::vec4& color, const glm::vec2& pos, const glm::vec2& size, float rotation = 0.0f);
 		static void drawSquad(const glm::vec4& color, const glm::vec3& pos, const glm::vec2& size, float rotation = 0.0f);
+		static void drawSquad(const ref<texture2D>& texture, const glm::vec2& pos, const glm::vec2& size, float textureScale = 1.0f, float rotation = 0.0f);
+		static void drawSquad(const ref<texture2D>& texture, const glm::vec4& color, const glm::vec3& pos, const glm::vec2& size, float textureScale = 1.0f, float rotation = 0.0f);
 	};
 }
 

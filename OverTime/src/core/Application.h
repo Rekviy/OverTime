@@ -12,13 +12,14 @@
 
 #include <memory>
 
+int main(int argc, char** argv);
+
 namespace overtime {
 	class application {
 	public:
 		application();
 		virtual ~application();
 
-		void run();
 		void onEvent(event& event);
 
 		void pushLayer(layer* layer);
@@ -26,13 +27,15 @@ namespace overtime {
 		inline window& getWindow() { return *m_Window; }
 		static inline application& getInst() { return *s_Instance; }
 	private:
-		imGuiLayer* m_ImGuiLayer;
+		void run();
+		friend int ::main(int argc, char** argv);
 		bool onWindowClose(windowCloseEvent &event);
 		bool onWindowResize(windowResizeEvent& event);
 
 		static application* s_Instance;
-		layerStack m_LayerStack;
+		imGuiLayer* m_ImGuiLayer;
 		scope<window> m_Window;
+		layerStack m_LayerStack;
 		bool m_Running = true;
 		bool m_Minimized = false;
 	};

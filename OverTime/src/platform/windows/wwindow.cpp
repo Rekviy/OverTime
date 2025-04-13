@@ -10,7 +10,7 @@
 
 namespace overtime {
 
-	static bool s_GLFWInitialized = false;
+	static uint8_t s_glfwWindowCount = 0;
 	static void glfwErrorCallback(int error, const char* description)
 	{
 		OT_CORE_ERROR("GLFW ERROR: [{0}] - {1}", error, description);
@@ -33,15 +33,14 @@ namespace overtime {
 		m_Data.width = props.width;
 		m_Data.height = props.height;
 		OT_CORE_INFO("Creating window {0} ({1}, {2})", props.title, props.width, props.height);
-		if (!s_GLFWInitialized) {
-			// TODO: glfwTerminate on system shutdown
+		if (s_glfwWindowCount==0) {
+			OT_CORE_INFO("Initializing GLFW");
 			int success = glfwInit();
 			OT_CORE_ASSERT(success, "Failed to intialize GLFW!");
 			glfwSetErrorCallback(glfwErrorCallback);
-			s_GLFWInitialized = true;
 		}
 		m_Window = glfwCreateWindow((int)props.width, (int)props.height, m_Data.title.c_str(), nullptr, nullptr);
-
+		s_glfwWindowCount++;
 		m_Context = new openGLContext(m_Window);
 		m_Context->init();
 
@@ -114,6 +113,11 @@ namespace overtime {
 	void windowsWindow::shutdown()
 	{
 		glfwDestroyWindow(m_Window);
+		if (--s_glfwWindowCount == 0)
+		{
+			OT_CORE_INFO("Terminating GLFW");
+			glfwTerminate();
+		}
 	}
 	void windowsWindow::onUpdate()
 	{

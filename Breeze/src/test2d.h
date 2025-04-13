@@ -14,7 +14,7 @@ public:
 	virtual void onImGuiRender() override;
 	virtual void onEvent(overtime::event& event) override;
 private:
-
+	overtime::ref<overtime::texture2D> _texture, _cherryTexture;
 	overtime::orthographCameraController _cameraControls;
 	glm::vec4 _squareColor = { 0.4f, 0.8f, 0.2f, 1.0f };
 };

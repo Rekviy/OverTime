@@ -7,6 +7,8 @@ namespace overtime {
 	{
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glEnable(GL_DEPTH_TEST);
 	}
 	void openGLRenderCommand::setClearColor(const glm::vec4& color)
 	{
@@ -19,6 +21,7 @@ namespace overtime {
 	void openGLRenderCommand::drawIndexed(const ref<vertexArray>&vertexArray)
 	{
 		glDrawElements(GL_TRIANGLES, vertexArray->getIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 	void openGLRenderCommand::setViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 	{
