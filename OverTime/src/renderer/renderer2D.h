@@ -17,10 +17,19 @@ namespace overtime {
 		static void beginScene(const orthographCamera& camera);
 		static void endScene();
 
-		static void drawSquad(const glm::vec4& color, const glm::vec2& pos, const glm::vec2& size, float rotation = 0.0f);
-		static void drawSquad(const glm::vec4& color, const glm::vec3& pos, const glm::vec2& size, float rotation = 0.0f);
-		static void drawSquad(const ref<texture2D>& texture, const glm::vec2& pos, const glm::vec2& size, float textureScale = 1.0f, float rotation = 0.0f);
-		static void drawSquad(const ref<texture2D>& texture, const glm::vec4& color, const glm::vec3& pos, const glm::vec2& size, float textureScale = 1.0f, float rotation = 0.0f);
+		static void drawSquad(const glm::vec2& pos, const glm::vec2& size, const glm::vec4& color);
+		static void drawSquad(const glm::vec3& pos, const glm::vec2& size, const glm::vec4& color);
+		static void drawSquad(const glm::vec2& pos, const glm::vec2& size, const ref<texture2D>& texture, float textureScale = 1.0f);
+		static void drawSquad(const glm::vec3& pos, const glm::vec2& size, const ref<texture2D>& texture, float textureScale = 1.0f);
+
+		static void drawSquad(const glm::vec3& pos, const glm::vec2& size, const glm::vec4& color, const ref<texture2D>& texture, float textureScale = 1.0f);
+
+		static void drawRotatedSquad(const glm::vec2& pos, const glm::vec2& size, float rotation, const glm::vec4& color);
+		static void drawRotatedSquad(const glm::vec3& pos, const glm::vec2& size, float rotation, const glm::vec4& color);
+		static void drawRotatedSquad(const glm::vec2& pos, const glm::vec2& size, float rotation, const ref<texture2D>& texture, float textureScale = 1.0f);
+		static void drawRotatedSquad(const glm::vec3& pos, const glm::vec2& size, float rotation, const ref<texture2D>& texture, float textureScale = 1.0f);
+
+		static void drawRotatedSquad(const glm::vec3& pos, const glm::vec2& size, float rotation, const glm::vec4& color, const ref<texture2D>& texture, float textureScale = 1.0f);
 	};
 }
 

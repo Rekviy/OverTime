@@ -23,9 +23,11 @@ void test2dLayer::onUpdate(overtime::timeStep ts)
 	overtime::rendererAPI::clear();
 
 	overtime::renderer2D::beginScene(_cameraControls.getCamera());
-	overtime::renderer2D::drawSquad(_squareColor, { -0.5f,0.5f }, { 1.0f,1.0f });
-	overtime::renderer2D::drawSquad(_squareColor, { 0.5f,-0.5f }, { 0.75f,0.3f });
-	overtime::renderer2D::drawSquad(_cherryTexture, { 0.0f,-0.75f }, { 1.0f,1.0f });
+	overtime::renderer2D::drawSquad({ -0.5f,0.5f }, { 1.0f,1.0f }, _squareColor);
+	overtime::renderer2D::drawSquad({ 0.5f,-0.5f }, { 0.75f,0.3f }, _squareColor);
+	overtime::renderer2D::drawSquad({ 0.0f,-0.75f }, { 1.0f,1.0f }, _cherryTexture);
+	overtime::renderer2D::drawRotatedSquad({ 3.0f,-0.75f,0.0f }, { 1.0f,1.0f }, glm::radians(45.0f), _squareColor, _cherryTexture, 1.0f);
+	//overtime::renderer2D::drawRotatedSquad(_squareColor, { 10.0f,-0.75f,0.0f }, { 1.0f,1.0f }, glm::radians(45.0f));
 
 
 	overtime::renderer2D::endScene();

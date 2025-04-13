@@ -17,8 +17,6 @@ set(GAME_RES
 set(GAME_SHADERS
     "assets/shaders/texture.vert"
     "assets/shaders/texture.frag"
-    "assets/shaders/color.vert"
-    "assets/shaders/color.frag"
 )
 
 list(APPEND GAME_RES ${GAME_SHADERS})
