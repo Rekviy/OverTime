@@ -2,6 +2,8 @@
 #ifndef LOG_H
 #define LOG_H
 
+#include "core.h"
+
 #include <memory>
 #include <spdlog/spdlog.h>
 #include <spdlog/fmt/ostr.h>
@@ -10,11 +12,11 @@ namespace overtime {
 	class log {
 	public:
 		static void init();
-		inline static std::shared_ptr<spdlog::logger>& getCoreLogger() { return s_coreLogger; }
-		inline static std::shared_ptr<spdlog::logger>& getClientLogger() { return s_clientLogger; }
+		inline static ref<spdlog::logger>& getCoreLogger() { return s_coreLogger; }
+		inline static ref<spdlog::logger>& getClientLogger() { return s_clientLogger; }
 	private:
-		static std::shared_ptr<spdlog::logger> s_clientLogger;
-		static std::shared_ptr<spdlog::logger> s_coreLogger;
+		static ref<spdlog::logger> s_clientLogger;
+		static ref<spdlog::logger> s_coreLogger;
 	};
 }
 

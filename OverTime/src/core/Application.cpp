@@ -2,6 +2,7 @@
 #include "core.h"
 #include "core/log.h"
 #include "renderer/renderer.h"
+#include "renderer/renderer2D.h"
 #include <GLFW/glfw3.h>
 
 namespace overtime {
@@ -11,7 +12,7 @@ namespace overtime {
 	{
 		OT_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
-		m_Window = scope<window>(window::create());
+		m_Window = window::create();
 		m_Window->setEventCallback(OT_BIND_EVENT_FN(application::onEvent));
 
 		renderer::init();
@@ -22,7 +23,7 @@ namespace overtime {
 
 	application::~application()
 	{
-
+		renderer2D::shutdown();
 	}
 
 	void application::pushLayer(layer* layer)

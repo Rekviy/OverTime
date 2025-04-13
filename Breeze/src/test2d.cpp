@@ -9,7 +9,8 @@ test2dLayer::test2dLayer() : layer("testLayer"), _cameraControls(1280.0f / 720.0
 
 void test2dLayer::onAttach()
 {
-
+	_texture = overtime::texture2D::create("assets/resources/Screenshot.png");
+	_cherryTexture = overtime::texture2D::create("assets/resources/cherry.png");
 }
 
 void test2dLayer::onDetach()
@@ -24,6 +25,8 @@ void test2dLayer::onUpdate(overtime::timeStep ts)
 	overtime::renderer2D::beginScene(_cameraControls.getCamera());
 	overtime::renderer2D::drawSquad(_squareColor, { -0.5f,0.5f }, { 1.0f,1.0f });
 	overtime::renderer2D::drawSquad(_squareColor, { 0.5f,-0.5f }, { 0.75f,0.3f });
+	overtime::renderer2D::drawSquad(_cherryTexture, { 0.0f,-0.75f }, { 1.0f,1.0f });
+
 
 	overtime::renderer2D::endScene();
 }

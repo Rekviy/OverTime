@@ -3,8 +3,8 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 
 namespace overtime {
-	std::shared_ptr<spdlog::logger> log::s_clientLogger;
-	std::shared_ptr<spdlog::logger> log::s_coreLogger;
+	ref<spdlog::logger> log::s_clientLogger;
+	ref<spdlog::logger> log::s_coreLogger;
 
 	void log::init()
 	{
