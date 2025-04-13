@@ -65,28 +65,61 @@ namespace overtime {
 	void renderer2D::endScene()
 	{}
 
-	void renderer2D::drawSquad(const glm::vec4& color, const glm::vec2& pos, const glm::vec2& size, float rotation)
+	void renderer2D::drawSquad(const glm::vec2& pos, const glm::vec2& size, const glm::vec4& color)
 	{
-		drawSquad(s_Data->whiteTexture, color, { pos.x,pos.y, 0.0f }, size, 1.0f, rotation);
+		drawSquad({ pos.x,pos.y, 0.0f }, size, color, s_Data->whiteTexture, 1.0f);
+	}
+	void renderer2D::drawSquad(const glm::vec3& pos, const glm::vec2& size, const glm::vec4& color)
+	{
+		drawSquad(pos, size, color, s_Data->whiteTexture, 1.0f);
+	}
+	void renderer2D::drawSquad(const glm::vec2& pos, const glm::vec2& size, const ref<texture2D>& texture, float textureScale)
+	{
+		drawSquad({ pos.x,pos.y, 0.0f }, size, glm::vec4(1.0f), texture, textureScale);
+	}
+	void renderer2D::drawSquad(const glm::vec3& pos, const glm::vec2& size, const ref<texture2D>& texture, float textureScale)
+	{
+		drawSquad(pos, size, glm::vec4(1.0f), texture, textureScale);
 	}
 
-	void renderer2D::drawSquad(const glm::vec4& color, const glm::vec3& pos, const glm::vec2& size, float rotation)
+	void renderer2D::drawSquad(const glm::vec3& pos, const glm::vec2& size, const glm::vec4& color, const ref<texture2D>& texture, float textureScale)
 	{
-		drawSquad(s_Data->whiteTexture, color, pos, size, 1.0f, rotation);
-	}
-	void renderer2D::drawSquad(const ref<texture2D>& texture, const glm::vec2& pos, const glm::vec2& size, float textureScale, float rotation)
-	{
-		drawSquad(texture,glm::vec4(1.0f), {pos.x,pos.y, 0.0f}, size, textureScale, rotation);
-	}
-	void renderer2D::drawSquad(const ref<texture2D>& texture, const glm::vec4& color, const glm::vec3& pos, const glm::vec2& size, float textureScale, float rotation)
-	{
-		//s_Data->textureShader->bind();
 		s_Data->textureShader->setFloat4("u_Color", color);
 		s_Data->textureShader->setFloat("u_TexScale", textureScale);
 		texture->bind();
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * glm::scale(glm::mat4(1.0f), { size.x,size.y,1.0f });
-		transform = glm::rotate(transform, glm::radians(rotation), glm::vec3(0, 0, 1));
+		s_Data->textureShader->setMat4("u_Transform", transform);
+
+		s_Data->quadVA->bind();
+		rendererAPI::drawIndexed(s_Data->quadVA);
+	}
+
+	void renderer2D::drawRotatedSquad(const glm::vec2& pos, const glm::vec2& size, float rotation, const glm::vec4& color)
+	{
+		drawRotatedSquad({ pos.x,pos.y, 0.0f }, size, rotation, color, s_Data->whiteTexture, 1.0f);
+	}
+	void renderer2D::drawRotatedSquad(const glm::vec3& pos, const glm::vec2& size, float rotation, const glm::vec4& color)
+	{
+		drawRotatedSquad(pos, size, rotation, color, s_Data->whiteTexture, 1.0f);
+	}
+	void renderer2D::drawRotatedSquad(const glm::vec2& pos, const glm::vec2& size, float rotation, const ref<texture2D>& texture, float textureScale)
+	{
+		drawRotatedSquad({ pos.x,pos.y,0.0f }, size, rotation, glm::vec4(1.0f), texture, textureScale);
+	}
+	void renderer2D::drawRotatedSquad(const glm::vec3& pos, const glm::vec2& size, float rotation, const ref<texture2D>& texture, float textureScale)
+	{
+		drawRotatedSquad(pos, size, rotation, glm::vec4(1.0f), texture, textureScale);
+	}
+
+	void renderer2D::drawRotatedSquad(const glm::vec3& pos, const glm::vec2& size, float rotation, const glm::vec4& color, const ref<texture2D>& texture, float textureScale)
+	{
+		s_Data->textureShader->setFloat4("u_Color", color);
+		s_Data->textureShader->setFloat("u_TexScale", textureScale);
+		texture->bind();
+
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * glm::scale(glm::mat4(1.0f), { size.x,size.y,1.0f });
+		transform = glm::rotate(transform, rotation, glm::vec3(0, 0, 1));
 		s_Data->textureShader->setMat4("u_Transform", transform);
 
 		s_Data->quadVA->bind();
