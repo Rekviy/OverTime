@@ -1,2 +1,2 @@
 # OverTime
-Project for my coursework for OOP
+Project for my OOP coursework
