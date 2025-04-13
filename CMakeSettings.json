@@ -23,6 +23,11 @@
           "name": "SPDLOG_BUILD_SHARED",
           "value": "False",
           "type": "BOOL"
+        },
+        {
+          "name": "BUILD_GAME",
+          "value": "True",
+          "type": "BOOL"
         }
       ]
     }
