@@ -6,26 +6,38 @@ project(${APP_NAME})
 set(GAME_SOURCE src/Breeze.cpp
 src/gameLayer.cpp
 src/player.cpp
-src/uiLayer.cpp
+src/ui/gameUI.cpp
 src/cameraWrapper.cpp
 src/ui/button.cpp
 src/ui/themeManager.cpp
+src/ui/interactElement.cpp
+src/ui/counter.cpp
+src/ui/objectPool.cpp
+src/grid.cpp
+src/ship.cpp
 )
 set(GAME_HEADER 
 src/gameLayer.h
 src/player.h
-src/uiLayer.h
+src/ui/gameUI.h
 src/cameraWrapper.h
 src/ui/button.h
 src/ui/themeManager.h
 src/ui/interactElement.h
+src/ui/counter.h
+src/ui/objectPool.h
+#src/ui/IObjectPool.h
+src/grid.h
+src/ship.h
+src/gameStateMachine.h
 )
 
 set(GAME_RES
-    "assets/resources/cherry.png"
-    "assets/resources/Screenshot.png"    
-    "assets/resources/Proxy555.jpg"    
-    "assets/resources/frame.png"    
+    "assets/resources/cherry.png" 
+    "assets/resources/frame.png"   
+    "assets/resources/play.png"   
+    "assets/resources/playHover.png"   
+    "assets/resources/playClicked.png"   
 )
 set(GAME_SHADERS
     "assets/shaders/texture.vert"

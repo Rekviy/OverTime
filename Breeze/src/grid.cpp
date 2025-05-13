@@ -1,0 +1,110 @@
+#include "grid.h"
+
+using namespace overtime;
+
+grid::gridCell::gridCell(const std::vector<std::string>& keys)
+	:_keys(keys)
+{
+	_style = themeManager::getStyle(_keys.at(_currentState));
+}
+
+grid::gridCell::~gridCell()
+{}
+
+void grid::gridCell::changeState(state newState)
+{
+	_currentState = newState;
+	_style = themeManager::getStyle(_keys.at(_currentState));
+}
+
+grid::grid(uint32_t rowCount, uint32_t columnCount, const glm::vec3& startPosition, const glm::vec2& gridCellSize, const std::vector<std::vector<std::string>>& keys)
+	:_rowCount(rowCount), _columnCount(columnCount), _pos(startPosition), _size(gridCellSize)
+{
+	_storage.reserve(rowCount * columnCount);
+	//todo add checking for row * column counts > 0
+	for (uint32_t i = 0, style = 0; i < _storage.capacity(); ++i, ++style) {
+		style %= keys.size();
+		_storage.emplace_back(gridCell(keys.at(style)));
+	}
+}
+
+grid::~grid()
+{}
+
+void grid::onRender()
+{
+	uint32_t x = 0, y = 0;
+	for (auto& item : _storage) {
+		renderer2D::drawSquad({ _pos.x + x * _size.x, _pos.y - y * _size.y, _pos.z }, _size,
+			item._style->_color, item._style->_texture, item._style->_textureSize);
+
+		++x %= _columnCount;
+		if (x == 0) y++;
+	}
+}
+
+bool grid::isOccupied(const std::vector<gridCell>::iterator& begin, const std::vector<gridCell>::iterator& end)
+{
+	while (begin != end) {
+		if (begin->_isOccupied)
+			return true;
+	}
+	return false;
+}
+
+bool grid::isOccupied(const glm::i32vec2& begin, const glm::i32vec2& end)
+{
+	for (int i = begin.y; i < end.y; i++) {
+		for (int j = begin.x; j < end.x; j++) {
+			if (_storage.at(i * _rowCount + j)._isOccupied)
+				return true;
+		}
+	}
+	return false;
+}
+
+void grid::changeState(std::vector<gridCell>::iterator& begin, std::vector<gridCell>::iterator& end, gridCell::state newState)
+{
+	while (begin != end) {
+		begin->changeState(newState);
+	};
+}
+
+void grid::changeState(const glm::i32vec2 & begin, const glm::i32vec2 & end, gridCell::state newState)
+{
+	for (int i = begin.y; i < end.y; i++) {
+		for (int j = begin.x; j < end.x; j++) {
+			_storage.at(i * _rowCount + j).changeState(newState);
+		}
+	}
+}
+
+void grid::onEvent(overtime::event& event)
+{
+	eventDispatcher dispatcher(event);
+
+
+
+
+
+}
+
+bool grid::onWindowResize(overtime::windowResizeEvent& event)
+{
+	return false;
+}
+
+bool grid::onMouseMoved(overtime::mouseMovedEvent& event)
+{
+	return false;
+}
+
+bool grid::onMouseButtonPressed(overtime::mouseButtonPressedEvent& event)
+{
+	return false;
+}
+
+bool grid::onMouseButtonReleased(overtime::mouseButtonReleasedEvent& event)
+{
+	return false;
+}

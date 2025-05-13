@@ -13,16 +13,15 @@ void cameraWrapper::updateCamera(float newWidth, float newHeight)
 	float scaleX = 1.0f, scaleY = 1.0f;
 
 	(windowAspect > ASPECT_RATIO) ? scaleX = windowAspect / ASPECT_RATIO : scaleY = ASPECT_RATIO / windowAspect;
-	_camera.setProjectionMatrix(-DESIGN_W / 2.0f * scaleX, DESIGN_W / 2.0f * scaleX, -DESIGN_H / 2.0 * scaleY, DESIGN_H / 2.0f * scaleY);
+	_camera.setProjectionMatrix(-DESIGN_W / 2.0f * scaleX, DESIGN_W / 2.0f * scaleX, -DESIGN_H / 2.0f * scaleY, DESIGN_H / 2.0f * scaleY);
 }
 
 glm::vec2 cameraWrapper::worldToScreen(const glm::vec2& worldPos)
 {
-	auto& app = application::getInst();
 	glm::vec4 clipSpacePos = _camera.getPVMatrix() * glm::vec4(worldPos.x, worldPos.y, 0.0f, 1.0f);
 	return {
-		(clipSpacePos.x / clipSpacePos.w + 1.0f) / 2.0f * app.getWindow().getWidth(),
-		(1.0f - (clipSpacePos.y / clipSpacePos.w + 1.0f) / 2.0f) * app.getWindow().getHeight()
+		(clipSpacePos.x / clipSpacePos.w + 1.0f) / 2.0f * application::getInst().getWindow().getWidth(),
+		(1.0f - (clipSpacePos.y / clipSpacePos.w + 1.0f) / 2.0f) * application::getInst().getWindow().getHeight()
 	};
 }
 glm::vec2 cameraWrapper::screenToWorld(const glm::vec2& screenPos)
@@ -37,3 +36,4 @@ glm::vec2 cameraWrapper::screenToWorld(const glm::vec2& screenPos)
 
 	return glm::vec2(worldPos.x, worldPos.y);
 }
+
