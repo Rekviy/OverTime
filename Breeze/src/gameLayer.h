@@ -1,9 +1,14 @@
 #pragma once
 #ifndef GAMELAYER_H
 #define GAMELAYER_H
-#include "cameraWrapper.h"
+
+#include "ship.h"
+#include "ui/gameUI.h"
+#include "grid.h"
 
 #include <overtime.h>
+
+class button;
 
 class gameLayer :public overtime::layer {
 public:
@@ -15,7 +20,14 @@ public:
 	virtual void onEvent(overtime::event& event) override;
 
 private:
-	overtime::ref<overtime::texture2D> _frame;
+	void mainMenu();
+	bool onWindowResize(overtime::windowResizeEvent& event);
+	bool mainMenuBtn(button* btn);
+	bool addShip4(button* btn);
+	bool gridCalculate(ship* ship);
+	bool placeShip(ship* ship);
+	overtime::scope<grid> _playerGrid;
+	gameUI _ui;
 };
 
 #endif
