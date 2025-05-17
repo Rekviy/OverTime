@@ -2,13 +2,9 @@
 #ifndef GAMELAYER_H
 #define GAMELAYER_H
 
-#include "ship.h"
-#include "ui/gameUI.h"
-#include "grid.h"
-
+#include "stateMachine.h"
 #include <overtime.h>
 
-class button;
 
 class gameLayer :public overtime::layer {
 public:
@@ -20,14 +16,8 @@ public:
 	virtual void onEvent(overtime::event& event) override;
 
 private:
-	void mainMenu();
 	bool onWindowResize(overtime::windowResizeEvent& event);
-	bool mainMenuBtn(button* btn);
-	bool addShip4(button* btn);
-	bool gridCalculate(ship* ship);
-	bool placeShip(ship* ship);
-	overtime::scope<grid> _playerGrid;
-	gameUI _ui;
+	stateMachine* _state;
 };
 
 #endif

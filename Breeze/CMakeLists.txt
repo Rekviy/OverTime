@@ -13,8 +13,10 @@ src/ui/themeManager.cpp
 src/ui/interactElement.cpp
 src/ui/counter.cpp
 src/ui/objectPool.cpp
-src/grid.cpp
-src/ship.cpp
+src/ui/grid.cpp
+src/gridManager.cpp
+src/ui/ship.cpp
+src/gameStateMachine.cpp
 )
 set(GAME_HEADER 
 src/gameLayer.h
@@ -27,8 +29,10 @@ src/ui/interactElement.h
 src/ui/counter.h
 src/ui/objectPool.h
 #src/ui/IObjectPool.h
-src/grid.h
-src/ship.h
+src/ui/grid.h
+src/gridManager.h
+src/ui/ship.h
+src/stateMachine.h
 src/gameStateMachine.h
 )
 
