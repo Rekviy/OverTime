@@ -17,8 +17,8 @@ void grid::gridCell::changeState(state newState)
 	_style = themeManager::getStyle(_keys.at(_currentState));
 }
 
-grid::grid(uint32_t rowCount, uint32_t columnCount, const glm::vec3& startPosition, const glm::vec2& gridCellSize, const std::vector<std::vector<std::string>>& keys)
-	:_rowCount(rowCount), _columnCount(columnCount), _pos(startPosition), _size(gridCellSize)
+grid::grid(const std::string& name, uint32_t rowCount, uint32_t columnCount, const glm::vec3& startPosition, const glm::vec2& gridCellSize, const std::vector<std::vector<std::string>>& keys)
+	:interactElement(name), _rowCount(rowCount), _columnCount(columnCount), _pos(startPosition), _size(gridCellSize)
 {
 	_storage.reserve(rowCount * columnCount);
 	//todo add checking for row * column counts > 0
@@ -33,14 +33,33 @@ grid::~grid()
 
 void grid::onRender()
 {
-	uint32_t x = 0, y = 0;
-	for (auto& item : _storage) {
-		renderer2D::drawSquad({ _pos.x + x * _size.x, _pos.y - y * _size.y, _pos.z }, _size,
-			item._style->_color, item._style->_texture, item._style->_textureSize);
+	if (_isVisible) {
+		uint32_t x = 0, y = 0;
 
-		++x %= _columnCount;
-		if (x == 0) y++;
+		for (auto& item : _storage) {
+			renderer2D::drawSquad({ _pos.x + x * _size.x, _pos.y - y * _size.y, _pos.z }, _size,
+				item._style->_color, item._style->_texture, item._style->_textureSize);
+
+			++x %= _columnCount;
+			if (x == 0) y++;
+		}
 	}
+}
+
+
+
+void grid::setOccupation(const std::vector<gridCell>::iterator& begin, const std::vector<gridCell>::iterator& end, bool newOccupation)
+{
+	while (begin != end)
+		begin->_isOccupied = newOccupation;
+
+}
+
+void grid::setOccupation(const glm::i32vec2 & begin, const glm::i32vec2 & end, bool newOccupation)
+{
+	for (int i = begin.y; i < end.y; i++)
+		for (int j = begin.x; j < end.x; j++)
+			_storage.at(i * _rowCount + j)._isOccupied = newOccupation;
 }
 
 bool grid::isOccupied(const std::vector<gridCell>::iterator& begin, const std::vector<gridCell>::iterator& end)
@@ -70,7 +89,7 @@ void grid::changeState(std::vector<gridCell>::iterator& begin, std::vector<gridC
 	};
 }
 
-void grid::changeState(const glm::i32vec2 & begin, const glm::i32vec2 & end, gridCell::state newState)
+void grid::changeState(const glm::i32vec2& begin, const glm::i32vec2& end, gridCell::state newState)
 {
 	for (int i = begin.y; i < end.y; i++) {
 		for (int j = begin.x; j < end.x; j++) {
@@ -81,12 +100,10 @@ void grid::changeState(const glm::i32vec2 & begin, const glm::i32vec2 & end, gri
 
 void grid::onEvent(overtime::event& event)
 {
-	eventDispatcher dispatcher(event);
+	if (_isActive) {
+		eventDispatcher dispatcher(event);
 
-
-
-
-
+	}
 }
 
 bool grid::onWindowResize(overtime::windowResizeEvent& event)

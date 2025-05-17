@@ -13,9 +13,9 @@ overtime::scope<interactElement> gameUI::pop(uint32_t id)
 {
 	return _pool.pop(id);
 }
-interactElement& gameUI::get(uint32_t key)
+interactElement& gameUI::get(uint32_t id)
 {
-	return _pool.get(key);
+	return _pool.get(id);
 }
 void gameUI::activate(const std::vector<uint32_t>& ids)
 {
@@ -27,7 +27,7 @@ void gameUI::activate(uint32_t id)
 {
 	_pool.activate(id);
 }
-uint32_t gameUI::activateFirst(interactElement::elementType type)
+uint32_t gameUI::activateFirst(elementType type)
 {
 	return _pool.activateFirst(type);
 }
@@ -47,20 +47,20 @@ bool gameUI::isExist(uint32_t id)
 	return _pool.isExist(id);
 }
 
-void gameUI::setTypeCap(interactElement::elementType type, uint32_t newCap)
+void gameUI::setTypeCap(elementType type, uint32_t newCap)
 {
 	_pool.setTypeCap(type, newCap);
 }
-void gameUI::setTypeActiveCap(interactElement::elementType type, uint32_t newCap)
+void gameUI::setTypeActiveCap(elementType type, uint32_t newCap)
 {
 	_pool.setTypeActiveCap(type, newCap);
 }
 
-uint32_t gameUI::checkTypeCap(interactElement::elementType type) const
+uint32_t gameUI::checkTypeCap(elementType type) const
 {
 	return _pool.checkTypeCap(type);
 }
-uint32_t gameUI::checkTypeActiveCap(interactElement::elementType type) const
+uint32_t gameUI::checkTypeActiveCap(elementType type) const
 {
 	return _pool.checkTypeActiveCap(type);
 }

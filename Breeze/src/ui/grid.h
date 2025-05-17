@@ -2,10 +2,11 @@
 #ifndef GRID_H
 #define GRID_H
 
+#include "ui/interactElement.h"
 #include "ui/themeManager.h"
 #include <initializer_list>
 
-class grid {
+class grid : public interactElement {
 public:
 	class gridCell {
 	public:
@@ -23,25 +24,28 @@ public:
 	};
 
 
-	grid(uint32_t rowCount, uint32_t columnCount, const glm::vec3& startPosition, const glm::vec2& gridCellSize, const std::vector<std::vector<std::string>>& keys);
+	grid(const std::string& name, uint32_t rowCount, uint32_t columnCount, const glm::vec3& startPosition, const glm::vec2& gridCellSize, const std::vector<std::vector<std::string>>& keys);
 	~grid();
-	void onRender();
-	inline const glm::vec3& getPos() const { return _pos; }
-	inline const glm::vec2& getSize() const { return _size; }
-	inline void setPos(const glm::vec3& newPos) { _pos = newPos; }
-	inline void setSize(const glm::vec2& newSize) { _size = newSize; }
+	virtual inline const glm::vec3& getPos() const override { return _pos; }
+	virtual inline const glm::vec2& getSize() const override { return _size; }
+	virtual inline void setPos(const glm::vec3& newPos) override { _pos = newPos; }
+	virtual inline void setSize(const glm::vec2& newSize) override { _size = newSize; }
 
 	std::vector<gridCell>::iterator begin() { return _storage.begin(); }
 	std::vector<gridCell>::iterator end() { return _storage.end(); }
 
+	void setOccupation(const std::vector<gridCell>::iterator& begin, const std::vector<gridCell>::iterator& end, bool newOccupation);
+	void setOccupation(const glm::i32vec2& begin, const glm::i32vec2& end, bool newOccupation);
 	bool isOccupied(const std::vector<gridCell>::iterator& begin, const std::vector<gridCell>::iterator& end);
 	bool isOccupied(const glm::i32vec2& begin, const glm::i32vec2& end);
 	void changeState(std::vector<gridCell>::iterator& begin, std::vector<gridCell>::iterator& end, gridCell::state newState);
 	void changeState(const glm::i32vec2& begin, const glm::i32vec2& end, gridCell::state newState);
-
-	void onEvent(overtime::event& event);
+	
+	virtual void onRender() override;
+	virtual void onEvent(overtime::event& event) override;
 	inline uint32_t getColumnCount() const noexcept { return _columnCount; }
 	inline uint32_t getRowCount() const noexcept { return _rowCount; }
+	ELEMENT_CLASS_TYPE(gridElement)
 private:
 	bool onWindowResize(overtime::windowResizeEvent& event);
 	bool onMouseMoved(overtime::mouseMovedEvent& event);

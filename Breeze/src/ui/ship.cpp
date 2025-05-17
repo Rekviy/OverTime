@@ -18,24 +18,9 @@ void ship::shipCell::changeState(state newState)
 }
 
 ship::ship(const std::string& name, const glm::vec3& position, uint32_t length, const glm::vec2& cellSize, const std::vector<std::vector<std::string>>& keys,
-	const std::function<bool(ship*)>& funcOnRelease, const std::function<bool(ship*)>& funcOnMoving)
-	:interactElement(name), _size(cellSize), _funcOnRelease(funcOnRelease), _funcOnMoving(funcOnMoving)
+	const std::function<bool(ship*)>& funcOnPress, const std::function<bool(ship*)>& funcOnRelease, const std::function<bool(ship*)>& funcOnMoving)
+	:interactElement(name), _size(cellSize), _funcOnPress(funcOnPress), _funcOnRelease(funcOnRelease), _funcOnMoving(funcOnMoving)
 {
-	switch (length) {
-		case 1:
-			_type = elementType::ship1;
-			break;
-		case 2:
-			_type = elementType::ship2;
-			break;
-		case 3:
-			_type = elementType::ship3;
-			break;
-		case 4:
-			_type = elementType::ship4;
-			break;
-	}
-
 	_cells.reserve(length);
 
 	for (uint32_t i = 0, style = 0; i < _cells.capacity(); ++i, ++style) {
@@ -75,7 +60,7 @@ void ship::activate()
 {
 	_isVisible = _isActive = _isDragging = true;
 }
-	
+
 
 void ship::deactivate()
 {
@@ -96,6 +81,19 @@ void ship::setPos(const glm::vec3& newPos)
 		!(bool)_rotation ? incX++ : incY++;
 	}
 	updateBounds();
+}
+
+ship::shipCell::state ship::getState() const
+{
+	int32_t temp = 0;
+	for (auto& item : _cells)
+		temp |= item.getState();
+	return (ship::shipCell::state)temp;
+}
+
+ship::shipCell::state ship::getState(uint32_t cell) const
+{
+	return _cells.at(cell).getState();
 }
 
 void ship::changeState(shipCell::state newState)
@@ -158,7 +156,7 @@ bool ship::onMouseButtonPressed(overtime::mouseButtonPressedEvent& event)
 		_cellClicked = (uint32_t)std::max(clickPos.x, clickPos.y);
 		//_clickOffset = { _cells.at(_cellClicked)._pos.x - mousePos.x,_cells.at(_cellClicked)._pos.y - mousePos.y };
 		_isDragging = true;
-		return true;
+		return _funcOnPress(this);
 	}
 	return false;
 }
@@ -198,4 +196,22 @@ bool ship::onKeyPressed(overtime::keyPressedEvent& event)
 	return false;
 }
 
+ship1::ship1(const std::string& name, const glm::vec3& position, const glm::vec2& cellSize, const std::vector<std::vector<std::string>>& keys,
+	const std::function<bool(ship*)>& funcOnPress, const std::function<bool(ship*)>& funcOnRelease, const std::function<bool(ship*)>& funcOnMoving)
+	:ship(name, position, 1, cellSize, keys, funcOnPress, funcOnRelease, funcOnMoving)
+{}
 
+ship2::ship2(const std::string& name, const glm::vec3& position, const glm::vec2& cellSize, const std::vector<std::vector<std::string>>& keys,
+	const std::function<bool(ship*)>& funcOnPress, const std::function<bool(ship*)>& funcOnRelease, const std::function<bool(ship*)>& funcOnMoving)
+	:ship(name, position, 2, cellSize, keys, funcOnPress, funcOnRelease, funcOnMoving)
+{}
+
+ship3::ship3(const std::string& name, const glm::vec3& position, const glm::vec2& cellSize, const std::vector<std::vector<std::string>>& keys,
+	const std::function<bool(ship*)>& funcOnPress, const std::function<bool(ship*)>& funcOnRelease, const std::function<bool(ship*)>& funcOnMoving)
+	:ship(name, position, 3, cellSize, keys, funcOnPress, funcOnRelease, funcOnMoving)
+{}
+
+ship4::ship4(const std::string& name, const glm::vec3& position, const glm::vec2& cellSize, const std::vector<std::vector<std::string>>& keys,
+	const std::function<bool(ship*)>& funcOnPress, const std::function<bool(ship*)>& funcOnRelease, const std::function<bool(ship*)>& funcOnMoving)
+	:ship(name, position, 4, cellSize, keys, funcOnPress, funcOnRelease, funcOnMoving)
+{}

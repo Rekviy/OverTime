@@ -9,11 +9,11 @@ button::button(const std::string& name, const glm::vec3& position, const glm::ve
 	const std::function<bool(button*)>& funcOnRelease, const std::function<bool(button*)>& funcOnPress)
 	:interactElement(name), _pos(position), _size(size), _keys(keys), _funcOnRelease(funcOnRelease), _funcOnPress(funcOnPress)
 {
-	_isVisible = isActive;
-	_isActive = isActive;
 	_currentState = state::idle;
 	_style = themeManager::getStyle(_keys.at(_currentState));
 	updateBounds();
+	if (isActive)
+		activate();
 }
 
 button::~button()

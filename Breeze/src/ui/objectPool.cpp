@@ -4,8 +4,8 @@ using namespace overtime;
 
 objectPool::objectPool()
 {
-	_typeCaps.resize(interactElement::elementType::unknown + 1, UINT32_MAX);
-	_typeActiveCaps.resize(interactElement::elementType::unknown + 1, UINT32_MAX);
+	_typeCaps.resize(elementType::unknown + 1, UINT32_MAX);
+	_typeActiveCaps.resize(elementType::unknown + 1, UINT32_MAX);
 }
 
 objectPool::~objectPool()
@@ -71,7 +71,7 @@ void objectPool::activate(uint32_t id)
 
 }
 
-uint32_t objectPool::activateFirst(interactElement::elementType type)
+uint32_t objectPool::activateFirst(elementType type)
 {
 	if (_typeActiveKeys[type].size() < _typeActiveCaps[type]) {
 		for (auto id : _typeKeys[type]) {
@@ -101,7 +101,7 @@ bool objectPool::isExist(uint32_t id)
 	return false;
 }
 
-std::vector<overtime::scope<interactElement>> objectPool::setTypeCap(interactElement::elementType type, uint32_t newCap)
+std::vector<overtime::scope<interactElement>> objectPool::setTypeCap(elementType type, uint32_t newCap)
 {
 	std::vector<overtime::scope<interactElement>> removed;
 	if (type > _typeCaps.size()) {
@@ -128,7 +128,7 @@ std::vector<overtime::scope<interactElement>> objectPool::setTypeCap(interactEle
 	return removed;
 }
 
-std::vector<uint32_t> objectPool::setTypeActiveCap(interactElement::elementType type, uint32_t newCap)
+std::vector<uint32_t> objectPool::setTypeActiveCap(elementType type, uint32_t newCap)
 {
 	std::vector<uint32_t> deactivated;
 
@@ -146,7 +146,7 @@ std::vector<uint32_t> objectPool::setTypeActiveCap(interactElement::elementType 
 	return deactivated;
 }
 
-uint32_t objectPool::checkTypeCap(interactElement::elementType type) const
+uint32_t objectPool::checkTypeCap(elementType type) const
 {
 	if (type > _typeCaps.size()) {
 		OT_ASSERT(false, "Type doesn't exist!");
@@ -154,7 +154,7 @@ uint32_t objectPool::checkTypeCap(interactElement::elementType type) const
 	return (uint32_t)_typeKeys.at(type).size();
 }
 
-uint32_t objectPool::checkTypeActiveCap(interactElement::elementType type) const
+uint32_t objectPool::checkTypeActiveCap(elementType type) const
 {
 	if (type > _typeActiveCaps.size()) {
 		OT_ASSERT(false, "Type doesn't exist!");
