@@ -15,6 +15,8 @@ public:
 	std::map<uint32_t, overtime::scope<interactElement>>::const_iterator cend() { return _storage.cend(); }
 	std::map<uint32_t, overtime::scope<interactElement>>::iterator begin() { return _storage.begin(); }
 	std::map<uint32_t, overtime::scope<interactElement>>::iterator end() { return _storage.end(); }
+	std::map<elementType, std::vector<uint32_t>>::iterator activeBegin() { return _typeActiveKeys.begin(); }
+	std::map<elementType, std::vector<uint32_t>>::iterator activeEnd() { return _typeActiveKeys.end(); }
 	uint32_t push(overtime::scope<interactElement> element);
 	overtime::scope<interactElement> pop(uint32_t id);
 	interactElement& get(uint32_t id);
@@ -33,6 +35,7 @@ public:
 	uint32_t checkTypeActiveCap(elementType type) const;
 	inline uint32_t size() const { return (uint32_t)_storage.size(); }
 private:
+	void zSort(std::vector<uint32_t>::iterator begin, std::vector<uint32_t>::iterator end);
 	std::map<uint32_t, overtime::scope<interactElement>> _storage;
 	std::map<elementType, std::vector<uint32_t>> _typeKeys;
 	std::map<elementType, std::vector<uint32_t>> _typeActiveKeys;

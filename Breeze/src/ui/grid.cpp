@@ -57,8 +57,8 @@ void grid::setOccupation(const std::vector<gridCell>::iterator& begin, const std
 
 void grid::setOccupation(const glm::i32vec2 & begin, const glm::i32vec2 & end, bool newOccupation)
 {
-	for (int i = begin.y; i < end.y; i++)
-		for (int j = begin.x; j < end.x; j++)
+	for (int i = begin.y; i <= end.y; i++)
+		for (int j = begin.x; j <= end.x; j++)
 			_storage.at(i * _rowCount + j)._isOccupied = newOccupation;
 }
 
@@ -73,8 +73,8 @@ bool grid::isOccupied(const std::vector<gridCell>::iterator& begin, const std::v
 
 bool grid::isOccupied(const glm::i32vec2& begin, const glm::i32vec2& end)
 {
-	for (int i = begin.y; i < end.y; i++) {
-		for (int j = begin.x; j < end.x; j++) {
+	for (int i = begin.y; i <= end.y; i++) {
+		for (int j = begin.x; j <= end.x; j++) {
 			if (_storage.at(i * _rowCount + j)._isOccupied)
 				return true;
 		}
