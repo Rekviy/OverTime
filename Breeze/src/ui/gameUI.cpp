@@ -21,7 +21,6 @@ void gameUI::activate(const std::vector<uint32_t>& ids)
 {
 	for (auto& item : ids)
 		_pool.activate(item);
-
 }
 void gameUI::activate(uint32_t id)
 {
@@ -30,6 +29,11 @@ void gameUI::activate(uint32_t id)
 uint32_t gameUI::activateFirst(elementType type)
 {
 	return _pool.activateFirst(type);
+}
+void gameUI::deactivate(const std::vector<uint32_t>& ids)
+{
+	for (auto& item : ids)
+		_pool.deactivate(item);
 }
 void gameUI::deactivate(uint32_t id)
 {
@@ -178,7 +182,7 @@ void gameUI::onImGuiRender()
 		if (ImGui::ArrowButton("##posDown", ImGuiDir_Down)) { item.setPos({ pos.x ,pos.y - 1.0f,pos.z }); }
 		ImGui::SameLine(0.0f, spacing);
 		if (ImGui::ArrowButton("##posRight", ImGuiDir_Right)) { item.setPos({ pos.x + 1.0f,pos.y,pos.z }); }
-		ImGui::SameLine(0.0f, spacing+5.0f);
+		ImGui::SameLine(0.0f, spacing + 5.0f);
 		if (ImGui::ArrowButton("##posTo", ImGuiDir_Up)) { item.setPos({ pos.x, pos.y,pos.z + 0.1f }); }
 		ImGui::SameLine(0.0f, spacing);
 		if (ImGui::ArrowButton("##posFrom", ImGuiDir_Down)) { item.setPos({ pos.x,pos.y,pos.z - 0.1f }); }
@@ -207,10 +211,12 @@ void gameUI::onImGuiRender()
 void gameUI::onEvent(overtime::event& event)
 {
 	eventDispatcher dispatcher(event);
-	for (auto it = _pool.end(); it != _pool.begin();) {
-		(*--it).second->onEvent(event);
-		if (event.isHandled())
-			break;
+	for (auto it = _pool.activeBegin(); it != _pool.activeEnd(); ++it) {
+		for (auto vecIt = it->second.end(); vecIt != it->second.begin();) {
+			_pool.get(*(--vecIt)).onEvent(event);
+			if (event.isHandled())
+				break;
+		}
 	}
 }
 

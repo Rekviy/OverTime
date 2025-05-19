@@ -42,6 +42,11 @@ set(GAME_RES
     "assets/resources/play.png"   
     "assets/resources/playHover.png"   
     "assets/resources/playClicked.png"   
+    "assets/resources/five.png"   
+    "assets/resources/four.png"   
+    "assets/resources/three.png"   
+    "assets/resources/two.png"   
+    "assets/resources/one.png"   
 )
 set(GAME_SHADERS
     "assets/shaders/texture.vert"

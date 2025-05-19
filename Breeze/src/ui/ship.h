@@ -26,8 +26,6 @@ public:
 	virtual void onEvent(overtime::event& event) override;
 	virtual inline void activate() override;
 	virtual inline void deactivate() override;
-	inline bool isPlaced() const { return _isPlaced; }
-	inline void setPlaced(bool newPlaced) { _isPlaced = newPlaced; }
 
 	virtual const glm::vec3& getPos() const override;
 	virtual inline const glm::vec2& getSize() const override { return _size; }
@@ -39,6 +37,9 @@ public:
 
 	shipCell::state getState() const;
 	shipCell::state getState(uint32_t cell) const;
+
+	inline void setRotation(float newRotation) { _rotation = newRotation; }
+	inline float getRotation() const { return _rotation; }
 
 	void changeState(shipCell::state newState);
 	void changeState(uint32_t cell, shipCell::state newState);
@@ -52,7 +53,6 @@ protected:
 	bool onMouseButtonReleased(overtime::mouseButtonReleasedEvent& event);
 	bool onKeyPressed(overtime::keyPressedEvent& event);
 	void updateBounds();
-	bool _isPlaced = false;
 	bool _isDragging = false;
 	uint32_t _cellClicked = 0;
 	//glm::vec2 _clickOffset;

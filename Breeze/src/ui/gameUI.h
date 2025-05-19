@@ -37,6 +37,7 @@ public:
 	void activate(const std::vector<uint32_t>& ids);
 	void activate(uint32_t id);
 	uint32_t activateFirst(elementType type);
+	void deactivate(const std::vector<uint32_t>& ids);
 	void deactivate(uint32_t id);
 	void deactivateAll();
 	bool isExist(uint32_t id);

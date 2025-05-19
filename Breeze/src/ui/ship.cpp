@@ -28,7 +28,7 @@ ship::ship(const std::string& name, const glm::vec3& position, uint32_t length, 
 		_cells.emplace_back(shipCell({ position.x + _size.x * i,position.y,position.z }, keys.at(style)));
 	}
 	updateBounds();
-	_cellClicked = (uint32_t)ceil(length / 2) - 1;
+	_cellClicked = (uint32_t)ceil((float)length / 2.0f) - 1;
 	_isDragging = true;
 }
 
@@ -46,9 +46,9 @@ void ship::onRender()
 
 void ship::onEvent(overtime::event& event)
 {
-	eventDispatcher dispatcher(event);
-	dispatcher.dispatch<windowResizeEvent>(OT_BIND_EVENT_FN(ship::onWindowResize));
 	if (_isActive) {
+		eventDispatcher dispatcher(event);
+		dispatcher.dispatch<windowResizeEvent>(OT_BIND_EVENT_FN(ship::onWindowResize));
 		dispatcher.dispatch<mouseMovedEvent>(OT_BIND_EVENT_FN(ship::onMouseMoved));
 		dispatcher.dispatch<mouseButtonPressedEvent>(OT_BIND_EVENT_FN(ship::onMouseButtonPressed));
 		dispatcher.dispatch<mouseButtonReleasedEvent>(OT_BIND_EVENT_FN(ship::onMouseButtonReleased));
@@ -58,7 +58,7 @@ void ship::onEvent(overtime::event& event)
 
 void ship::activate()
 {
-	_isVisible = _isActive = _isDragging = true;
+	_isVisible = _isActive = _isDragging = true; updateBounds();
 }
 
 

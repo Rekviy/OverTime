@@ -22,7 +22,7 @@ void counter::onRender()
 
 void counter::onEvent(overtime::event & event)
 {}
-
+//todo sync count to styles
 void counter::updateStyle()
 {
 	_style = themeManager::getStyle(_keys.at(_count));

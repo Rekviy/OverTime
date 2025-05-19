@@ -23,8 +23,10 @@ uint32_t objectPool::push(overtime::scope<interactElement> element)
 
 		_typeKeys[type].push_back(it->first);
 
-		if (it->second->isActive() && _typeActiveKeys[type].size() < _typeActiveCaps[type])
+		if (it->second->isActive() && _typeActiveKeys[type].size() < _typeActiveCaps[type]) {
 			_typeActiveKeys[type].push_back(it->first);
+			zSort(_typeActiveKeys[type].begin(), _typeActiveKeys[type].end());
+		}
 		return it->first;
 	}
 	return -1;
@@ -33,17 +35,12 @@ uint32_t objectPool::push(overtime::scope<interactElement> element)
 
 overtime::scope<interactElement> objectPool::pop(uint32_t id)
 {
+	deactivate(id);
 	auto& it = _storage.extract(id);
 	auto& vec = _typeKeys.at(it.mapped()->getType());
 	auto& vecIt = std::find(vec.begin(), vec.end(), id);
 	//std::swap(vecIt, vec.end() - 1);
 	vec.erase(vecIt);
-	if (it.mapped()->isActive()) {
-		vec = _typeActiveKeys.at(it.mapped()->getType());
-		vecIt = std::find(vec.begin(), vec.end(), id);
-		//std::swap(vecIt, vec.end() - 1);
-		vec.erase(vecIt);
-	}
 
 	return std::move(it.mapped());
 }
@@ -62,13 +59,14 @@ std::map<uint32_t, overtime::scope<interactElement>>::iterator objectPool::find(
 void objectPool::activate(uint32_t id)
 {
 	if (!_storage.at(id)->isActive()) {
-		if (_typeActiveKeys[_storage.at(id)->getType()].size() + 1 < _typeActiveCaps[_storage.at(id)->getType()]) {
+		auto type = _storage.at(id)->getType();
+		if (_typeActiveKeys[type].size() < _typeActiveCaps[type]) {
 			_storage.at(id)->activate();
 
-			_typeActiveKeys[_storage.at(id)->getType()].push_back(id);
+			_typeActiveKeys[type].push_back(id);
+			zSort(_typeActiveKeys[type].begin(), _typeActiveKeys[type].end());
 		}
 	}
-
 }
 
 uint32_t objectPool::activateFirst(elementType type)
@@ -76,8 +74,7 @@ uint32_t objectPool::activateFirst(elementType type)
 	if (_typeActiveKeys[type].size() < _typeActiveCaps[type]) {
 		for (auto id : _typeKeys[type]) {
 			if (!_storage.at(id)->isActive()) {
-				_storage.at(id)->activate();
-				_typeActiveKeys[_storage.at(id)->getType()].push_back(id);
+				activate(id);
 				return id;
 			}
 		}
@@ -87,12 +84,13 @@ uint32_t objectPool::activateFirst(elementType type)
 
 void objectPool::deactivate(uint32_t id)
 {
-	_storage.at(id)->deactivate();
-	auto& activeVec = _typeActiveKeys[_storage.at(id)->getType()];
-	auto& vecIt = std::find(activeVec.begin(), activeVec.end(), id);
-	//std::swap(vecIt, vec.end() - 1);
-	activeVec.erase(vecIt);
-
+	if (_storage.at(id)->isActive()) {
+		_storage.at(id)->deactivate();
+		auto& activeVec = _typeActiveKeys[_storage.at(id)->getType()];
+		auto& vecIt = std::find(activeVec.begin(), activeVec.end(), id);
+		//std::swap(vecIt, vec.end() - 1);
+		activeVec.erase(vecIt);
+	}
 }
 
 bool objectPool::isExist(uint32_t id)
@@ -107,10 +105,8 @@ std::vector<overtime::scope<interactElement>> objectPool::setTypeCap(elementType
 	if (type > _typeCaps.size()) {
 		_typeCaps.reserve(type);
 	}
-
+	if (_typeActiveCaps.at(type) > newCap) setTypeActiveCap(type, newCap);
 	if (_typeKeys[type].size() > newCap) {
-		if (_typeActiveCaps.at(type) > newCap) setTypeActiveCap(type, newCap);
-
 		uint32_t diff = (uint32_t)_typeKeys[type].size() - newCap;
 		removed.reserve(diff);
 		auto& vec = _typeKeys[type];
@@ -160,6 +156,15 @@ uint32_t objectPool::checkTypeActiveCap(elementType type) const
 		OT_ASSERT(false, "Type doesn't exist!");
 	}
 	return (uint32_t)_typeActiveKeys.at(type).size();
+}
+
+void objectPool::zSort(std::vector<uint32_t>::iterator begin, std::vector<uint32_t>::iterator end)
+{
+	std::sort(begin, end, [this](const uint32_t& idA, const uint32_t& idB)->bool {
+		if (_storage.at(idA)->getPos().z == _storage.at(idB)->getPos().z)
+			return (idA > idB) ? true : false;
+		return (_storage.at(idA)->getPos().z < _storage.at(idB)->getPos().z) ? true : false;
+	});
 }
 
 

@@ -1,14 +1,11 @@
 #pragma once
-#ifndef GAMESTATEMACHINE_H
-#define GAMESTATEMACHINE_H
+#ifndef STATEMACHINE_H
+#define STATEMACHINE_H
 
+#include <overtime.h>
 enum class gameState {
-	unknown = -1, mainMenu, pause, planning, gameplay, gameOver
+	unknown = 0, mainMenu, gameplay, planning, playing, pause, gameOver
 };
-namespace overtime {
-	class timeStep;
-	class event;
-}
 
 class stateMachine {
 public:

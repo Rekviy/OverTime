@@ -35,9 +35,9 @@ void button::onRender()
 
 void button::onEvent(overtime::event& event)
 {
-	eventDispatcher dispatcher(event);
-	dispatcher.dispatch<windowResizeEvent>(OT_BIND_EVENT_FN(button::onWindowResize));
 	if (_isActive) {
+		eventDispatcher dispatcher(event);
+		dispatcher.dispatch<windowResizeEvent>(OT_BIND_EVENT_FN(button::onWindowResize));
 		dispatcher.dispatch<mouseMovedEvent>(OT_BIND_EVENT_FN(button::onMouseMoved));
 		dispatcher.dispatch<mouseButtonPressedEvent>(OT_BIND_EVENT_FN(button::onMouseButtonPressed));
 		dispatcher.dispatch<mouseButtonReleasedEvent>(OT_BIND_EVENT_FN(button::onMouseButtonReleased));
