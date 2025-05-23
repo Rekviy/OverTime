@@ -13,54 +13,64 @@ gridManager::~gridManager()
 
 bool gridManager::gridCalculate(ship* ship)
 {
+	uint32_t shipId = ship->getId();
 	auto& playerGrid = _ui->get<grid>(_playerGridId);
+	uint32_t rows = playerGrid.getRowCount(), columns = playerGrid.getColumnCount();
 	const glm::vec2& size = playerGrid.getSize();
 	const glm::vec3& gridPos = playerGrid.getPos();
-	glm::i32vec2 begin = round(glm::vec2((ship->getPos().x - gridPos.x) / size.x, (gridPos.y - ship->getPos().y) / size.y));
+	bool swapped = false;
+	glm::vec2 sBegin = ship->getPos(), sEnd = (ship->end() - 1)->_pos;
+	if (sEnd.x < sBegin.x) { std::swap(sBegin.x, sEnd.x); swapped = true; }
+	if (sEnd.y > sBegin.y) { std::swap(sBegin.y, sEnd.y); swapped = true; }
 
-	glm::i32vec2 end = round(glm::vec2(((ship->end() - 1)->_pos.x - gridPos.x) / size.x, (gridPos.y - (ship->end() - 1)->_pos.y) / size.y));
+	glm::i32vec2 startIdx = round(glm::vec2((sBegin.x - gridPos.x) / size.x, (gridPos.y - sBegin.y) / size.y));
+	glm::i32vec2 endIdx = round(glm::vec2((sEnd.x - gridPos.x) / size.x, (gridPos.y - sEnd.y) / size.y));
 
-	if (begin.x > -1 && begin.y > -1 && begin.x < (int)playerGrid.getColumnCount() && begin.y < (int)playerGrid.getRowCount() &&
-		end.x > -1 && end.y > -1 && end.x < (int)playerGrid.getColumnCount() && end.y < (int)playerGrid.getRowCount()) {
+	if (startIdx.x > -1 && startIdx.y > -1 && startIdx.x < (int)columns && startIdx.y < (int)rows &&
+		endIdx.x > -1 && endIdx.y > -1 && endIdx.x < (int)columns && endIdx.y < (int)rows) {
 
-		ship->setPos({ gridPos.x + begin.x * size.x, gridPos.y - begin.y * size.y, gridPos.z + 0.2f });
+		if (swapped)
+			ship->setPos({ gridPos.x + endIdx.x * size.x, gridPos.y - endIdx.y * size.y, gridPos.z + 0.2f });
+		else
+			ship->setPos({ gridPos.x + startIdx.x * size.x, gridPos.y - startIdx.y * size.y, gridPos.z + 0.2f });
 
-		glm::i32vec2 areaB = begin - 1, areaE = end + 1;
+		glm::i32vec2 areaB = startIdx - 1, areaE = endIdx + 1;
 
-		areaB.x = std::max(0, std::min(areaB.x, (int32_t)playerGrid.getRowCount() - 1));
-		areaB.y = std::max(0, std::min(areaB.y, (int32_t)playerGrid.getColumnCount() - 1));
-		areaE.x = std::max(0, std::min(areaE.x, (int32_t)playerGrid.getRowCount() - 1));
-		areaE.y = std::max(0, std::min(areaE.y, (int32_t)playerGrid.getColumnCount() - 1));
+		areaB.x = std::clamp(areaB.x, 0, (int)columns - 1);
+		areaB.y = std::clamp(areaB.y, 0, (int)rows - 1);
+		areaE.x = std::clamp(areaE.x, 0, (int)columns - 1);
+		areaE.y = std::clamp(areaE.y, 0, (int)rows - 1);
 
 		ship::shipCell::state state = ship::shipCell::state::placingAllowed;
 		if (playerGrid.isOccupied(areaB, areaE))
 			state = ship::shipCell::state::placingDenied;
 
 		ship->changeState(state);
-		_shipPlacings[ship->getId()].first = begin;
-		_shipPlacings[ship->getId()].second = end;
+
+		playerGrid.addTempPlacement(shipId, startIdx, endIdx);
 		return true;
 	}
-	if(isPlaced(ship->getId()))
-		_shipPlacings.erase(ship->getId());
+	else if (playerGrid.isPlaced(shipId))
+		playerGrid.removeTempPlacement(shipId);
 	ship->changeState(ship::shipCell::state::normal);
 	return false;
 }
 
 bool gridManager::placeShip(ship* ship)
 {
-	if (!isPlaced(ship->getId()) || ship->getState() == ship::shipCell::placingDenied) {
-		auto& bind = _ui->getBindings(ship->getId()).begin();
-		auto& count = _ui->get<counter>(*_ui->getBindings(ship->getId()).begin());
+	auto& playerGrid = _ui->get<grid>(_playerGridId);
+	uint32_t shipId = ship->getId();
+	if (!playerGrid.isPlaced(shipId) || ship->getState() == ship::shipCell::placingDenied) {
+		auto& bind = _ui->getBindings(shipId).begin();
+		auto& count = _ui->get<counter>(*_ui->getBindings(shipId).begin());
 		--count;
-		_ui->deactivate(ship->getId());
+		_ui->deactivate(shipId);
 	}
 	else {
-		auto& playerGrid = _ui->get<grid>(_playerGridId);
-		auto& [begin, end] = _shipPlacings.at(ship->getId());
 		const auto& shipPos = ship->getPos();
-		ship->setPos({ shipPos.x, shipPos.y, shipPos.z - 0.1f });
-		playerGrid.setOccupation(begin, end, true);
+		ship->setPos({ shipPos.x, shipPos.y, playerGrid.getPos().z + 0.1f });
+		playerGrid.acceptPlacing(shipId);
+		_ui->bind(shipId, _playerGridId);
 	}
 	ship->changeState(ship::shipCell::state::normal);
 	return true;
@@ -68,17 +78,115 @@ bool gridManager::placeShip(ship* ship)
 
 bool gridManager::removeShip(ship* ship)
 {
-	if (isPlaced(ship->getId())) {
-
-		auto& playerGrid = _ui->get<grid>(_playerGridId);
-		auto& [begin, end] = _shipPlacings.at(ship->getId());
-		playerGrid.setOccupation(begin, end, false);
-
+	uint32_t shipId = ship->getId();
+	auto& playerGrid = _ui->get<grid>(_playerGridId);
+	if (playerGrid.isPlaced(shipId)) {
+		playerGrid.removePlacement(shipId);
+		_ui->unBind(shipId, _playerGridId);
 	}
 	return true;
 }
 
+uint32_t gridManager::createShip(uint32_t gridId, elementType shipType)
+{
+	auto& curGrid = _ui->get<grid>(gridId);
+	const glm::vec2& size = curGrid.getSize();
+	const glm::vec3& gridPos = curGrid.getPos();
+
+
+	uint32_t shipId = -1;
+	std::string name = (curGrid.getName());
+	switch (shipType) {
+		case ship1Element:
+			name.append("ship1_");
+			name.append(1, '1' + _ui->checkTypeCap(shipType));
+			shipId = _ui->push<ship1>(ship1(name, { 0.0f, 0.0f, gridPos.z + 0.1f },
+				size, { { "cherry","cherryApproved","cherryDenied","frame" } },
+				[this](ship* ship) {return false; },
+				[this](ship* ship) {return false; },
+				[this](ship* ship) {return false; }
+			));
+			break;
+		case ship2Element:
+			name.append("ship2_");
+			name.append(1, '1' + _ui->checkTypeCap(shipType));
+			shipId = _ui->push<ship2>(ship2(name, { 0.0f, 0.0f, gridPos.z + 0.1f },
+				size, { { "cherry","cherryApproved","cherryDenied","frame" } },
+				[this](ship* ship) {return false; },
+				[this](ship* ship) {return false; },
+				[this](ship* ship) {return false; }
+			));
+			break;
+		case ship3Element:
+			name.append("ship3_");
+			name.append(1, '1' + _ui->checkTypeCap(shipType));
+			shipId = _ui->push<ship3>(ship3(name, { 0.0f, 0.0f, gridPos.z + 0.1f },
+				size, { { "cherry","cherryApproved","cherryDenied","frame" } },
+				[this](ship* ship) {return false; },
+				[this](ship* ship) {return false; },
+				[this](ship* ship) {return false; }
+			));
+			break;
+		case ship4Element:
+			name.append("ship4_");
+			name.append(1, '1' + _ui->checkTypeCap(shipType));
+			shipId = _ui->push<ship4>(ship4(name, { 0.0f, 0.0f, gridPos.z + 0.1f },
+				size, { { "cherry","cherryApproved","cherryDenied","frame" } },
+				[this](ship* ship) {return false; },
+				[this](ship* ship) {return false; },
+				[this](ship* ship) {return false; }
+			));
+			break;
+	}
+	return shipId;
+}
+
 void gridManager::autoPlace(uint32_t gridId)
 {
+	auto& curGrid = _ui->get<grid>(gridId);
+	uint32_t rows = curGrid.getRowCount(), columns = curGrid.getColumnCount();
+	const glm::vec2& size = curGrid.getSize();
+	const glm::vec3& gridPos = curGrid.getPos();
 
+	for (int type = elementType::ship4Element; type >= elementType::ship1Element; type--)
+		while (!_ui->isTypeActiveCapReached((elementType)type))
+			_ui->bind(_ui->activateFirst((elementType)type), gridId);
+
+	for (auto& id : _ui->getBindings(gridId)) {
+		ship& item = static_cast<ship&>(_ui->get(id));
+		item.setDragging(false);
+		glm::i32vec2 startIdx(0), endIdx(0);
+		float rotation = 0.0f;
+		bool isPlaced = false;
+		const int MAX_ATTEMPTS = 100;
+		int attempts = 0;
+		int c, s;
+		if (!curGrid.isPlaced(id)) {
+			do {
+				attempts++;
+				rotation = (rand() % 2 != 0) ? glm::radians(90.0f) : 0.0f;
+				startIdx = { rand() % columns,rand() % rows };
+
+				c = glm::cos(rotation), s = glm::sin(rotation);
+				endIdx = { startIdx.x + (item.length() - 1) * c,startIdx.y + (item.length() - 1) * s };
+
+				if (endIdx.x > -1 && endIdx.y > -1 && endIdx.x < (int)columns && endIdx.y < (int)rows) {
+
+					glm::i32vec2 areaB = { startIdx.x - 1,startIdx.y - 1 }, areaE = { endIdx.x + 1, endIdx.y + 1 };
+					areaB.x = std::clamp(areaB.x, 0, (int)columns - 1);
+					areaB.y = std::clamp(areaB.y, 0, (int)rows - 1);
+					areaE.x = std::clamp(areaE.x, 0, (int)columns - 1);
+					areaE.y = std::clamp(areaE.y, 0, (int)rows - 1);
+
+					isPlaced = !curGrid.isOccupied(areaB, areaE);
+				}
+			} while (!isPlaced && attempts < MAX_ATTEMPTS);
+			if (isPlaced) {
+				item.setRotation(rotation);
+				item.setPos({ gridPos.x + startIdx.x * size.x, gridPos.y - startIdx.y * size.y, gridPos.z + 0.1f });
+				curGrid.addPlacement(id, startIdx, endIdx);
+			}
+		}
+	}
+	_ui->unBindAll(gridId);
 }

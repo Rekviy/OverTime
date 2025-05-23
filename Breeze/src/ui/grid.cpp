@@ -55,7 +55,7 @@ void grid::setOccupation(const std::vector<gridCell>::iterator& begin, const std
 
 }
 
-void grid::setOccupation(const glm::i32vec2 & begin, const glm::i32vec2 & end, bool newOccupation)
+void grid::setOccupation(const glm::i32vec2& begin, const glm::i32vec2& end, bool newOccupation)
 {
 	for (int i = begin.y; i <= end.y; i++)
 		for (int j = begin.x; j <= end.x; j++)
@@ -80,6 +80,80 @@ bool grid::isOccupied(const glm::i32vec2& begin, const glm::i32vec2& end)
 		}
 	}
 	return false;
+}
+
+bool grid::addPlacement(uint32_t itemId, const glm::i32vec2& begin, const glm::i32vec2& end)
+{
+	if (!isOccupied(begin, end)) {
+		_placings[itemId] = { begin,end };
+		setOccupation(begin, end, true);
+		return true;
+	}
+	return false;
+}
+
+void grid::removePlacement(uint32_t itemId)
+{
+	auto it = _placings.find(itemId);
+	if (it != _placings.end()) {
+		setOccupation(it->second.first, it->second.second, false);
+		_placings.erase(it);
+	}
+}
+
+const std::pair<glm::i32vec2, glm::i32vec2>& grid::getPlacement(uint32_t itemId) const
+{
+	auto& item = _tempPlacings.find(itemId);
+	if (item == _tempPlacings.end())
+		item = _placings.find(itemId);
+
+	return item->second;
+}
+
+uint32_t grid::getItemAt(const glm::i32vec2& position) const
+{
+	for (const auto& [shipId, placement] : _placings) {
+		if (position.x >= placement.first.x && position.x <= placement.second.x &&
+			position.y >= placement.first.y && position.y <= placement.second.y) {
+			return shipId;
+		}
+	}
+	return -1;
+}
+
+bool grid::addTempPlacement(uint32_t itemId, const glm::i32vec2& begin, const glm::i32vec2& end)
+{
+	if (!isOccupied(begin, end)) {
+		_tempPlacings[itemId] = { begin,end };
+		return true;
+	}
+	return false;
+}
+
+void grid::removeTempPlacement(uint32_t itemId)
+{
+	auto it = _tempPlacings.find(itemId);
+	if (it != _tempPlacings.end())
+		_tempPlacings.erase(it);
+
+}
+
+bool grid::acceptPlacing(uint32_t itemId)
+{
+	auto it = _tempPlacings.find(itemId);
+	if (it != _tempPlacings.end()) {
+		if (addPlacement(it->first, it->second.first, it->second.second))
+			_tempPlacings.erase(itemId);
+	}
+	return false;
+}
+
+void grid::rejectPlacing(uint32_t itemId)
+{
+	auto it = _tempPlacings.find(itemId);
+	if (it != _tempPlacings.end()) {
+		_tempPlacings.erase(itemId);
+	}
 }
 
 void grid::changeState(std::vector<gridCell>::iterator& begin, std::vector<gridCell>::iterator& end, gridCell::state newState)

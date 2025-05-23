@@ -27,8 +27,8 @@ gsm::gsm()
 	themeManager::add("three", themeManager::style(texture2D::create("assets/resources/three.png")));
 	themeManager::add("two", themeManager::style(texture2D::create("assets/resources/two.png")));
 	themeManager::add("one", themeManager::style(texture2D::create("assets/resources/one.png")));
-	
-	
+
+
 #pragma region mainMenu
 	uint32_t mainMenuBtnId = _ui->push<button>(button("mainMenuBtn",
 		{ 0.0f, 130.0f, 0.0f }, { 200.0f, 75.0f }, { "play", "playHover", "playClicked" }, true,
@@ -46,8 +46,12 @@ gsm::gsm()
 	_gridManager.setPlayerGrid(
 		_ui->push<grid>(grid("playerGrid", 10, 10, { 0.0f, 240.0f,0.5f }, { 40.0f,40.0f }, { {"frame" , "cherry"} }))
 	);
+	uint32_t playerGridId = _gridManager.getPlayerGrid();
+	uint32_t btnAuto = _ui->push<button>(button("auto", { -200.0f,-200.0f,0.7f }, { 100.0f,100.0f }, { "one","two","three" }, false,
+		[this](button* btn)->bool {_gridManager.autoPlace(_gridManager.getPlayerGrid()); return true; }));
 	_stateUI[gameState::gameplay] = {
-		_gridManager.getPlayerGrid()
+		btnAuto,
+		playerGridId
 	};
 #pragma endregion
 
@@ -57,7 +61,7 @@ gsm::gsm()
 
 	uint32_t btnship4Id = _ui->push<button>(button("ship4AddBtn",
 		{ addBtnPos.x, addBtnPos.y, addBtnPos.z }, addBntSize, { "play", "playHover", "playClicked" }, false,
-		[](button*) {return false; }, OT_BIND_EVENT_FN(gsm::addShip4)
+		[](button*) {return false; }, [this](button* btn) { return addShip(btn, elementType::ship4Element); }
 	));
 
 	uint32_t count4Id = _ui->push<counter>(counter("ship4Counter",
@@ -70,7 +74,7 @@ gsm::gsm()
 
 	uint32_t btnship3Id = _ui->push<button>(button("ship3AddBtn",
 		{ addBtnPos.x, addBtnPos.y, addBtnPos.z }, addBntSize, { "play", "playHover", "playClicked" }, false,
-		[](button*) {return false; }, OT_BIND_EVENT_FN(gsm::addShip3)
+		[](button*) {return false; }, [this](button* btn) { return addShip(btn, elementType::ship3Element); }
 	));
 	uint32_t count3Id = _ui->push<counter>(counter("ship3Counter",
 		{ addBtnPos.x + addBntSize.x / 2,addBtnPos.y + addBntSize.y / 2,addBtnPos.z + 0.1f }, { 15.0f, 15.0f }, 4, 0,
@@ -82,7 +86,7 @@ gsm::gsm()
 
 	uint32_t btnship2Id = _ui->push<button>(button("ship2AddBtn",
 		{ addBtnPos.x, addBtnPos.y, addBtnPos.z }, addBntSize, { "play", "playHover", "playClicked" }, false,
-		[](button*) {return false; }, OT_BIND_EVENT_FN(gsm::addShip2)
+		[](button*) {return false; }, [this](button* btn) { return addShip(btn, elementType::ship2Element); }
 	));
 	uint32_t count2Id = _ui->push<counter>(counter("ship2Counter",
 		{ addBtnPos.x + addBntSize.x / 2,addBtnPos.y + addBntSize.y / 2,addBtnPos.z + 0.1f }, { 15.0f, 15.0f }, 4, 0,
@@ -94,7 +98,7 @@ gsm::gsm()
 
 	uint32_t btnship1Id = _ui->push<button>(button("ship1AddBtn",
 		{ addBtnPos.x, addBtnPos.y, addBtnPos.z }, addBntSize, { "play", "playHover", "playClicked" }, false,
-		[](button*) {return false; }, OT_BIND_EVENT_FN(gsm::addShip1)
+		[](button*) {return false; }, [this](button* btn) { return addShip(btn, elementType::ship1Element); }
 	));
 	uint32_t count1Id = _ui->push<counter>(counter("ship1Counter",
 		{ addBtnPos.x + addBntSize.x / 2,addBtnPos.y + addBntSize.y / 2,addBtnPos.z + 0.1f }, { 15.0f, 15.0f }, 4, 0,
@@ -106,6 +110,19 @@ gsm::gsm()
 		{ 0.0f, 300.0f, 1.0f }, { 200.0f, 75.0f }, { "play", "playHover", "playClicked" }, false,
 		OT_BIND_EVENT_FN(gsm::finishPlanningBtn)
 	));
+
+	for (int type = elementType::ship4Element; type >= elementType::ship1Element; type--) {
+		while (!_ui->isTypeCapReached((elementType)type)) {
+			uint32_t id = createPlayerShip((elementType)type);
+			switch (type) {
+				case ship1Element: _ui->bind(count1Id, id); break;
+				case ship2Element: _ui->bind(count2Id, id); break;
+				case ship3Element: _ui->bind(count3Id, id); break;
+				case ship4Element: _ui->bind(count4Id, id); break;
+			}
+		}
+	}
+
 	_stateUI[gameState::planning] = {
 		btnship4Id, count4Id,
 		btnship3Id, count3Id,
@@ -248,120 +265,73 @@ bool gsm::finishPlanningBtn(button* btn)
 		enterState(gameState::playing);
 	return true;
 }
-bool gsm::addShip4(button* btn)
+
+bool gsm::addShip(button* btn, elementType shipType)
 {
 	counter& count = (_ui->get<counter>(*_ui->getBindings(btn->getId()).begin()));
 	auto [mouseX, mouseY] = input::getMousePos();
 	auto pos = cameraWrapper::screenToWorld({ mouseX,  mouseY });
-
-	if (!_ui->isTypeCapReached(elementType::ship4Element)) {
-		std::string name = ("ship4_");
-		name.append(1, '1' + _ui->checkTypeCap(elementType::ship4Element));
-
-		uint32_t ship4Id = _ui->push<ship4>(ship4(name, { pos, 1.0f },
-			{ 40.0f,40.0f }, { { "cherry","cherryApproved","cherryDenied","frame" } },
-			[this](ship* ship) {return _gridManager.removeShip(ship); },
-			[this](ship* ship) {return _gridManager.placeShip(ship); },
-			[this](ship* ship) {return _gridManager.gridCalculate(ship); }
-		));
-		_ui->bind(count.getId(), ship4Id);
-		++count;
-	}
-	else if (!_ui->isTypeActiveCapReached(elementType::ship4Element)) {
-		uint32_t id = _ui->activateFirst(elementType::ship4Element);
+	if (!_ui->isTypeActiveCapReached(shipType)) {
+		uint32_t id = _ui->activateFirst(shipType);
 		auto& item = _ui->get(id);
-		item.setPos({ pos, item.getPos().z });
-		++count;
-	}
-
-
-	return true;
-}
-bool gsm::addShip3(button* btn)
-{
-	counter& count = (_ui->get<counter>(*_ui->getBindings(btn->getId()).begin()));
-	auto [mouseX, mouseY] = input::getMousePos();
-	auto pos = cameraWrapper::screenToWorld({ mouseX,  mouseY });
-
-	if (!_ui->isTypeCapReached(elementType::ship3Element)) {
-		std::string name = ("ship3_");
-		name.append(1, '1' + _ui->checkTypeCap(elementType::ship3Element));
-
-		uint32_t ship3Id = _ui->push<ship3>(ship3(name, { pos, 1.0f },
-			{ 40.0f,40.0f }, { { "cherry","cherryApproved","cherryDenied","frame" } },
-			[this](ship* ship) {return _gridManager.removeShip(ship); },
-			[this](ship* ship) {return _gridManager.placeShip(ship); },
-			[this](ship* ship) {return _gridManager.gridCalculate(ship); }
-		));
-		_ui->bind(count.getId(), ship3Id);
-		++count;
-	}
-	else if (!_ui->isTypeActiveCapReached(elementType::ship3Element)) {
-		uint32_t id = _ui->activateFirst(elementType::ship3Element);
-		auto& item = _ui->get(id);
-		item.setPos({ pos, item.getPos().z });
-		++count;
-	}
-
-
-	return true;
-}
-bool gsm::addShip2(button* btn)
-{
-	counter& count = (_ui->get<counter>(*_ui->getBindings(btn->getId()).begin()));
-	auto [mouseX, mouseY] = input::getMousePos();
-	auto pos = cameraWrapper::screenToWorld({ mouseX,  mouseY });
-
-	if (!_ui->isTypeCapReached(elementType::ship2Element)) {
-		std::string name = ("ship2_");
-		name.append(1, '1' + _ui->checkTypeCap(elementType::ship2Element));
-
-		uint32_t ship2Id = _ui->push<ship2>(ship2(name, { pos, 1.0f },
-			{ 40.0f,40.0f }, { { "cherry","cherryApproved","cherryDenied","frame" } },
-			[this](ship* ship) {return _gridManager.removeShip(ship); },
-			[this](ship* ship) {return _gridManager.placeShip(ship); },
-			[this](ship* ship) {return _gridManager.gridCalculate(ship); }
-		));
-		_ui->bind(count.getId(), ship2Id);
-		++count;
-	}
-	else if (!_ui->isTypeActiveCapReached(elementType::ship2Element)) {
-		uint32_t id = _ui->activateFirst(elementType::ship2Element);
-		auto& item = _ui->get(id);
-		item.setPos({ pos, item.getPos().z });
+		item.setPos({ pos, _ui->get(_gridManager.getPlayerGrid()).getPos().z });
 		++count;
 	}
 
 	return true;
 }
-bool gsm::addShip1(button* btn)
+
+uint32_t gsm::createPlayerShip(elementType shipType)
 {
-	counter& count = (_ui->get<counter>(*_ui->getBindings(btn->getId()).begin()));
-	auto [mouseX, mouseY] = input::getMousePos();
-	auto pos = cameraWrapper::screenToWorld({ mouseX,  mouseY });
+	auto& curGrid = _ui->get<grid>(_gridManager.getPlayerGrid());
+	const glm::vec2& size = curGrid.getSize();
+	const glm::vec3& gridPos = curGrid.getPos();
 
-	if (!_ui->isTypeCapReached(elementType::ship1Element)) {
-		std::string name = ("ship1_");
-		name.append(1, '1' + _ui->checkTypeCap(elementType::ship1Element));
-
-		uint32_t ship1Id = _ui->push<ship1>(ship1(name, { pos, 1.0f },
-			{ 40.0f,40.0f }, { { "cherry","cherryApproved","cherryDenied","frame" } },
-			[this](ship* ship) {return _gridManager.removeShip(ship); },
-			[this](ship* ship) {return _gridManager.placeShip(ship); },
-			[this](ship* ship) {return _gridManager.gridCalculate(ship); }
-		));
-		_ui->bind(count.getId(), ship1Id);
-		++count;
+	uint32_t shipId = -1;
+	std::string name = (curGrid.getName());
+	switch (shipType) {
+		case ship1Element:
+			name.append("ship1_");
+			name.append(1, '1' + _ui->checkTypeCap(shipType));
+			shipId = _ui->push<ship1>(ship1(name, gridPos,
+				size, { { "cherry","cherryApproved","cherryDenied","frame" } },
+				[this](ship* ship) {return _gridManager.removeShip(ship); },
+				[this](ship* ship) {return _gridManager.placeShip(ship); },
+				[this](ship* ship) {return _gridManager.gridCalculate(ship); }
+			));
+			break;
+		case ship2Element:
+			name.append("ship2_");
+			name.append(1, '1' + _ui->checkTypeCap(shipType));
+			shipId = _ui->push<ship2>(ship2(name, gridPos,
+				size, { { "cherry","cherryApproved","cherryDenied","frame" } },
+				[this](ship* ship) {return _gridManager.removeShip(ship); },
+				[this](ship* ship) {return _gridManager.placeShip(ship); },
+				[this](ship* ship) {return _gridManager.gridCalculate(ship); }
+			));
+			break;
+		case ship3Element:
+			name.append("ship3_");
+			name.append(1, '1' + _ui->checkTypeCap(shipType));
+			shipId = _ui->push<ship3>(ship3(name, gridPos,
+				size, { { "cherry","cherryApproved","cherryDenied","frame" } },
+				[this](ship* ship) {return _gridManager.removeShip(ship); },
+				[this](ship* ship) {return _gridManager.placeShip(ship); },
+				[this](ship* ship) {return _gridManager.gridCalculate(ship); }
+			));
+			break;
+		case ship4Element:
+			name.append("ship4_");
+			name.append(1, '1' + _ui->checkTypeCap(shipType));
+			shipId = _ui->push<ship4>(ship4(name, gridPos,
+				size, { { "cherry","cherryApproved","cherryDenied","frame" } },
+				[this](ship* ship) {return _gridManager.removeShip(ship); },
+				[this](ship* ship) {return _gridManager.placeShip(ship); },
+				[this](ship* ship) {return _gridManager.gridCalculate(ship); }
+			));
+			break;
 	}
-	else if (!_ui->isTypeActiveCapReached(elementType::ship1Element)) {
-		uint32_t id = _ui->activateFirst(elementType::ship1Element);
-		auto& item = _ui->get(id);
-		item.setPos({ pos, item.getPos().z });
-		++count;
-	}
-
-
-	return true;
+	return shipId;
 }
 
 

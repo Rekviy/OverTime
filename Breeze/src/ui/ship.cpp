@@ -1,5 +1,8 @@
 #include "ship.h"
 #include "cameraWrapper.h"
+
+#include <glm/gtc/constants.hpp>
+
 using namespace overtime;
 
 ship::shipCell::shipCell(glm::vec3 position, const std::vector<std::string>& keys)
@@ -39,7 +42,7 @@ void ship::onRender()
 {
 	if (_isVisible) {
 		for (auto& item : _cells) {
-			renderer2D::drawRotatedSquad(item._pos, _size, _rotation, item._style->_color, item._style->_texture, item._style->_textureSize);
+			renderer2D::drawRotatedSquad(item._pos, _size, _angle, item._style->_color, item._style->_texture, item._style->_textureSize);
 		}
 	}
 }
@@ -69,17 +72,13 @@ void ship::deactivate()
 
 const glm::vec3& ship::getPos() const
 {
-	return (*_cells.begin())._pos;
+	return _cells.begin()->_pos;
 }
 
 void ship::setPos(const glm::vec3& newPos)
 {
-	auto& first = (*_cells.begin());
-	first._pos = newPos;
-	for (uint32_t i = 0, incX = 0, incY = 0; i < _cells.size(); i++) {
-		_cells.at(i)._pos = { first._pos.x + _size.x * incX, first._pos.y - _size.x * incY, first._pos.z };
-		!(bool)_rotation ? incX++ : incY++;
-	}
+	calculateNewPos(0, newPos);
+
 	updateBounds();
 }
 
@@ -116,27 +115,37 @@ bool ship::onWindowResize(overtime::windowResizeEvent& event)
 
 void ship::updateBounds()
 {
+	glm::vec2 first = (*_cells.cbegin())._pos, end = (_cells.cend() - 1)->_pos;
+	if (end.x < first.x ) std::swap(first.x, end.x);
+	if ( end.y > first.y) std::swap(first.y, end.y);
+
+
+	first = { first.x - _size.x / 2.0f, first.y + _size.y / 2.0f };
+	end = { end.x + _size.x / 2.0f,end.y - _size.y / 2.0f };
+
 	_bounds = {
-		cameraWrapper::worldToScreen({ (*_cells.cbegin())._pos.x - _size.x / 2.0f, (*_cells.cbegin())._pos.y + _size.y / 2.0f }),//UpLeft
-		cameraWrapper::worldToScreen({ (*(_cells.cend() - 1))._pos.x + _size.x / 2.0f, (*(_cells.cend() - 1))._pos.y - _size.y / 2.0f }) //BottomRight
+		cameraWrapper::worldToScreen({ first.x,first.y }),//UpLeft
+		cameraWrapper::worldToScreen({ end.x, end.y }) //BottomRight
 	};
+}
+void ship::calculateNewPos(uint32_t cellClicked, const glm::vec3& newPos)
+{
+	glm::vec3 basePos = _cells[cellClicked]._pos = newPos;
+	float c = glm::cos(_angle), s = glm::sin(_angle);
+	for (uint32_t i = 0; i < _cells.size(); ++i) {
+		int delta = (int)i - (int)cellClicked;
+
+		glm::vec3 newPos = basePos;
+
+		newPos.y -= (float)delta * _size.y * s; newPos.x += (float)delta * _size.x * c;
+		_cells[i]._pos = newPos;
+	}
 }
 bool ship::onMouseMoved(overtime::mouseMovedEvent& event)
 {
 	if (_isDragging) {
+		calculateNewPos(_cellClicked, { cameraWrapper::screenToWorld({ event.getX(),event.getY() }), _cells[_cellClicked]._pos.z });
 
-		glm::vec3 temp = _cells.at(_cellClicked)._pos = { cameraWrapper::screenToWorld({ event.getX(),event.getY() }), _cells.at(_cellClicked)._pos.z };
-		uint32_t ccX = 0, ccY = 0;
-		!(bool)_rotation ? ccX = _cellClicked : ccY = _cellClicked;
-		for (uint32_t i = 0, incX = 0, incY = 0; i < _cells.size(); i++) {
-			if (i < _cellClicked) {
-				_cells.at(i)._pos = { temp.x - _size.x * (ccX - incX), {temp.y + _size.y * (ccY - incY)},temp.z };
-			}
-			else if (i > _cellClicked) {
-				_cells.at(i)._pos = { temp.x + _size.x * (incX - ccX), {temp.y - _size.y * (incY - ccY)},temp.z };
-			}
-			!(bool)_rotation ? incX++ : incY++;
-		}
 		return _funcOnMoving(this);
 	}
 
@@ -150,10 +159,15 @@ bool ship::onMouseButtonPressed(overtime::mouseButtonPressedEvent& event)
 	if (mouseX >= _bounds.x && mouseY >= _bounds.y &&
 		mouseX <= _bounds.z && mouseY <= _bounds.w) {
 
-		glm::vec2 clickPos = { mouseX - _bounds.x, mouseY - _bounds.y };
+		glm::vec2 worldClick = cameraWrapper::screenToWorld({ mouseX, mouseY });
+		const glm::vec3& pivotPoint = (_cells.begin())->_pos;
+		float c = cos(_angle), s = -sin(_angle);
 
-		clickPos = floor(clickPos / _size);
-		_cellClicked = (uint32_t)std::max(clickPos.x, clickPos.y);
+		glm::vec2 delta = { worldClick.x - pivotPoint.x, worldClick.y - pivotPoint.y };
+		glm::vec2 rotatedClickPos = { delta.x * c - delta.y * s,delta.x * s + delta.y * c };
+
+		delta = abs(round(rotatedClickPos / _size));
+		_cellClicked = (uint32_t)delta.x;
 		//_clickOffset = { _cells.at(_cellClicked)._pos.x - mousePos.x,_cells.at(_cellClicked)._pos.y - mousePos.y };
 		_isDragging = true;
 		return _funcOnPress(this);
@@ -176,20 +190,10 @@ bool ship::onKeyPressed(overtime::keyPressedEvent& event)
 	if (_isDragging) {
 		switch (event.getKeyCode()) {
 			case keyCodes::OT_KEY_R:
-				_rotation = (bool)_rotation ? 0.0f : glm::radians(90.0f);
-				glm::vec3 temp = _cells.at(_cellClicked)._pos;
-				uint32_t ccX = 0, ccY = 0;
-				!(bool)_rotation ? ccX = _cellClicked : ccY = _cellClicked;
-				for (uint32_t i = 0, incX = 0, incY = 0; i < _cells.size(); i++) {
-					if (i < _cellClicked) {
-						_cells.at(i)._pos = { temp.x - _size.x * (ccX - incX), {temp.y + _size.y * (ccY - incY)},temp.z };
-					}
-					else if (i > _cellClicked) {
-						_cells.at(i)._pos = { temp.x + _size.x * (incX - ccX), {temp.y - _size.y * (incY - ccY)},temp.z };
-					}
-					!(bool)_rotation ? incX++ : incY++;
-				}
-				break;
+				_angle += glm::radians(90.0f);
+				if (_angle >= glm::two_pi<float>()) _angle -= glm::two_pi<float>();
+
+				calculateNewPos(_cellClicked, _cells[_cellClicked]._pos);
 		}
 		return true;
 	}
