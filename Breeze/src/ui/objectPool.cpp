@@ -56,6 +56,17 @@ std::map<uint32_t, overtime::scope<interactElement>>::iterator objectPool::find(
 	return _storage.find(id);
 }
 
+void objectPool::activateAll()
+{
+	for (auto& key : _typeKeys) {
+		auto type = key.first;
+		for (auto id : key.second) {
+			if (_typeActiveKeys[type].size() < _typeActiveCaps[type])
+				activate(id);
+		}
+	}
+}
+
 void objectPool::activate(uint32_t id)
 {
 	if (!_storage.at(id)->isActive()) {
@@ -80,6 +91,17 @@ uint32_t objectPool::activateFirst(elementType type)
 		}
 	}
 	return -1;
+}
+
+void objectPool::deactivateAll()
+{
+	for (auto& key: _typeActiveKeys) {
+		for (auto id : key.second) {
+			_storage.at(id)->deactivate();
+		}
+		key.second.clear();
+	}
+
 }
 
 void objectPool::deactivate(uint32_t id)

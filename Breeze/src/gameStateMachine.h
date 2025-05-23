@@ -27,15 +27,13 @@ public:
 private:
 	bool mainMenuBtn(button* btn);
 	bool finishPlanningBtn(button* btn);
-	bool addShip4(button* btn);
-	bool addShip3(button* btn);
-	bool addShip2(button* btn);
-	bool addShip1(button* btn);
+
+	bool addShip(button* btn, elementType shipType);
+	uint32_t createPlayerShip(elementType shipType);
 	gridManager _gridManager;
 	overtime::ref<gameUI> _ui;
 	//gameState _currentState = gameState::unknown;
 	std::stack<gameState> _stateStack;
-	//todo add state stack
 	std::unordered_map<gameState, std::vector<uint32_t>> _stateUI;
 };
 

@@ -5,7 +5,7 @@
 #include "ui/interactElement.h"
 #include "ui/themeManager.h"
 #include <initializer_list>
-
+#include <map>
 class grid : public interactElement {
 public:
 	class gridCell {
@@ -33,14 +33,30 @@ public:
 
 	std::vector<gridCell>::iterator begin() { return _storage.begin(); }
 	std::vector<gridCell>::iterator end() { return _storage.end(); }
+	std::map<uint32_t, std::pair<glm::i32vec2, glm::i32vec2>>::iterator placingsBegin() { return _placings.begin(); }
+	std::map<uint32_t, std::pair<glm::i32vec2, glm::i32vec2>>::iterator placingsEnd() { return _placings.end(); }
+	std::map<uint32_t, std::pair<glm::i32vec2, glm::i32vec2>>::iterator tempPlacingsBegin() { return _tempPlacings.begin(); }
+	std::map<uint32_t, std::pair<glm::i32vec2, glm::i32vec2>>::iterator tempPlacingsEnd() { return _tempPlacings.end(); }
 
 	void setOccupation(const std::vector<gridCell>::iterator& begin, const std::vector<gridCell>::iterator& end, bool newOccupation);
 	void setOccupation(const glm::i32vec2& begin, const glm::i32vec2& end, bool newOccupation);
 	bool isOccupied(const std::vector<gridCell>::iterator& begin, const std::vector<gridCell>::iterator& end);
 	bool isOccupied(const glm::i32vec2& begin, const glm::i32vec2& end);
+	bool addPlacement(uint32_t itemId, const glm::i32vec2& begin, const glm::i32vec2& end);
+	void removePlacement(uint32_t itemId);
+	const std::pair<glm::i32vec2, glm::i32vec2>& getPlacement(uint32_t itemId) const;
+	uint32_t getItemAt(const glm::i32vec2& position) const;
+	inline bool isPlaced(uint32_t id) const { return (_placings.find(id) != _placings.end()) || (_tempPlacings.find(id) != _tempPlacings.end()); }
+	inline uint32_t placementCount() const { return _placings.size(); }
+
+	bool addTempPlacement(uint32_t itemId, const glm::i32vec2& begin, const glm::i32vec2& end);
+	void removeTempPlacement(uint32_t itemId);
+	bool acceptPlacing(uint32_t itemId);
+	void rejectPlacing(uint32_t itemId);
+	inline uint32_t tempPlacementCount() const { return _tempPlacings.size(); }
 	void changeState(std::vector<gridCell>::iterator& begin, std::vector<gridCell>::iterator& end, gridCell::state newState);
 	void changeState(const glm::i32vec2& begin, const glm::i32vec2& end, gridCell::state newState);
-	
+
 	virtual void onRender() override;
 	virtual void onEvent(overtime::event& event) override;
 	inline uint32_t getColumnCount() const noexcept { return _columnCount; }
@@ -54,7 +70,8 @@ private:
 	uint32_t _columnCount;
 	uint32_t _rowCount;
 	std::vector<gridCell> _storage;
-
+	std::map<uint32_t, std::pair<glm::i32vec2, glm::i32vec2>> _placings;
+	std::map<uint32_t, std::pair<glm::i32vec2, glm::i32vec2>> _tempPlacings;
 	glm::vec3 _pos;
 	glm::vec2 _size;
 };

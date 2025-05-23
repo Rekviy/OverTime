@@ -7,6 +7,7 @@ class Breeze : public overtime::application {
 public:
 	Breeze()
 	{
+		srand(time(NULL)); 
 		themeManager::init();
 		pushLayer(new gameLayer());
 	}

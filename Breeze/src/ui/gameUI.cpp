@@ -30,6 +30,10 @@ uint32_t gameUI::activateFirst(elementType type)
 {
 	return _pool.activateFirst(type);
 }
+void gameUI::activateAll()
+{
+	_pool.activateAll();
+}
 void gameUI::deactivate(const std::vector<uint32_t>& ids)
 {
 	for (auto& item : ids)
@@ -41,10 +45,7 @@ void gameUI::deactivate(uint32_t id)
 }
 void gameUI::deactivateAll()
 {
-	for (auto& it = _pool.begin(); it != _pool.end(); ++it) {
-		it->second->deactivate();
-		it->second->setVisibility(false);
-	}
+	_pool.deactivateAll();
 }
 bool gameUI::isExist(uint32_t id)
 {
@@ -110,7 +111,7 @@ const std::vector<uint32_t>& gameUI::getBindings(uint32_t element)
 	OT_ASSERT(it != _bindings.end(), "Element doesn't binded!");
 	return it->second;
 }
-//todo add game status to parameters
+
 void gameUI::onRender()
 {
 	for (auto& it = _pool.begin(); it != _pool.end(); ++it) {

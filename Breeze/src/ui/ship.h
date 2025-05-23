@@ -31,16 +31,18 @@ public:
 	virtual inline const glm::vec2& getSize() const override { return _size; }
 	virtual void setPos(const glm::vec3& newPos) override;
 	virtual inline void setSize(const glm::vec2& newSize) override { _size = newSize; }
-
+	inline uint32_t length() const { return _cells.size(); }
 	std::vector<shipCell>::iterator begin() { return _cells.begin(); }
 	std::vector<shipCell>::iterator end() { return _cells.end(); }
 
 	shipCell::state getState() const;
 	shipCell::state getState(uint32_t cell) const;
 
-	inline void setRotation(float newRotation) { _rotation = newRotation; }
-	inline float getRotation() const { return _rotation; }
+	inline void setRotation(float radians) { _angle = radians; setPos(_cells.begin()->_pos); }
+	inline float getRotation() const { return _angle; }
 
+	inline bool isDragging() const { return _isDragging; }
+	inline void setDragging(bool dragState) { _isDragging = dragState; }
 	void changeState(shipCell::state newState);
 	void changeState(uint32_t cell, shipCell::state newState);
 protected:
@@ -53,12 +55,13 @@ protected:
 	bool onMouseButtonReleased(overtime::mouseButtonReleasedEvent& event);
 	bool onKeyPressed(overtime::keyPressedEvent& event);
 	void updateBounds();
+	void calculateNewPos(uint32_t cellClicked, const glm::vec3& newPos);
 	bool _isDragging = false;
 	uint32_t _cellClicked = 0;
 	//glm::vec2 _clickOffset;
 	glm::vec2 _size;
 	glm::vec4 _bounds;
-	float _rotation = 0.0f;
+	float _angle = 0.0f;
 	std::vector<shipCell> _cells;
 	std::function<bool(ship*)> _funcOnMoving, _funcOnRelease, _funcOnPress;
 };
