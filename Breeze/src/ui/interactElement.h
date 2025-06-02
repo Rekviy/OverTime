@@ -6,9 +6,9 @@
 #define ELEMENT_CLASS_TYPE(type) static elementType getStaticType() { return elementType::type; }\
 								virtual inline elementType getType() const override { return getStaticType(); }
 enum elementType {
-	buttonElement = 0, counterElement, gridElement, ship1Element, ship2Element, ship3Element, ship4Element, unknown
+	buttonElement = 0, counterElement, gridElement, ship1Element, ship2Element, ship3Element, ship4Element, maskOverlay, unknown
 };
-
+enum elementFlags : uint32_t { active = BIT(0), visible = BIT(1), blocked = BIT(2) };
 class objectPool;
 class interactElement {
 	friend objectPool;
@@ -28,16 +28,15 @@ public:
 	virtual inline uint32_t getId() const { return _id; }
 	virtual inline elementType getType() const { return elementType::unknown; }
 
-	virtual inline bool isActive() const { return _isActive; }
-	virtual void activate() { _isVisible = _isActive = true; }
-	virtual void deactivate() { _isVisible = _isActive = false; }
+	virtual void activate() { setFlag(active | visible); }
+	virtual void deactivate() { dropFlag(active | visible); }
 
-	virtual inline bool isVisible() const { return _isVisible; }
-	virtual inline void setVisibility(bool newVisible) { _isVisible = newVisible; }
+	virtual inline uint32_t checkFlag(uint32_t flag) const { return _status & flag; }
+	virtual inline void setFlag(uint32_t flag) { _status |= flag; }
+	virtual inline void dropFlag(uint32_t flag) { _status &= ~flag; }
 protected:
 	std::string _name;
 	uint32_t _id = UINT32_MAX;
-	bool _isActive = true;
-	bool _isVisible = true;
+	uint32_t _status = 0;
 };
 #endif

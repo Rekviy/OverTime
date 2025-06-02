@@ -4,6 +4,7 @@
 #include "ui/objectPool.h"
 #include "ui/counter.h"
 #include "ui/button.h"
+#include "ui/maskLayer.h"
 gridManager::gridManager(std::shared_ptr<gameUI> ui)
 	:_ui(ui)
 {}
@@ -41,9 +42,9 @@ bool gridManager::gridCalculate(ship* ship)
 		areaE.x = std::clamp(areaE.x, 0, (int)columns - 1);
 		areaE.y = std::clamp(areaE.y, 0, (int)rows - 1);
 
-		ship::shipCell::state state = ship::shipCell::state::placingAllowed;
+		shipCellState state = shipCellState::placingAllowed;
 		if (playerGrid.isOccupied(areaB, areaE))
-			state = ship::shipCell::state::placingDenied;
+			state = shipCellState::placingDenied;
 
 		ship->changeState(state);
 
@@ -52,7 +53,7 @@ bool gridManager::gridCalculate(ship* ship)
 	}
 	else if (playerGrid.isPlaced(shipId))
 		playerGrid.removeTempPlacement(shipId);
-	ship->changeState(ship::shipCell::state::normal);
+	ship->changeState(shipCellState::normal);
 	return false;
 }
 
@@ -60,7 +61,7 @@ bool gridManager::placeShip(ship* ship)
 {
 	auto& playerGrid = _ui->get<grid>(_playerGridId);
 	uint32_t shipId = ship->getId();
-	if (!playerGrid.isPlaced(shipId) || ship->getState() == ship::shipCell::placingDenied) {
+	if (!playerGrid.isPlaced(shipId) || ship->getState() == shipCellState::placingDenied) {
 		auto& bind = _ui->getBindings(shipId).begin();
 		auto& count = _ui->get<counter>(*_ui->getBindings(shipId).begin());
 		--count;
@@ -72,7 +73,7 @@ bool gridManager::placeShip(ship* ship)
 		playerGrid.acceptPlacing(shipId);
 		_ui->bind(shipId, _playerGridId);
 	}
-	ship->changeState(ship::shipCell::state::normal);
+	ship->changeState(shipCellState::normal);
 	return true;
 }
 
@@ -85,6 +86,59 @@ bool gridManager::removeShip(ship* ship)
 		_ui->unBind(shipId, _playerGridId);
 	}
 	return true;
+}
+
+uint32_t gridManager::createPlayerShip(elementType shipType)
+{
+	auto& curGrid = _ui->get<grid>(getPlayerGrid());
+	const glm::vec2& size = curGrid.getSize();
+	const glm::vec3& gridPos = curGrid.getPos();
+
+	uint32_t shipId = -1;
+	std::string name = (curGrid.getName());
+	switch (shipType) {
+		case ship1Element:
+			name.append("ship1_");
+			name.append(1, '1' + _ui->checkTypeCap(shipType));
+			shipId = _ui->push<ship1>(ship1(name, gridPos,
+				size, { { "cherry","cherryApproved","cherryDenied","frame" } },
+				[this](ship* ship) {return removeShip(ship); },
+				[this](ship* ship) {return placeShip(ship); },
+				[this](ship* ship) {return gridCalculate(ship); }
+			));
+			break;
+		case ship2Element:
+			name.append("ship2_");
+			name.append(1, '1' + _ui->checkTypeCap(shipType));
+			shipId = _ui->push<ship2>(ship2(name, gridPos,
+				size, { { "cherry","cherryApproved","cherryDenied","frame" } },
+				[this](ship* ship) {return removeShip(ship); },
+				[this](ship* ship) {return placeShip(ship); },
+				[this](ship* ship) {return gridCalculate(ship); }
+			));
+			break;
+		case ship3Element:
+			name.append("ship3_");
+			name.append(1, '1' + _ui->checkTypeCap(shipType));
+			shipId = _ui->push<ship3>(ship3(name, gridPos,
+				size, { { "cherry","cherryApproved","cherryDenied","frame" } },
+				[this](ship* ship) {return removeShip(ship); },
+				[this](ship* ship) {return placeShip(ship); },
+				[this](ship* ship) {return gridCalculate(ship); }
+			));
+			break;
+		case ship4Element:
+			name.append("ship4_");
+			name.append(1, '1' + _ui->checkTypeCap(shipType));
+			shipId = _ui->push<ship4>(ship4(name, gridPos,
+				size, { { "cherry","cherryApproved","cherryDenied","frame" } },
+				[this](ship* ship) {return removeShip(ship); },
+				[this](ship* ship) {return placeShip(ship); },
+				[this](ship* ship) {return gridCalculate(ship); }
+			));
+			break;
+	}
+	return shipId;
 }
 
 uint32_t gridManager::createShip(uint32_t gridId, elementType shipType)
@@ -153,40 +207,82 @@ void gridManager::autoPlace(uint32_t gridId)
 			_ui->bind(_ui->activateFirst((elementType)type), gridId);
 
 	for (auto& id : _ui->getBindings(gridId)) {
-		ship& item = static_cast<ship&>(_ui->get(id));
-		item.setDragging(false);
-		glm::i32vec2 startIdx(0), endIdx(0);
-		float rotation = 0.0f;
-		bool isPlaced = false;
-		const int MAX_ATTEMPTS = 100;
-		int attempts = 0;
-		int c, s;
-		if (!curGrid.isPlaced(id)) {
-			do {
-				attempts++;
-				rotation = (rand() % 2 != 0) ? glm::radians(90.0f) : 0.0f;
-				startIdx = { rand() % columns,rand() % rows };
+		auto& it = _ui->get(id);
+		ship* item = dynamic_cast<ship*>(&_ui->get(id));
+		if (item != nullptr) {
+			item->changeShipState(shipState::normal);
+			glm::i32vec2 startIdx(0), endIdx(0);
+			float rotation = 0.0f;
+			bool isPlaced = false;
+			const int MAX_ATTEMPTS = 100;
+			int attempts = 0;
+			int c, s;
+			if (!curGrid.isPlaced(id)) {
+				do {
+					attempts++;
+					rotation = (rand() % 2 != 0) ? glm::radians(90.0f) : 0.0f;
+					startIdx = { rand() % columns,rand() % rows };
 
-				c = glm::cos(rotation), s = glm::sin(rotation);
-				endIdx = { startIdx.x + (item.length() - 1) * c,startIdx.y + (item.length() - 1) * s };
+					c = (int)glm::cos(rotation), s = (int)glm::sin(rotation);
+					endIdx = { startIdx.x + (item->length() - 1) * c,startIdx.y + (item->length() - 1) * s };
 
-				if (endIdx.x > -1 && endIdx.y > -1 && endIdx.x < (int)columns && endIdx.y < (int)rows) {
+					if (endIdx.x > -1 && endIdx.y > -1 && endIdx.x < (int)columns && endIdx.y < (int)rows) {
 
-					glm::i32vec2 areaB = { startIdx.x - 1,startIdx.y - 1 }, areaE = { endIdx.x + 1, endIdx.y + 1 };
-					areaB.x = std::clamp(areaB.x, 0, (int)columns - 1);
-					areaB.y = std::clamp(areaB.y, 0, (int)rows - 1);
-					areaE.x = std::clamp(areaE.x, 0, (int)columns - 1);
-					areaE.y = std::clamp(areaE.y, 0, (int)rows - 1);
+						glm::i32vec2 areaB = { startIdx.x - 1,startIdx.y - 1 }, areaE = { endIdx.x + 1, endIdx.y + 1 };
+						areaB.x = std::clamp(areaB.x, 0, (int)columns - 1);
+						areaB.y = std::clamp(areaB.y, 0, (int)rows - 1);
+						areaE.x = std::clamp(areaE.x, 0, (int)columns - 1);
+						areaE.y = std::clamp(areaE.y, 0, (int)rows - 1);
 
-					isPlaced = !curGrid.isOccupied(areaB, areaE);
+						isPlaced = !curGrid.isOccupied(areaB, areaE);
+					}
+				} while (!isPlaced && attempts < MAX_ATTEMPTS);
+				if (isPlaced) {
+					item->setRotation(rotation);
+					item->setPos({ gridPos.x + startIdx.x * size.x, gridPos.y - startIdx.y * size.y, gridPos.z + 0.1f });
+					curGrid.addPlacement(id, startIdx, endIdx);
 				}
-			} while (!isPlaced && attempts < MAX_ATTEMPTS);
-			if (isPlaced) {
-				item.setRotation(rotation);
-				item.setPos({ gridPos.x + startIdx.x * size.x, gridPos.y - startIdx.y * size.y, gridPos.z + 0.1f });
-				curGrid.addPlacement(id, startIdx, endIdx);
 			}
 		}
 	}
-	_ui->unBindAll(gridId);
+}
+
+bool gridManager::attack(uint32_t gridId, uint32_t maskId, uint32_t x, uint32_t y)
+{
+	auto& curGrid = _ui->get<grid>(gridId);
+	maskLayer* curMask = nullptr;
+	if (maskId != -1) {
+		curMask = &_ui->get<maskLayer>(maskId);
+		curMask->setCellVisibility(y * curMask->getRowCount() + x, false);
+	}
+
+	curGrid.changeState({ x,y }, grid::gridCell::state::shot);
+	uint32_t shipId = curGrid.getItemAt({ x, y });
+	if (shipId != -1) {
+		auto& attackedShip = static_cast<ship&>(_ui->get(shipId));
+		auto& [shipStart, shipEnd] = curGrid.getPlacement(shipId);
+
+		attackedShip.changeState(x - shipStart.x + y - shipStart.y, shipCellState::shot);
+		if (attackedShip.getShipState() == shipState::destroyed && curMask != nullptr)
+			curMask->setCellVisibility(shipStart, shipEnd, false);
+
+		return true;
+	}
+
+	return false;
+}
+
+bool gridManager::autoAttack(uint32_t gridId, uint32_t maskId)
+{
+	auto& curGrid = _ui->get<grid>(gridId);
+	uint32_t rows = curGrid.getRowCount(), columns = curGrid.getColumnCount();
+
+	glm::i32vec2 pos;
+	do {
+		pos.x = rand() % columns; pos.y = rand() % rows;
+
+	} while (curGrid.getState(pos) == grid::gridCell::state::shot);
+
+	
+	return attack(gridId, maskId, pos.x, pos.y);
 }

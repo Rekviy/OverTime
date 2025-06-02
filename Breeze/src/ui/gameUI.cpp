@@ -70,45 +70,64 @@ uint32_t gameUI::checkTypeActiveCap(elementType type) const
 	return _pool.checkTypeActiveCap(type);
 }
 
-bool gameUI::bind(uint32_t elementId, uint32_t bindTo)
+bool gameUI::bind(uint32_t childId, uint32_t ParentId)
 {
-	auto& itE = _pool.find(elementId);
-	auto& itB = _pool.find(bindTo);
-	if (itE == _pool.end() || itB == _pool.end())
-		return false;
-	_bindings[itB->first].push_back(itE->first);
+	auto& child = _pool.find(childId), parent = _pool.find(ParentId);
+	if (child != _pool.end() || parent != _pool.end()) {
 
-	return true;
-}
-bool gameUI::unBind(uint32_t elementId, uint32_t unBindFrom)
-{
-	auto& itB = _bindings.find(unBindFrom);
-	if (itB == _bindings.end())
-		return false;
+		_bindings[parent->first].push_back(child->first);
+		_parents[child->first].push_back(parent->first);
 
-	for (auto& it = itB->second.begin(); it != itB->second.end(); ++it) {
-		if (*it == elementId) {
-			itB->second.erase(it);
-			return true;
-		}
+		return true;
 	}
+	return false;
+}
+bool gameUI::unBind(uint32_t childId, uint32_t ParentId)
+{
+	auto& childrensIt = _bindings.find(ParentId), parentsIt = _parents.find(childId);
 
+	if (childrensIt != _bindings.end() && parentsIt != _parents.end()) {
+
+		childrensIt->second.erase(std::remove(childrensIt->second.begin(), childrensIt->second.end(), childId), childrensIt->second.end());
+		if (childrensIt->second.empty())
+			_bindings.erase(ParentId);
+
+		parentsIt->second.erase(std::remove(parentsIt->second.begin(), parentsIt->second.end(), ParentId), parentsIt->second.end());
+		if (childrensIt->second.empty())
+			_parents.erase(childId);
+		return true;
+	}
 	return false;
 }
 
 bool gameUI::unBindAll(uint32_t unBindFrom)
 {
 	auto& it = _bindings.find(unBindFrom);
-	if (it == _bindings.end())
-		return false;
-	it->second.clear();
-	return true;
+	if (it != _bindings.end()) {
+		for (auto& child : it->second) {
+			auto& childVec = _parents.find(child)->second;
+			childVec.erase(std::remove(childVec.begin(), childVec.end(), unBindFrom), childVec.end());
+			if (childVec.empty())
+				_parents.erase(child);
+		}
+		_bindings.erase(it);
+		return true;
+	}
+	return false;
 }
-const std::vector<uint32_t>& gameUI::getBindings(uint32_t element)
+const std::vector<uint32_t>& gameUI::getBindings(uint32_t ParentId)
 {
-	auto& it = _bindings.find(element);
+	auto& it = _bindings.find(ParentId);
 
 	OT_ASSERT(it != _bindings.end(), "Element doesn't binded!");
+	return it->second;
+}
+
+const std::vector<uint32_t>& gameUI::getParents(uint32_t childId)
+{
+	auto& it = _parents.find(childId);
+
+	OT_ASSERT(it != _parents.end(), "Element doesn't binded!");
 	return it->second;
 }
 
@@ -153,15 +172,25 @@ void gameUI::onImGuiRender()
 
 		ImGui::NewLine();
 
-		ImGui::Text("Visibility: %s", item.isVisible() ? "True" : "False");
+		ImGui::Text("Visibility: %s", item.checkFlag(elementFlags::visible) ? "True" : "False");
 		ImGui::SameLine(0.0f, spacing);
 		if (ImGui::Button("Show"))
-			item.setVisibility(true);
+			item.setFlag(elementFlags::visible);
 		ImGui::SameLine(0.0f, spacing);
 		if (ImGui::Button("Hide"))
-			item.setVisibility(false);
+			item.dropFlag(elementFlags::visible);
 		ImGui::NewLine();
-		ImGui::Text("Active: %s", item.isActive() ? "True" : "False");
+
+		ImGui::Text("Blocked: %s", item.checkFlag(elementFlags::blocked) ? "True" : "False");
+		ImGui::SameLine(0.0f, spacing);
+		if (ImGui::Button("Block"))
+			item.setFlag(elementFlags::blocked);
+		ImGui::SameLine(0.0f, spacing);
+		if (ImGui::Button("Unblock"))
+			item.dropFlag(elementFlags::blocked);
+		ImGui::NewLine();
+
+		ImGui::Text("Active: %s", item.checkFlag(elementFlags::active) ? "True" : "False");
 		ImGui::SameLine(0.0f, spacing);
 		if (ImGui::Button("Activate"))
 			_pool.activate(item.getId());
@@ -169,7 +198,6 @@ void gameUI::onImGuiRender()
 		if (ImGui::Button("Deactivate"))
 			_pool.deactivate(item.getId());
 		ImGui::NewLine();
-
 		glm::vec3 pos = item.getPos();
 
 		ImGui::Text("Position: x=%f y=%f z=%f", pos.x, pos.y, pos.z);

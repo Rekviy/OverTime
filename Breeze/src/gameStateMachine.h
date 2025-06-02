@@ -15,6 +15,10 @@ class grid;
 class gsm : public stateMachine {
 public:
 	gsm();
+	~gsm();
+	virtual int init() override;
+	virtual int shutdown() override;
+
 	virtual void enterState(gameState newState) override;
 	void pushState(gameState newState);
 	void popState();
@@ -29,7 +33,6 @@ private:
 	bool finishPlanningBtn(button* btn);
 
 	bool addShip(button* btn, elementType shipType);
-	uint32_t createPlayerShip(elementType shipType);
 	gridManager _gridManager;
 	overtime::ref<gameUI> _ui;
 	//gameState _currentState = gameState::unknown;

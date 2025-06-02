@@ -20,12 +20,14 @@ void grid::gridCell::changeState(state newState)
 grid::grid(const std::string& name, uint32_t rowCount, uint32_t columnCount, const glm::vec3& startPosition, const glm::vec2& gridCellSize, const std::vector<std::vector<std::string>>& keys)
 	:interactElement(name), _rowCount(rowCount), _columnCount(columnCount), _pos(startPosition), _size(gridCellSize)
 {
-	_storage.reserve(rowCount * columnCount);
+	uint32_t count = rowCount * columnCount;
+	_storage.reserve(count);
 	//todo add checking for row * column counts > 0
-	for (uint32_t i = 0, style = 0; i < _storage.capacity(); ++i, ++style) {
+	for (uint32_t i = 0, style = 0; i < count; ++i, ++style) {
 		style %= keys.size();
 		_storage.emplace_back(gridCell(keys.at(style)));
 	}
+	deactivate();
 }
 
 grid::~grid()
@@ -33,7 +35,7 @@ grid::~grid()
 
 void grid::onRender()
 {
-	if (_isVisible) {
+	if (_status & elementFlags::visible) {
 		uint32_t x = 0, y = 0;
 
 		for (auto& item : _storage) {
@@ -167,14 +169,24 @@ void grid::changeState(const glm::i32vec2& begin, const glm::i32vec2& end, gridC
 {
 	for (int i = begin.y; i < end.y; i++) {
 		for (int j = begin.x; j < end.x; j++) {
-			_storage.at(i * _rowCount + j).changeState(newState);
+			_storage[i * _rowCount + j].changeState(newState);
 		}
 	}
 }
 
+void grid::changeState(const glm::i32vec2& cellPos, gridCell::state newState)
+{
+	_storage[cellPos.y * _rowCount + cellPos.x].changeState(newState);
+}
+
+void grid::changeState(uint32_t cellIndex, gridCell::state newState)
+{
+	_storage[cellIndex].changeState(newState);
+}
+
 void grid::onEvent(overtime::event& event)
 {
-	if (_isActive) {
+	if (!(_status & elementFlags::blocked)) {
 		eventDispatcher dispatcher(event);
 
 	}

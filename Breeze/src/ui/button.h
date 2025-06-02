@@ -17,7 +17,7 @@ public:
 	virtual inline const glm::vec2& getSize() const override { return _size; }
 	virtual inline void setPos(const glm::vec3& newPos) override { _pos = newPos; updateBounds(); }
 	virtual inline void setSize(const glm::vec2& newSize) override { _size = newSize; updateBounds(); }
-	virtual void activate() override { _isVisible = _isActive = true; updateBounds(); }
+	virtual void activate() override { interactElement::activate(); updateBounds(); }
 	virtual void onEvent(overtime::event& event) override;
 	enum state {
 		idle = 0, hover, clicked
