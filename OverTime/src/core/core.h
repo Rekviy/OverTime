@@ -2,6 +2,13 @@
 #ifndef CORE_H
 #define CORE_H
 #include <memory>
+namespace overtime {
+	template<typename T>
+	using ref = std::shared_ptr<T>;
+
+	template<typename T>
+	using scope = std::unique_ptr<T>;
+}
 	#ifdef OT_DEBUG
 		#define OT_ENABLE_ASSERTS
 	#endif
@@ -18,12 +25,6 @@
 
 #define OT_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
 
-namespace overtime {
-	template<typename T>
-	using ref = std::shared_ptr<T>;
 
-	template<typename T>
-	using scope = std::unique_ptr<T>;
-}
 
 #endif

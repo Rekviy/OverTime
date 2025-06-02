@@ -16,7 +16,7 @@ counter::~counter()
 
 void counter::onRender()
 {
-	if(_isVisible)
+	if(_status & elementFlags::visible)
 		renderer2D::drawSquad(_pos, _size, _style->_color, _style->_texture, _style->_textureSize);
 }
 

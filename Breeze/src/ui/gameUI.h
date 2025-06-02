@@ -5,7 +5,7 @@
 #include "interactElement.h"
 #include "objectPool.h"
 #include <overtime.h>
-#include <map>
+#include <unordered_map>
 
 
 
@@ -16,7 +16,7 @@ public:
 	template<typename T, typename... Args>
 	uint32_t push(Args&&... args)
 	{
-		OT_ASSERT(std::is_base_of<interactElement, T>::value, "class is not derived from interactElement!");
+		OT_ASSERT((std::is_base_of<interactElement, T>::value), "class is not derived from interactElement!");
 		return _pool.push(std::make_unique<T>(std::forward<Args>(args)...));
 	}
 	uint32_t push(overtime::scope<interactElement> element)
@@ -51,17 +51,19 @@ public:
 	inline uint32_t getTypeCap(elementType type) const { return _pool.getTypeCap(type); }
 	inline uint32_t getTypeActiveCap(elementType type) const { return  _pool.getTypeActiveCap(type);}
 
-	bool bind(uint32_t elementId, uint32_t bindTo);
-	bool unBind(uint32_t elementId, uint32_t unBindFrom);
+	bool bind(uint32_t childId, uint32_t ParentId);
+	bool unBind(uint32_t childId, uint32_t ParentId);
 	bool unBindAll(uint32_t unBindFrom);
-	const std::vector<uint32_t>& getBindings(uint32_t element);
+	const std::vector<uint32_t>& getBindings(uint32_t ParentId);
+	const std::vector<uint32_t>& getParents(uint32_t childId);
 	inline const objectPool& getPool() const { return _pool; }
 	void onRender();
 	void onImGuiRender();
 	void onEvent(overtime::event& event);
 private:
 	objectPool _pool;
-	std::map<uint32_t, std::vector<uint32_t>> _bindings;
+	std::unordered_map<uint32_t, std::vector<uint32_t>> _bindings;
+	std::unordered_map<uint32_t, std::vector<uint32_t>> _parents;
 
 };
 

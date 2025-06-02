@@ -29,13 +29,13 @@ void button::updateBounds()
 
 void button::onRender()
 {
-	if (_isVisible)
+	if (_status & elementFlags::visible)
 		renderer2D::drawSquad(_pos, _size, _style->_color, _style->_texture, _style->_textureSize);
 }
 
 void button::onEvent(overtime::event& event)
 {
-	if (_isActive) {
+	if (!(_status & elementFlags::blocked)) {
 		eventDispatcher dispatcher(event);
 		dispatcher.dispatch<windowResizeEvent>(OT_BIND_EVENT_FN(button::onWindowResize));
 		dispatcher.dispatch<mouseMovedEvent>(OT_BIND_EVENT_FN(button::onMouseMoved));

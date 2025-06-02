@@ -23,7 +23,7 @@ uint32_t objectPool::push(overtime::scope<interactElement> element)
 
 		_typeKeys[type].push_back(it->first);
 
-		if (it->second->isActive() && _typeActiveKeys[type].size() < _typeActiveCaps[type]) {
+		if (it->second->checkFlag(elementFlags::active) && _typeActiveKeys[type].size() < _typeActiveCaps[type]) {
 			_typeActiveKeys[type].push_back(it->first);
 			zSort(_typeActiveKeys[type].begin(), _typeActiveKeys[type].end());
 		}
@@ -69,7 +69,7 @@ void objectPool::activateAll()
 
 void objectPool::activate(uint32_t id)
 {
-	if (!_storage.at(id)->isActive()) {
+	if (!_storage.at(id)->checkFlag(elementFlags::active)) {
 		auto type = _storage.at(id)->getType();
 		if (_typeActiveKeys[type].size() < _typeActiveCaps[type]) {
 			_storage.at(id)->activate();
@@ -84,7 +84,7 @@ uint32_t objectPool::activateFirst(elementType type)
 {
 	if (_typeActiveKeys[type].size() < _typeActiveCaps[type]) {
 		for (auto id : _typeKeys[type]) {
-			if (!_storage.at(id)->isActive()) {
+			if (!_storage.at(id)->checkFlag(elementFlags::active)) {
 				activate(id);
 				return id;
 			}
@@ -106,7 +106,7 @@ void objectPool::deactivateAll()
 
 void objectPool::deactivate(uint32_t id)
 {
-	if (_storage.at(id)->isActive()) {
+	if (_storage.at(id)->checkFlag(elementFlags::active)) {
 		_storage.at(id)->deactivate();
 		auto& activeVec = _typeActiveKeys[_storage.at(id)->getType()];
 		auto& vecIt = std::find(activeVec.begin(), activeVec.end(), id);
@@ -135,7 +135,7 @@ std::vector<overtime::scope<interactElement>> objectPool::setTypeCap(elementType
 
 		for (uint32_t i = diff; i > 0;) {
 			auto& it = vec.begin() + --i;
-			if (_storage.at(*it)->isActive()) deactivate(*it);
+			if (_storage.at(*it)->checkFlag(elementFlags::active)) deactivate(*it);
 
 			removed.push_back(std::move(_storage.extract(*it).mapped()));
 			vec.erase(it);
@@ -160,6 +160,8 @@ std::vector<uint32_t> objectPool::setTypeActiveCap(elementType type, uint32_t ne
 		}
 		activeVec.erase(itStart, itEnd);
 	}
+	else if (_typeCaps[type] < newCap)
+		setTypeCap(type, newCap);
 	_typeActiveCaps[type] = newCap;
 	return deactivated;
 }

@@ -14,8 +14,9 @@ src/ui/interactElement.cpp
 src/ui/counter.cpp
 src/ui/objectPool.cpp
 src/ui/grid.cpp
-src/gridManager.cpp
+src/ui/maskLayer.cpp
 src/ui/ship.cpp
+src/gridManager.cpp
 src/gameStateMachine.cpp
 )
 set(GAME_HEADER 
@@ -30,8 +31,9 @@ src/ui/counter.h
 src/ui/objectPool.h
 #src/ui/IObjectPool.h
 src/ui/grid.h
-src/gridManager.h
+src/ui/maskLayer.h
 src/ui/ship.h
+src/gridManager.h
 src/stateMachine.h
 src/gameStateMachine.h
 )
@@ -62,6 +64,10 @@ add_executable(${APP_NAME} ${GAME_SOURCE})
 foreach(item IN LISTS GAME_RES)
          res_mgmt(${APP_NAME} ${item})
 endforeach()
+
+target_compile_definitions(${APP_NAME} PRIVATE
+    "$<$<CONFIG:Debug>:OT_DEBUG>"
+)
 
 target_include_directories(${APP_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 

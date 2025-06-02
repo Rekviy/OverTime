@@ -15,16 +15,20 @@ public:
 	inline void setPlayerGrid(uint32_t gridId) { _playerGridId = gridId; }
 	inline void setEnemyGrid(uint32_t gridId) { _enemyGridId = gridId; }
 	inline uint32_t getPlayerGrid() const { return _playerGridId; }
-	inline uint32_t getEnemyGrid()const { return _shipReq; }
+	inline uint32_t getEnemyGrid()const { return _enemyGridId; }
 	inline void setShipRequirement(uint32_t newReq) { _shipReq = newReq; }
-	inline uint32_t getShipRequirement()const { return _enemyGridId; }
+	inline uint32_t getShipRequirement()const { return _shipReq; }
 	bool gridCalculate(ship* ship);
 	bool checkRequirement() { return (_ui->get<grid>(_playerGridId).placementCount() == _shipReq); }
 
 	bool placeShip(ship* ship);
 	bool removeShip(ship* ship);
 	uint32_t createShip(uint32_t gridId, elementType shipType);
+	uint32_t createPlayerShip(elementType shipType);
 	void autoPlace(uint32_t gridId);
+
+	bool attack(uint32_t gridId, uint32_t maskId, uint32_t x, uint32_t y);
+	bool autoAttack(uint32_t gridId, uint32_t maskId);
 private:
 	std::shared_ptr<gameUI> _ui;
 	uint32_t _playerGridId = -1;

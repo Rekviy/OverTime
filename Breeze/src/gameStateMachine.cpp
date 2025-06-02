@@ -6,6 +6,7 @@
 #include "ui/ship.h"
 #include "ui/counter.h"
 #include "ui/button.h"
+#include "ui/maskLayer.h"
 using namespace overtime;
 
 gsm::gsm()
@@ -44,7 +45,7 @@ gsm::gsm()
 	_gridManager.setShipRequirement(_ui->getTypeActiveCap(elementType::ship1Element) + _ui->getTypeActiveCap(elementType::ship2Element)
 		+ _ui->getTypeActiveCap(elementType::ship3Element) + _ui->getTypeActiveCap(elementType::ship4Element));
 	_gridManager.setPlayerGrid(
-		_ui->push<grid>(grid("playerGrid", 10, 10, { 0.0f, 240.0f,0.5f }, { 40.0f,40.0f }, { {"frame" , "cherry"} }))
+		_ui->push<grid>(grid("playerGrid", 10, 10, { -620.0f, 240.0f,0.5f }, { 40.0f,40.0f }, { {"frame" , "cherry"} }))
 	);
 	uint32_t playerGridId = _gridManager.getPlayerGrid();
 	uint32_t btnAuto = _ui->push<button>(button("auto", { -200.0f,-200.0f,0.7f }, { 100.0f,100.0f }, { "one","two","three" }, false,
@@ -113,7 +114,7 @@ gsm::gsm()
 
 	for (int type = elementType::ship4Element; type >= elementType::ship1Element; type--) {
 		while (!_ui->isTypeCapReached((elementType)type)) {
-			uint32_t id = createPlayerShip((elementType)type);
+			uint32_t id = _gridManager.createPlayerShip((elementType)type);
 			switch (type) {
 				case ship1Element: _ui->bind(count1Id, id); break;
 				case ship2Element: _ui->bind(count2Id, id); break;
@@ -135,8 +136,21 @@ gsm::gsm()
 #pragma endregion
 
 #pragma region playing
+	_gridManager.setEnemyGrid(
+		_ui->push<grid>(grid("enemyGrid", 10, 10, { 260.0f, 240.0f,0.5f }, { 40.0f,40.0f }, { {"frame" , "cherry"} }))
+	);
+	auto& enemyGrid = _ui->get<grid>(_gridManager.getEnemyGrid());
+	auto& enemyGridPos = enemyGrid.getPos();
+	uint32_t maskId = _ui->push<maskLayer>(maskLayer("enemyMask", enemyGrid.getRowCount(), enemyGrid.getColumnCount(), { enemyGridPos.x, enemyGridPos.y,enemyGridPos.z + 0.2f }, enemyGrid.getSize(),
+		{ "frame" },
+		[this](maskLayer* mask) {
+		uint32_t cellAttacked = mask->getCellClicked(), maskId = mask->getId(), rowCount = mask->getRowCount();
+		return _gridManager.attack(*_ui->getParents(maskId).begin(), maskId, cellAttacked % rowCount, cellAttacked / rowCount);
+	}));
+	_ui->bind(maskId, enemyGrid.getId());
 	_stateUI[gameState::playing] = {
-
+		enemyGrid.getId(),
+		maskId
 	};
 #pragma endregion
 #pragma region pause
@@ -147,6 +161,19 @@ gsm::gsm()
 
 	_ui->deactivateAll();
 	enterState(gameState::mainMenu);
+}
+
+gsm::~gsm()
+{}
+
+int gsm::init()
+{
+	return 0;
+}
+
+int gsm::shutdown()
+{
+	return 0;
 }
 
 void gsm::enterState(gameState newState)
@@ -194,7 +221,25 @@ void gsm::onEnter(gameState state)
 		case gameState::planning:
 			break;
 		case gameState::playing:
+			_ui->setTypeActiveCap(elementType::ship1Element, _ui->getTypeCap(elementType::ship1Element) * 2);
+			_ui->setTypeActiveCap(elementType::ship2Element, _ui->getTypeCap(elementType::ship2Element) * 2);
+			_ui->setTypeActiveCap(elementType::ship3Element, _ui->getTypeCap(elementType::ship3Element) * 2);
+			_ui->setTypeActiveCap(elementType::ship4Element, _ui->getTypeCap(elementType::ship4Element) * 2);
 
+			for (int type = elementType::ship4Element; type >= elementType::ship1Element; type--)
+				while (!_ui->isTypeCapReached((elementType)type))
+					_gridManager.createShip(_gridManager.getEnemyGrid(), (elementType)type);
+			_gridManager.autoPlace(_gridManager.getEnemyGrid());
+			for (auto childId : _ui->getBindings(_gridManager.getEnemyGrid())) {
+				auto& binded = _ui->get(childId);
+				switch (binded.getType()) {
+					case elementType::ship1Element:
+					case elementType::ship2Element:
+					case elementType::ship3Element:
+					case elementType::ship4Element:
+						binded.setFlag(elementFlags::blocked);
+				}
+			}
 			break;
 		case gameState::pause:
 			break;
@@ -212,6 +257,7 @@ void gsm::onUpdate(overtime::timeStep ts)
 
 void gsm::onRender()
 {
+	_ui->onRender();
 	switch (_stateStack.top()) {
 		case gameState::mainMenu:
 			renderer2D::drawSquad({ 0.0f,0.0f,-0.9f }, { application::getInst().getWindow().getWidth(),application::getInst().getWindow().getHeight() }, { 0.5f,0.5f,0.1f,1.0f });
@@ -224,15 +270,48 @@ void gsm::onRender()
 		case gameState::gameplay:
 			break;
 		case gameState::gameOver:
+			renderer2D::drawSquad({ 0.0f,0.0f,1.0f }, { application::getInst().getWindow().getWidth(),application::getInst().getWindow().getHeight() }, { 0.7f,0.7f,0.7f,0.5f });
 			break;
 		default:
 			break;
 	}
-	_ui->onRender();
 }
 
 void gsm::onImGuiRender()
 {
+	ImGui::Begin("gsm menu");
+	ImGui::PushItemFlag(ImGuiItemFlags_ButtonRepeat, true);
+
+	const char* stateStr;
+	switch (_stateStack.top()) {
+		case gameState::mainMenu:
+			stateStr = "mainMenu";
+			break;
+		case gameState::pause:
+			stateStr = "pause";
+			break;
+		case gameState::planning:
+			stateStr = "planning";
+			break;
+		case gameState::playing:
+			stateStr = "playing";
+			break;
+		case gameState::gameplay:
+			stateStr = "gameplay";
+			break;
+		case gameState::gameOver:
+			stateStr = "gameOver";
+			break;
+		default:
+			stateStr = "error";
+			break;
+	}
+	ImGui::Text("Current state: %s", stateStr);
+	ImGui::NewLine();
+
+
+	ImGui::PopItemFlag();
+	ImGui::End();
 	_ui->onImGuiRender();
 }
 
@@ -259,6 +338,7 @@ bool gsm::mainMenuBtn(button* btn)
 	pushState(gameState::planning);
 	return true;
 }
+
 bool gsm::finishPlanningBtn(button* btn)
 {
 	if (_gridManager.checkRequirement())
@@ -281,58 +361,6 @@ bool gsm::addShip(button* btn, elementType shipType)
 	return true;
 }
 
-uint32_t gsm::createPlayerShip(elementType shipType)
-{
-	auto& curGrid = _ui->get<grid>(_gridManager.getPlayerGrid());
-	const glm::vec2& size = curGrid.getSize();
-	const glm::vec3& gridPos = curGrid.getPos();
-
-	uint32_t shipId = -1;
-	std::string name = (curGrid.getName());
-	switch (shipType) {
-		case ship1Element:
-			name.append("ship1_");
-			name.append(1, '1' + _ui->checkTypeCap(shipType));
-			shipId = _ui->push<ship1>(ship1(name, gridPos,
-				size, { { "cherry","cherryApproved","cherryDenied","frame" } },
-				[this](ship* ship) {return _gridManager.removeShip(ship); },
-				[this](ship* ship) {return _gridManager.placeShip(ship); },
-				[this](ship* ship) {return _gridManager.gridCalculate(ship); }
-			));
-			break;
-		case ship2Element:
-			name.append("ship2_");
-			name.append(1, '1' + _ui->checkTypeCap(shipType));
-			shipId = _ui->push<ship2>(ship2(name, gridPos,
-				size, { { "cherry","cherryApproved","cherryDenied","frame" } },
-				[this](ship* ship) {return _gridManager.removeShip(ship); },
-				[this](ship* ship) {return _gridManager.placeShip(ship); },
-				[this](ship* ship) {return _gridManager.gridCalculate(ship); }
-			));
-			break;
-		case ship3Element:
-			name.append("ship3_");
-			name.append(1, '1' + _ui->checkTypeCap(shipType));
-			shipId = _ui->push<ship3>(ship3(name, gridPos,
-				size, { { "cherry","cherryApproved","cherryDenied","frame" } },
-				[this](ship* ship) {return _gridManager.removeShip(ship); },
-				[this](ship* ship) {return _gridManager.placeShip(ship); },
-				[this](ship* ship) {return _gridManager.gridCalculate(ship); }
-			));
-			break;
-		case ship4Element:
-			name.append("ship4_");
-			name.append(1, '1' + _ui->checkTypeCap(shipType));
-			shipId = _ui->push<ship4>(ship4(name, gridPos,
-				size, { { "cherry","cherryApproved","cherryDenied","frame" } },
-				[this](ship* ship) {return _gridManager.removeShip(ship); },
-				[this](ship* ship) {return _gridManager.placeShip(ship); },
-				[this](ship* ship) {return _gridManager.gridCalculate(ship); }
-			));
-			break;
-	}
-	return shipId;
-}
 
 
 

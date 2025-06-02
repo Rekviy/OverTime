@@ -10,6 +10,9 @@ enum class gameState {
 class stateMachine {
 public:
 	virtual ~stateMachine() = default;
+	virtual int init() = 0;
+	virtual int shutdown() = 0;
+
 	virtual void enterState(gameState newState) = 0;
 	virtual void onEnter(gameState state) = 0;
 	virtual void onExit(gameState state) = 0;

@@ -15,7 +15,7 @@ public:
 		};
 		gridCell(const std::vector<std::string>& keys);
 		~gridCell();
-
+		//todo move keys to grid
 		std::vector<std::string> _keys;
 		overtime::ref<themeManager::style> _style;
 		bool _isOccupied = false;
@@ -47,15 +47,22 @@ public:
 	const std::pair<glm::i32vec2, glm::i32vec2>& getPlacement(uint32_t itemId) const;
 	uint32_t getItemAt(const glm::i32vec2& position) const;
 	inline bool isPlaced(uint32_t id) const { return (_placings.find(id) != _placings.end()) || (_tempPlacings.find(id) != _tempPlacings.end()); }
-	inline uint32_t placementCount() const { return _placings.size(); }
+	inline uint32_t placementCount() const { return (uint32_t)_placings.size(); }
 
 	bool addTempPlacement(uint32_t itemId, const glm::i32vec2& begin, const glm::i32vec2& end);
 	void removeTempPlacement(uint32_t itemId);
 	bool acceptPlacing(uint32_t itemId);
 	void rejectPlacing(uint32_t itemId);
-	inline uint32_t tempPlacementCount() const { return _tempPlacings.size(); }
+	inline uint32_t tempPlacementCount() const { return (uint32_t)_tempPlacings.size(); }
 	void changeState(std::vector<gridCell>::iterator& begin, std::vector<gridCell>::iterator& end, gridCell::state newState);
 	void changeState(const glm::i32vec2& begin, const glm::i32vec2& end, gridCell::state newState);
+	void changeState(const glm::i32vec2& cellPos, gridCell::state newState);
+	void changeState(uint32_t cellIndex, gridCell::state newState);
+
+	//gridCell::state getState(std::vector<gridCell>::iterator& begin, std::vector<gridCell>::iterator& end) const;
+	//gridCell::state getState(const glm::i32vec2& begin, const glm::i32vec2& end) const;
+	gridCell::state getState(const glm::i32vec2& cellPos) const { return _storage[cellPos.y * _rowCount + cellPos.x]._currentState; }
+	gridCell::state getState(uint32_t cellIndex) const { return _storage[cellIndex]._currentState; }
 
 	virtual void onRender() override;
 	virtual void onEvent(overtime::event& event) override;

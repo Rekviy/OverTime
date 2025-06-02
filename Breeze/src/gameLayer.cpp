@@ -10,13 +10,18 @@ gameLayer::gameLayer()
 	
 }
 void gameLayer::onAttach()
-{}
+{
+	_state->init();
+}
 
 void gameLayer::onDetach()
-{}
+{
+	_state->shutdown();
+}
 
 void gameLayer::onUpdate(timeStep ts)
 {
+	_state->onUpdate(ts);
 	//render happens here
 	rendererAPI::setClearColor({ 0, 0.6f, 0.6f, 1 });
 	rendererAPI::clear();
