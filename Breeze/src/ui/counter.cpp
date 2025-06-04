@@ -22,6 +22,11 @@ void counter::onRender()
 
 void counter::onEvent(overtime::event & event)
 {}
+void counter::reset()
+{
+	_count = _start;
+	updateStyle();
+}
 //todo sync count to styles
 void counter::updateStyle()
 {

@@ -14,22 +14,37 @@ gsm::gsm()
 	_stateStack.push(gameState::unknown); _stateUI[gameState::unknown] = {};
 	_ui = std::make_shared<gameUI>();
 	_gridManager = gridManager(_ui);
-	themeManager::add("play", themeManager::style(texture2D::create("assets/resources/play.png"), 1.0f));
-	themeManager::add("playHover", themeManager::style(texture2D::create("assets/resources/playHover.png"), 1.0f));
-	themeManager::add("playClicked", themeManager::style(texture2D::create("assets/resources/playClicked.png"), 1.0f));
+	themeManager::add("play", style(texture2D::create("assets/resources/play.png"), 1.0f));
+	themeManager::add("playHover", style(texture2D::create("assets/resources/playHover.png"), 1.0f));
+	themeManager::add("playClicked", style(texture2D::create("assets/resources/playClicked.png"), 1.0f));
 
-	themeManager::add("cherry", themeManager::style(texture2D::create("assets/resources/cherry.png")));
-	themeManager::add("cherryDenied", themeManager::style(texture2D::create("assets/resources/cherry.png"), 1.0f, { 0.9f,0.1f,0.1f,0.8f }));
-	themeManager::add("cherryApproved", themeManager::style(texture2D::create("assets/resources/cherry.png"), 1.0f, { 0.1f,0.9f,0.1f,0.8f }));
-	themeManager::add("frame", themeManager::style(texture2D::create("assets/resources/frame.png")));
+	themeManager::add("cherry", style(texture2D::create("assets/resources/cherry.png")));
 
-	themeManager::add("five", themeManager::style(texture2D::create("assets/resources/five.png")));
-	themeManager::add("four", themeManager::style(texture2D::create("assets/resources/four.png")));
-	themeManager::add("three", themeManager::style(texture2D::create("assets/resources/three.png")));
-	themeManager::add("two", themeManager::style(texture2D::create("assets/resources/two.png")));
-	themeManager::add("one", themeManager::style(texture2D::create("assets/resources/one.png")));
+	themeManager::add("frame", style(texture2D::create("assets/resources/frame.png")));
+	themeManager::add("darkFrame", style(texture2D::create("assets/resources/frame.png"), 1.0f, { 0.1f,0.1f,0.1f,1.0f }));
 
+	themeManager::add("five", style(texture2D::create("assets/resources/five.png")));
+	themeManager::add("fiveDenied", style(texture2D::create("assets/resources/five.png"), 1.0f, { 0.9f,0.1f,0.1f,0.8f }));
+	themeManager::add("fiveApproved", style(texture2D::create("assets/resources/five.png"), 1.0f, { 0.1f,0.9f,0.1f,0.8f }));
 
+	themeManager::add("four", style(texture2D::create("assets/resources/four.png")));
+	themeManager::add("fourDenied", style(texture2D::create("assets/resources/four.png"), 1.0f, { 0.9f,0.1f,0.1f,0.8f }));
+	themeManager::add("fourApproved", style(texture2D::create("assets/resources/four.png"), 1.0f, { 0.1f,0.9f,0.1f,0.8f }));
+
+	themeManager::add("three", style(texture2D::create("assets/resources/three.png")));
+	themeManager::add("threeDenied", style(texture2D::create("assets/resources/three.png"), 1.0f, { 0.9f,0.1f,0.1f,0.8f }));
+	themeManager::add("threeApproved", style(texture2D::create("assets/resources/three.png"), 1.0f, { 0.1f,0.9f,0.1f,0.8f }));
+
+	themeManager::add("two", style(texture2D::create("assets/resources/two.png")));
+	themeManager::add("twoDenied", style(texture2D::create("assets/resources/two.png"), 1.0f, { 0.9f,0.1f,0.1f,0.8f }));
+	themeManager::add("twoApproved", style(texture2D::create("assets/resources/two.png"), 1.0f, { 0.1f,0.9f,0.1f,0.8f }));
+
+	themeManager::add("one", style(texture2D::create("assets/resources/one.png")));
+	themeManager::add("oneDenied", style(texture2D::create("assets/resources/one.png"), 1.0f, { 0.9f,0.1f,0.1f,0.8f }));
+	themeManager::add("oneApproved", style(texture2D::create("assets/resources/one.png"), 1.0f, { 0.1f,0.9f,0.1f,0.8f }));
+
+	themeManager::add("playerWon", style(texture2D::create("assets/resources/cherry.png")));
+	themeManager::add("enemyWon", style(texture2D::create("assets/resources/frame.png")));
 #pragma region mainMenu
 	uint32_t mainMenuBtnId = _ui->push<button>(button("mainMenuBtn",
 		{ 0.0f, 130.0f, 0.0f }, { 200.0f, 75.0f }, { "play", "playHover", "playClicked" }, true,
@@ -38,20 +53,20 @@ gsm::gsm()
 #pragma endregion
 
 #pragma region gameplay
-	_ui->setTypeCap(elementType::ship1Element, 4);
-	_ui->setTypeCap(elementType::ship2Element, 3);
-	_ui->setTypeCap(elementType::ship3Element, 2);
-	_ui->setTypeCap(elementType::ship4Element, 1);
+	_ui->setTypeCap(elementType::ship1Element, 4 * 2); _ui->setTypeActiveCap(elementType::ship1Element, _ui->getTypeCap(elementType::ship1Element) / 2);
+	_ui->setTypeCap(elementType::ship2Element, 3 * 2); _ui->setTypeActiveCap(elementType::ship2Element, _ui->getTypeCap(elementType::ship2Element) / 2);
+	_ui->setTypeCap(elementType::ship3Element, 2 * 2); _ui->setTypeActiveCap(elementType::ship3Element, _ui->getTypeCap(elementType::ship3Element) / 2);
+	_ui->setTypeCap(elementType::ship4Element, 1 * 2); _ui->setTypeActiveCap(elementType::ship4Element, _ui->getTypeCap(elementType::ship4Element) / 2);
+
 	_gridManager.setShipRequirement(_ui->getTypeActiveCap(elementType::ship1Element) + _ui->getTypeActiveCap(elementType::ship2Element)
 		+ _ui->getTypeActiveCap(elementType::ship3Element) + _ui->getTypeActiveCap(elementType::ship4Element));
+
 	_gridManager.setPlayerGrid(
 		_ui->push<grid>(grid("playerGrid", 10, 10, { -620.0f, 240.0f,0.5f }, { 40.0f,40.0f }, { {"frame" , "cherry"} }))
 	);
 	uint32_t playerGridId = _gridManager.getPlayerGrid();
-	uint32_t btnAuto = _ui->push<button>(button("auto", { -200.0f,-200.0f,0.7f }, { 100.0f,100.0f }, { "one","two","three" }, false,
-		[this](button* btn)->bool {_gridManager.autoPlace(_gridManager.getPlayerGrid()); return true; }));
+
 	_stateUI[gameState::gameplay] = {
-		btnAuto,
 		playerGridId
 	};
 #pragma endregion
@@ -59,6 +74,9 @@ gsm::gsm()
 #pragma region planning
 	glm::vec3 addBtnPos = { -100.0f, -200.0f, 0.0f };
 	glm::vec2 addBntSize = { 200.0f, 75.0f };
+
+	uint32_t btnAutoPlaceId = _ui->push<button>(button("autoPlace", { -200.0f,-200.0f,0.7f }, { 100.0f,100.0f }, { "one","two","three" }, false,
+		[this](button* btn)->bool {_gridManager.autoPlace(_gridManager.getPlayerGrid()); return true; }));
 
 	uint32_t btnship4Id = _ui->push<button>(button("ship4AddBtn",
 		{ addBtnPos.x, addBtnPos.y, addBtnPos.z }, addBntSize, { "play", "playHover", "playClicked" }, false,
@@ -125,6 +143,7 @@ gsm::gsm()
 	}
 
 	_stateUI[gameState::planning] = {
+		btnAutoPlaceId,
 		btnship4Id, count4Id,
 		btnship3Id, count3Id,
 		btnship2Id, count2Id,
@@ -139,26 +158,67 @@ gsm::gsm()
 	_gridManager.setEnemyGrid(
 		_ui->push<grid>(grid("enemyGrid", 10, 10, { 260.0f, 240.0f,0.5f }, { 40.0f,40.0f }, { {"frame" , "cherry"} }))
 	);
+
+
+
 	auto& enemyGrid = _ui->get<grid>(_gridManager.getEnemyGrid());
 	auto& enemyGridPos = enemyGrid.getPos();
 	uint32_t maskId = _ui->push<maskLayer>(maskLayer("enemyMask", enemyGrid.getRowCount(), enemyGrid.getColumnCount(), { enemyGridPos.x, enemyGridPos.y,enemyGridPos.z + 0.2f }, enemyGrid.getSize(),
-		{ "frame" },
+		{ "darkFrame" },
 		[this](maskLayer* mask) {
 		uint32_t cellAttacked = mask->getCellClicked(), maskId = mask->getId(), rowCount = mask->getRowCount();
-		return _gridManager.attack(*_ui->getParents(maskId).begin(), maskId, cellAttacked % rowCount, cellAttacked / rowCount);
-	}));
+		_isPlayerMove = (bool)_gridManager.attack(*_ui->getParents(maskId).begin(), maskId, cellAttacked % rowCount, cellAttacked / rowCount);
+		if (_gridManager.isAllDestroyed(_gridManager.getEnemyGrid())) {
+			_winningTitle = themeManager::getStyle("playerWon");
+			pushState(gameState::gameOver);
+		}
+		return true;
+	}
+	));
+
 	_ui->bind(maskId, enemyGrid.getId());
+
+	uint32_t autoAttackBtn = _ui->push<button>(button("autoAttackBtn",
+		{ 0.0f, 320.0f, 0.0f }, { 200.0f, 75.0f }, { "play", "playHover", "playClicked" }, true,
+		[this](button* mask) {
+		_isPlayerMove = (bool)_gridManager.autoAttack(_gridManager.getEnemyGrid(), *_ui->getBindings(_gridManager.getEnemyGrid()).begin());
+		if (_gridManager.isAllDestroyed(_gridManager.getEnemyGrid())) {
+			_winningTitle = themeManager::getStyle("playerWon");
+			pushState(gameState::gameOver);
+		}
+		return true;
+	}
+	));
+
+	for (int type = elementType::ship4Element; type >= elementType::ship1Element; type--)
+		while (!_ui->isTypeCapReached((elementType)type))
+			_gridManager.createShip(_gridManager.getEnemyGrid(), (elementType)type);
+
 	_stateUI[gameState::playing] = {
 		enemyGrid.getId(),
-		maskId
+		maskId,
+		autoAttackBtn
 	};
 #pragma endregion
+
 #pragma region pause
+	uint32_t btnRetryId = _ui->push<button>(button("retry", { 0.0f,0.0f,0.7f }, { 100.0f,100.0f }, { "play", "playHover", "playClicked" }, false,
+		OT_BIND_EVENT_FN(gsm::resetBtn)
+	));
+	uint32_t btnToMainMenuId = _ui->push<button>(button("toMainMenu", { -100.0f,0.0f,0.7f }, { 100.0f,100.0f }, { "one","two","three" }, false,
+		OT_BIND_EVENT_FN(gsm::toMainMenuBtn)
+	));
 	_stateUI[gameState::pause] = {
-
+		btnRetryId,btnToMainMenuId
 	};
 #pragma endregion
 
+#pragma region gameOver
+
+	_stateUI[gameState::gameOver] = {
+		btnRetryId,btnToMainMenuId
+	};
+#pragma endregion
 	_ui->deactivateAll();
 	enterState(gameState::mainMenu);
 }
@@ -221,24 +281,20 @@ void gsm::onEnter(gameState state)
 		case gameState::planning:
 			break;
 		case gameState::playing:
-			_ui->setTypeActiveCap(elementType::ship1Element, _ui->getTypeCap(elementType::ship1Element) * 2);
-			_ui->setTypeActiveCap(elementType::ship2Element, _ui->getTypeCap(elementType::ship2Element) * 2);
-			_ui->setTypeActiveCap(elementType::ship3Element, _ui->getTypeCap(elementType::ship3Element) * 2);
-			_ui->setTypeActiveCap(elementType::ship4Element, _ui->getTypeCap(elementType::ship4Element) * 2);
+			for (auto itemId : _ui->get<grid>(_gridManager.getEnemyGrid()).getAllItems()) {
+				_ui->get(itemId).setFlag(elementFlags::blocked);
+			}
 
-			for (int type = elementType::ship4Element; type >= elementType::ship1Element; type--)
-				while (!_ui->isTypeCapReached((elementType)type))
-					_gridManager.createShip(_gridManager.getEnemyGrid(), (elementType)type);
+			_ui->setTypeActiveCap(elementType::ship1Element, _ui->getTypeActiveCap(elementType::ship1Element) * 2);
+			_ui->setTypeActiveCap(elementType::ship2Element, _ui->getTypeActiveCap(elementType::ship2Element) * 2);
+			_ui->setTypeActiveCap(elementType::ship3Element, _ui->getTypeActiveCap(elementType::ship3Element) * 2);
+			_ui->setTypeActiveCap(elementType::ship4Element, _ui->getTypeActiveCap(elementType::ship4Element) * 2);
+
+
 			_gridManager.autoPlace(_gridManager.getEnemyGrid());
-			for (auto childId : _ui->getBindings(_gridManager.getEnemyGrid())) {
-				auto& binded = _ui->get(childId);
-				switch (binded.getType()) {
-					case elementType::ship1Element:
-					case elementType::ship2Element:
-					case elementType::ship3Element:
-					case elementType::ship4Element:
-						binded.setFlag(elementFlags::blocked);
-				}
+
+			for (auto itemId : _ui->get<grid>(_gridManager.getEnemyGrid()).getAllItems()) {
+				_ui->get(itemId).setFlag(elementFlags::blocked);
 			}
 			break;
 		case gameState::pause:
@@ -250,10 +306,55 @@ void gsm::onEnter(gameState state)
 }
 
 void gsm::onExit(gameState state)
-{}
+{
+	switch (state) {
+		case gameState::mainMenu:
+			break;
+		case gameState::gameplay:
+			break;
+		case gameState::planning:
+			break;
+		case gameState::playing:
+			for (auto itemId : _ui->get<grid>(_gridManager.getEnemyGrid()).getAllItems()) {
+				_ui->get(itemId).dropFlag(elementFlags::blocked);
+			}
+			_ui->setTypeActiveCap(elementType::ship1Element, _ui->getTypeCap(elementType::ship1Element) / 2);
+			_ui->setTypeActiveCap(elementType::ship2Element, _ui->getTypeCap(elementType::ship2Element) / 2);
+			_ui->setTypeActiveCap(elementType::ship3Element, _ui->getTypeCap(elementType::ship3Element) / 2);
+			_ui->setTypeActiveCap(elementType::ship4Element, _ui->getTypeCap(elementType::ship4Element) / 2);
+			break;
+		case gameState::pause:
+			break;
+		case gameState::gameOver:
+			break;
+
+	}
+
+}
 
 void gsm::onUpdate(overtime::timeStep ts)
-{}
+{
+	switch (_stateStack.top()) {
+
+		case gameState::playing:
+			if (!_isPlayerMove) {
+				auto* mask = *_ui->get<maskLayer>(_ui->getBindings(_gridManager.getEnemyGrid())).begin();
+				mask->setFlag(elementFlags::blocked);
+				//todo there will be autoAttack button deactivation
+				_isPlayerMove = !_gridManager.autoAttack(_gridManager.getPlayerGrid(), -1);
+				if (_gridManager.isAllDestroyed(_gridManager.getPlayerGrid())) {
+					pushState(gameState::gameOver);
+					_winningTitle = themeManager::getStyle("enemyWon");
+				}
+			}
+			else {
+				auto* mask = *_ui->get<maskLayer>(_ui->getBindings(_gridManager.getEnemyGrid())).begin();
+				mask->dropFlag(elementFlags::blocked);
+
+			}
+	}
+
+}
 
 void gsm::onRender()
 {
@@ -270,7 +371,8 @@ void gsm::onRender()
 		case gameState::gameplay:
 			break;
 		case gameState::gameOver:
-			renderer2D::drawSquad({ 0.0f,0.0f,1.0f }, { application::getInst().getWindow().getWidth(),application::getInst().getWindow().getHeight() }, { 0.7f,0.7f,0.7f,0.5f });
+			renderer2D::drawSquad({ 0.0f,0.0f,0.9f }, { application::getInst().getWindow().getWidth(),application::getInst().getWindow().getHeight() }, { 0.7f,0.7f,0.7f,0.5f });
+			renderer2D::drawSquad({ 0.0f,0.0f,1.0f }, { 200.0f, 50.0f }, _winningTitle->_color, _winningTitle->_texture, _winningTitle->_textureSize);
 			break;
 		default:
 			break;
@@ -307,9 +409,25 @@ void gsm::onImGuiRender()
 			break;
 	}
 	ImGui::Text("Current state: %s", stateStr);
+
+	static auto& playerGrid = _ui->get<grid>(_gridManager.getPlayerGrid());
+	if (ImGui::CollapsingHeader("Player Grid Info", ImGuiTreeNodeFlags_None)) {
+		ImGui::Text("Columns:%d rows:%d", playerGrid.getColumnCount(), playerGrid.getRowCount());
+		for (auto& item : playerGrid.getAllItems()) {
+			auto& placement = playerGrid.getPlacement(item);
+			ImGui::Text("ShipId:%d; Positions on grid: x1:%d y1:%d; x2:%d y2:%d;", item, placement.first.x, placement.first.y, placement.second.x, placement.second.y);
+		}
+	}
+	static auto& enemyGrid = _ui->get<grid>(_gridManager.getEnemyGrid());
+	if (ImGui::CollapsingHeader("Enemy Grid Info", ImGuiTreeNodeFlags_None)) {
+		ImGui::Text("Columns:%d rows:%d", enemyGrid.getColumnCount(), enemyGrid.getRowCount());
+		for (auto& item : enemyGrid.getAllItems()) {
+			auto& placement = enemyGrid.getPlacement(item);
+			ImGui::Text("ShipId:%d; Positions on grid: x1:%d y1:%d; x2:%d y2:%d;", item, placement.first.x, placement.first.y, placement.second.x, placement.second.y);
+		}
+	}
+
 	ImGui::NewLine();
-
-
 	ImGui::PopItemFlag();
 	ImGui::End();
 	_ui->onImGuiRender();
@@ -337,6 +455,47 @@ bool gsm::mainMenuBtn(button* btn)
 	enterState(gameState::gameplay);
 	pushState(gameState::planning);
 	return true;
+}
+
+//todo replace enter state and reseting with push and etc. to implement game continuation
+bool gsm::toMainMenuBtn(button* btn)
+{
+	if (_stateStack.top() == gameState::pause)
+		popState();
+	popState();
+
+	reset();
+
+	enterState(gameState::mainMenu);
+	return true;
+}
+
+bool gsm::resetBtn(button* btn)
+{
+	if (_stateStack.top() == gameState::pause)
+		popState();
+
+	reset();
+	_ui->activate(_gridManager.getPlayerGrid());
+	enterState(gameState::planning);
+	return true;
+}
+
+void gsm::reset()
+{
+	uint32_t playerGridId = _gridManager.getPlayerGrid();
+	uint32_t enemyGridId = _gridManager.getEnemyGrid();
+
+	(*_ui->get<maskLayer>(_ui->getBindings(enemyGridId)).begin())->reset();
+	auto counters = _ui->get<counter>(_stateUI[gameState::planning]);
+	for (auto count : counters)
+		count->reset();
+
+	_gridManager.resetShips(_ui->get<grid>(enemyGridId).getAllItems());
+	_gridManager.resetShips(_ui->get<grid>(playerGridId).getAllItems());
+
+	_gridManager.resetGrid(enemyGridId);
+	_gridManager.resetGrid(playerGridId);
 }
 
 bool gsm::finishPlanningBtn(button* btn)

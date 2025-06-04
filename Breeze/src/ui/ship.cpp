@@ -42,6 +42,12 @@ ship::ship(const std::string& name, const glm::vec3& position, uint32_t length, 
 ship::~ship()
 {}
 
+void ship::reset()
+{
+	changeState(shipCellState::normal);
+	changeShipState(shipState::normal);
+}
+
 void ship::onRender()
 {
 	if (_status & elementFlags::visible) {
@@ -93,7 +99,7 @@ shipCellState ship::getState() const
 {
 	int32_t temp = 0;
 	for (auto& item : _cells)
-		temp &= item.getState();
+		temp |= item.getState();
 	return (shipCellState)temp;
 }
 shipCellState ship::getState(uint32_t cell) const

@@ -22,6 +22,7 @@ void gameLayer::onDetach()
 void gameLayer::onUpdate(timeStep ts)
 {
 	_state->onUpdate(ts);
+
 	//render happens here
 	rendererAPI::setClearColor({ 0, 0.6f, 0.6f, 1 });
 	rendererAPI::clear();

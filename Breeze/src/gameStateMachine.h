@@ -31,8 +31,12 @@ public:
 private:
 	bool mainMenuBtn(button* btn);
 	bool finishPlanningBtn(button* btn);
-
+	bool toMainMenuBtn(button* btn);
+	bool resetBtn(button* btn);
+	void reset();
 	bool addShip(button* btn, elementType shipType);
+	bool _isPlayerMove = true;
+	overtime::ref<style> _winningTitle;
 	gridManager _gridManager;
 	overtime::ref<gameUI> _ui;
 	//gameState _currentState = gameState::unknown;

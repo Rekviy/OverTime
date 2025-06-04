@@ -18,6 +18,7 @@ public:
 	inline uint32_t operator++(int) { uint32_t temp; (_count < _end) ? temp = _count++ : temp = _count; updateStyle(); return temp; }
 	inline uint32_t operator--(int) { uint32_t temp; (_count > _start) ? temp = _count-- : temp = _count; updateStyle(); return temp; }
 	uint32_t count() const { return _count; }
+	void reset();
 	ELEMENT_CLASS_TYPE(counterElement)
 private:
 	
@@ -28,7 +29,7 @@ private:
 	glm::vec3 _pos;
 	glm::vec2 _size;
 	std::vector<std::string> _keys;
-	overtime::ref<themeManager::style> _style;
+	overtime::ref<style> _style;
 };
 
 #endif

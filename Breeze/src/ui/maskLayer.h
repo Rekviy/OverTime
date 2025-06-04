@@ -8,11 +8,11 @@ enum state {
 };
 class maskCell {
 public:
-	maskCell(const overtime::ref<themeManager::style> style);
+	maskCell(const overtime::ref<style> style);
 	~maskCell();
 
 	state _currentState = state::idle;
-	overtime::ref<themeManager::style> _style;
+	overtime::ref<style> _style;
 	bool _isVisible = true;
 };
 class maskLayer :public interactElement{
@@ -27,6 +27,8 @@ public:
 	virtual inline const glm::vec2& getSize() const override { return _size; }
 	virtual inline void setPos(const glm::vec3& newPos) override { _pos = newPos; }
 	virtual inline void setSize(const glm::vec2& newSize) override { _size = newSize; }
+
+	void reset();
 
 	inline void setCellVisibility(uint32_t cell, bool newVisibility) { _cells.at(cell)._isVisible = newVisibility; }
 	void setCellVisibility(const glm::i32vec2& begin, const glm::i32vec2& end, bool newVisibility);

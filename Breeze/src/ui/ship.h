@@ -16,12 +16,13 @@ public:
 		void changeState(shipCellState newState);
 		inline shipCellState getState() const { return _currentState; }
 		glm::vec3 _pos;
-		overtime::ref<themeManager::style> _style;
+		overtime::ref<style> _style;
 		std::vector<std::string> _keys;
 	private:
 		shipCellState _currentState = shipCellState::normal;
 	};
 	virtual ~ship() override;
+	void reset();
 	virtual void onRender() override;
 	virtual void onEvent(overtime::event& event) override;
 	virtual inline void activate() override;

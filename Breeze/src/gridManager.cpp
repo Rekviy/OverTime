@@ -52,7 +52,7 @@ bool gridManager::gridCalculate(ship* ship)
 		return true;
 	}
 	else if (playerGrid.isPlaced(shipId))
-		playerGrid.removeTempPlacement(shipId);
+		playerGrid.rejectPlacing(shipId);
 	ship->changeState(shipCellState::normal);
 	return false;
 }
@@ -61,17 +61,18 @@ bool gridManager::placeShip(ship* ship)
 {
 	auto& playerGrid = _ui->get<grid>(_playerGridId);
 	uint32_t shipId = ship->getId();
+	auto& count = *(_ui->get<counter>(_ui->getBindings(shipId)).begin());
 	if (!playerGrid.isPlaced(shipId) || ship->getState() == shipCellState::placingDenied) {
-		auto& bind = _ui->getBindings(shipId).begin();
-		auto& count = _ui->get<counter>(*_ui->getBindings(shipId).begin());
 		--count;
+		playerGrid.rejectPlacing(shipId);
 		_ui->deactivate(shipId);
 	}
 	else {
 		const auto& shipPos = ship->getPos();
 		ship->setPos({ shipPos.x, shipPos.y, playerGrid.getPos().z + 0.1f });
 		playerGrid.acceptPlacing(shipId);
-		_ui->bind(shipId, _playerGridId);
+		++count;
+		//_ui->bind(shipId, _playerGridId);
 	}
 	ship->changeState(shipCellState::normal);
 	return true;
@@ -83,7 +84,22 @@ bool gridManager::removeShip(ship* ship)
 	auto& playerGrid = _ui->get<grid>(_playerGridId);
 	if (playerGrid.isPlaced(shipId)) {
 		playerGrid.removePlacement(shipId);
-		_ui->unBind(shipId, _playerGridId);
+		//_ui->unBind(shipId, _playerGridId);
+		auto& count = *(_ui->get<counter>(_ui->getBindings(shipId)).begin());
+		--count;
+	}
+	return true;
+}
+
+bool gridManager::isAllDestroyed(uint32_t gridId)
+{
+	auto& curGrid = _ui->get<grid>(gridId);
+	auto ships = curGrid.getAllItems();
+
+	for (auto id : ships) {
+		auto& curShip = static_cast<ship&>(_ui->get(id));
+		if (curShip.getShipState() != shipState::destroyed)
+			return false;
 	}
 	return true;
 }
@@ -101,7 +117,7 @@ uint32_t gridManager::createPlayerShip(elementType shipType)
 			name.append("ship1_");
 			name.append(1, '1' + _ui->checkTypeCap(shipType));
 			shipId = _ui->push<ship1>(ship1(name, gridPos,
-				size, { { "cherry","cherryApproved","cherryDenied","frame" } },
+				size, { {"one","oneApproved","oneDenied","play"} },
 				[this](ship* ship) {return removeShip(ship); },
 				[this](ship* ship) {return placeShip(ship); },
 				[this](ship* ship) {return gridCalculate(ship); }
@@ -111,7 +127,7 @@ uint32_t gridManager::createPlayerShip(elementType shipType)
 			name.append("ship2_");
 			name.append(1, '1' + _ui->checkTypeCap(shipType));
 			shipId = _ui->push<ship2>(ship2(name, gridPos,
-				size, { { "cherry","cherryApproved","cherryDenied","frame" } },
+				size, { {"one","oneApproved","oneDenied","play"},{"two","twoApproved","twoDenied","play"} },
 				[this](ship* ship) {return removeShip(ship); },
 				[this](ship* ship) {return placeShip(ship); },
 				[this](ship* ship) {return gridCalculate(ship); }
@@ -121,7 +137,7 @@ uint32_t gridManager::createPlayerShip(elementType shipType)
 			name.append("ship3_");
 			name.append(1, '1' + _ui->checkTypeCap(shipType));
 			shipId = _ui->push<ship3>(ship3(name, gridPos,
-				size, { { "cherry","cherryApproved","cherryDenied","frame" } },
+				size, { {"one","oneApproved","oneDenied","play"},{"two","twoApproved","twoDenied","play"}, {"three","threeApproved","threeDenied","play"} },
 				[this](ship* ship) {return removeShip(ship); },
 				[this](ship* ship) {return placeShip(ship); },
 				[this](ship* ship) {return gridCalculate(ship); }
@@ -131,7 +147,7 @@ uint32_t gridManager::createPlayerShip(elementType shipType)
 			name.append("ship4_");
 			name.append(1, '1' + _ui->checkTypeCap(shipType));
 			shipId = _ui->push<ship4>(ship4(name, gridPos,
-				size, { { "cherry","cherryApproved","cherryDenied","frame" } },
+				size, { {"one","oneApproved","oneDenied","play"},{"two","twoApproved","twoDenied","play"}, {"three","threeApproved","threeDenied","play"},{"four","fourApproved","fourDenied","play"} },
 				[this](ship* ship) {return removeShip(ship); },
 				[this](ship* ship) {return placeShip(ship); },
 				[this](ship* ship) {return gridCalculate(ship); }
@@ -155,7 +171,7 @@ uint32_t gridManager::createShip(uint32_t gridId, elementType shipType)
 			name.append("ship1_");
 			name.append(1, '1' + _ui->checkTypeCap(shipType));
 			shipId = _ui->push<ship1>(ship1(name, { 0.0f, 0.0f, gridPos.z + 0.1f },
-				size, { { "cherry","cherryApproved","cherryDenied","frame" } },
+				size, { {"one","oneApproved","oneDenied","play"} },
 				[this](ship* ship) {return false; },
 				[this](ship* ship) {return false; },
 				[this](ship* ship) {return false; }
@@ -165,7 +181,7 @@ uint32_t gridManager::createShip(uint32_t gridId, elementType shipType)
 			name.append("ship2_");
 			name.append(1, '1' + _ui->checkTypeCap(shipType));
 			shipId = _ui->push<ship2>(ship2(name, { 0.0f, 0.0f, gridPos.z + 0.1f },
-				size, { { "cherry","cherryApproved","cherryDenied","frame" } },
+				size, { {"one","oneApproved","oneDenied","play"},{"two","twoApproved","twoDenied","play"} },
 				[this](ship* ship) {return false; },
 				[this](ship* ship) {return false; },
 				[this](ship* ship) {return false; }
@@ -175,7 +191,7 @@ uint32_t gridManager::createShip(uint32_t gridId, elementType shipType)
 			name.append("ship3_");
 			name.append(1, '1' + _ui->checkTypeCap(shipType));
 			shipId = _ui->push<ship3>(ship3(name, { 0.0f, 0.0f, gridPos.z + 0.1f },
-				size, { { "cherry","cherryApproved","cherryDenied","frame" } },
+				size, { {"one","oneApproved","oneDenied","play"},{"two","twoApproved","twoDenied","play"}, {"three","threeApproved","threeDenied","play"} },
 				[this](ship* ship) {return false; },
 				[this](ship* ship) {return false; },
 				[this](ship* ship) {return false; }
@@ -185,7 +201,7 @@ uint32_t gridManager::createShip(uint32_t gridId, elementType shipType)
 			name.append("ship4_");
 			name.append(1, '1' + _ui->checkTypeCap(shipType));
 			shipId = _ui->push<ship4>(ship4(name, { 0.0f, 0.0f, gridPos.z + 0.1f },
-				size, { { "cherry","cherryApproved","cherryDenied","frame" } },
+				size, { {"one","oneApproved","oneDenied","play"},{"two","twoApproved","twoDenied","play"}, {"three","threeApproved","threeDenied","play"},{"four","fourApproved","fourDenied","play"} },
 				[this](ship* ship) {return false; },
 				[this](ship* ship) {return false; },
 				[this](ship* ship) {return false; }
@@ -202,12 +218,12 @@ void gridManager::autoPlace(uint32_t gridId)
 	const glm::vec2& size = curGrid.getSize();
 	const glm::vec3& gridPos = curGrid.getPos();
 
-	for (int type = elementType::ship4Element; type >= elementType::ship1Element; type--)
+	for (int type = elementType::ship1Element; type <= elementType::ship4Element; type++)
 		while (!_ui->isTypeActiveCapReached((elementType)type))
 			_ui->bind(_ui->activateFirst((elementType)type), gridId);
-
-	for (auto& id : _ui->getBindings(gridId)) {
-		auto& it = _ui->get(id);
+	auto& idVec = _ui->getBindings(gridId);
+	for (uint32_t i = idVec.size(); i > 0; i--) {
+		uint32_t id = idVec[i - 1];
 		ship* item = dynamic_cast<ship*>(&_ui->get(id));
 		if (item != nullptr) {
 			item->changeShipState(shipState::normal);
@@ -241,10 +257,18 @@ void gridManager::autoPlace(uint32_t gridId)
 					item->setRotation(rotation);
 					item->setPos({ gridPos.x + startIdx.x * size.x, gridPos.y - startIdx.y * size.y, gridPos.z + 0.1f });
 					curGrid.addPlacement(id, startIdx, endIdx);
+					auto count = _ui->get<counter>(_ui->getBindings(id));
+					if (!count.empty())
+						++(*count.begin());
+				}
+				else {
+					_ui->deactivate(id);
 				}
 			}
+			_ui->unBind(id, gridId);
 		}
 	}
+
 }
 
 bool gridManager::attack(uint32_t gridId, uint32_t maskId, uint32_t x, uint32_t y)
@@ -263,8 +287,17 @@ bool gridManager::attack(uint32_t gridId, uint32_t maskId, uint32_t x, uint32_t 
 		auto& [shipStart, shipEnd] = curGrid.getPlacement(shipId);
 
 		attackedShip.changeState(x - shipStart.x + y - shipStart.y, shipCellState::shot);
-		if (attackedShip.getShipState() == shipState::destroyed && curMask != nullptr)
-			curMask->setCellVisibility(shipStart, shipEnd, false);
+		if (attackedShip.getShipState() == shipState::destroyed && curMask != nullptr) {
+			uint32_t rows = curGrid.getRowCount();
+			uint32_t columns = curGrid.getColumnCount();
+			glm::i32vec2 areaB = { shipStart.x - 1,shipStart.y - 1 }, areaE = { shipEnd.x + 1, shipEnd.y + 1 };
+			areaB.x = std::clamp(areaB.x, 0, (int)columns - 1);
+			areaB.y = std::clamp(areaB.y, 0, (int)rows - 1);
+			areaE.x = std::clamp(areaE.x, 0, (int)columns - 1);
+			areaE.y = std::clamp(areaE.y, 0, (int)rows - 1);
+
+			curMask->setCellVisibility(areaB, areaE, false);
+		}
 
 		return true;
 	}
@@ -283,6 +316,22 @@ bool gridManager::autoAttack(uint32_t gridId, uint32_t maskId)
 
 	} while (curGrid.getState(pos) == grid::gridCell::state::shot);
 
-	
+
 	return attack(gridId, maskId, pos.x, pos.y);
+}
+
+void gridManager::resetGrid(uint32_t gridId)
+{
+	auto& curGrid = _ui->get<grid>(gridId);
+	curGrid.reset();
+	_ui->deactivate(gridId);
+}
+
+void gridManager::resetShips(std::vector<uint32_t>& ships)
+{
+	for (auto id : ships) {
+		auto& curShip = static_cast<ship&>(_ui->get(id));
+		curShip.reset();
+		_ui->deactivate(id);
+	}
 }

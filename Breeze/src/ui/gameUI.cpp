@@ -93,7 +93,7 @@ bool gameUI::unBind(uint32_t childId, uint32_t ParentId)
 			_bindings.erase(ParentId);
 
 		parentsIt->second.erase(std::remove(parentsIt->second.begin(), parentsIt->second.end(), ParentId), parentsIt->second.end());
-		if (childrensIt->second.empty())
+		if (parentsIt->second.empty())
 			_parents.erase(childId);
 		return true;
 	}
@@ -117,10 +117,10 @@ bool gameUI::unBindAll(uint32_t unBindFrom)
 }
 const std::vector<uint32_t>& gameUI::getBindings(uint32_t ParentId)
 {
-	auto& it = _bindings.find(ParentId);
-
-	OT_ASSERT(it != _bindings.end(), "Element doesn't binded!");
-	return it->second;
+	//auto& it = _bindings.find(ParentId);
+	//temp
+	//OT_ASSERT(it != _bindings.end(), "Element doesn't binded!");
+	return _bindings[ParentId];
 }
 
 const std::vector<uint32_t>& gameUI::getParents(uint32_t childId)

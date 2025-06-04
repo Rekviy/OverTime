@@ -33,6 +33,17 @@ grid::grid(const std::string& name, uint32_t rowCount, uint32_t columnCount, con
 grid::~grid()
 {}
 
+void grid::reset()
+{
+	changeState(_storage.begin(), _storage.end(), gridCell::state::normal);
+	for (auto it = _placings.rend(); it != _placings.rbegin();) {
+		removePlacement((--it)->first);
+	}
+	for (auto it = _tempPlacings.rend(); it != _tempPlacings.rbegin();) {
+		rejectPlacing((--it)->first);
+	}
+}
+
 void grid::onRender()
 {
 	if (_status & elementFlags::visible) {
@@ -123,6 +134,16 @@ uint32_t grid::getItemAt(const glm::i32vec2& position) const
 	return -1;
 }
 
+std::vector<uint32_t> grid::getAllItems() const
+{
+	std::vector<uint32_t> itemIds;
+	itemIds.reserve(_placings.size());
+	for (auto& it = _placings.cbegin(); it != _placings.cend(); ++it) {
+		itemIds.push_back(it->first);
+	}
+	return itemIds;
+}
+
 bool grid::addTempPlacement(uint32_t itemId, const glm::i32vec2& begin, const glm::i32vec2& end)
 {
 	if (!isOccupied(begin, end)) {
@@ -130,14 +151,6 @@ bool grid::addTempPlacement(uint32_t itemId, const glm::i32vec2& begin, const gl
 		return true;
 	}
 	return false;
-}
-
-void grid::removeTempPlacement(uint32_t itemId)
-{
-	auto it = _tempPlacings.find(itemId);
-	if (it != _tempPlacings.end())
-		_tempPlacings.erase(it);
-
 }
 
 bool grid::acceptPlacing(uint32_t itemId)
@@ -153,16 +166,15 @@ bool grid::acceptPlacing(uint32_t itemId)
 void grid::rejectPlacing(uint32_t itemId)
 {
 	auto it = _tempPlacings.find(itemId);
-	if (it != _tempPlacings.end()) {
-		_tempPlacings.erase(itemId);
-	}
+	if (it != _tempPlacings.end())
+		_tempPlacings.erase(it);
+
 }
 
 void grid::changeState(std::vector<gridCell>::iterator& begin, std::vector<gridCell>::iterator& end, gridCell::state newState)
 {
-	while (begin != end) {
+	for (; begin != end; ++begin)
 		begin->changeState(newState);
-	};
 }
 
 void grid::changeState(const glm::i32vec2& begin, const glm::i32vec2& end, gridCell::state newState)
@@ -182,32 +194,4 @@ void grid::changeState(const glm::i32vec2& cellPos, gridCell::state newState)
 void grid::changeState(uint32_t cellIndex, gridCell::state newState)
 {
 	_storage[cellIndex].changeState(newState);
-}
-
-void grid::onEvent(overtime::event& event)
-{
-	if (!(_status & elementFlags::blocked)) {
-		eventDispatcher dispatcher(event);
-
-	}
-}
-
-bool grid::onWindowResize(overtime::windowResizeEvent& event)
-{
-	return false;
-}
-
-bool grid::onMouseMoved(overtime::mouseMovedEvent& event)
-{
-	return false;
-}
-
-bool grid::onMouseButtonPressed(overtime::mouseButtonPressedEvent& event)
-{
-	return false;
-}
-
-bool grid::onMouseButtonReleased(overtime::mouseButtonReleasedEvent& event)
-{
-	return false;
 }
