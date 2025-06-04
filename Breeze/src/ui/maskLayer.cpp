@@ -4,7 +4,7 @@
 using namespace overtime;
 
 
-maskCell::maskCell(const overtime::ref<themeManager::style> style)
+maskCell::maskCell(const overtime::ref<style> style)
 	:_style(style)
 {
 
@@ -72,6 +72,14 @@ inline void maskLayer::onEvent(event& event)
 		dispatcher.dispatch<mouseButtonReleasedEvent>(OT_BIND_EVENT_FN(maskLayer::onMouseButtonReleased));
 	}
 }
+void maskLayer::reset()
+{
+	for (auto& cell : _cells)
+		cell._isVisible = true;
+	dropFlag(elementFlags::blocked);
+	deactivate();
+}
+
 void maskLayer::setCellVisibility(const glm::i32vec2& begin, const glm::i32vec2& end, bool newVisibility)
 {
 	for (int i = begin.y; i <= end.y; i++)

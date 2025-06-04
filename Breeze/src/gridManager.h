@@ -20,7 +20,7 @@ public:
 	inline uint32_t getShipRequirement()const { return _shipReq; }
 	bool gridCalculate(ship* ship);
 	bool checkRequirement() { return (_ui->get<grid>(_playerGridId).placementCount() == _shipReq); }
-
+	bool isAllDestroyed(uint32_t gridId);
 	bool placeShip(ship* ship);
 	bool removeShip(ship* ship);
 	uint32_t createShip(uint32_t gridId, elementType shipType);
@@ -29,6 +29,9 @@ public:
 
 	bool attack(uint32_t gridId, uint32_t maskId, uint32_t x, uint32_t y);
 	bool autoAttack(uint32_t gridId, uint32_t maskId);
+
+	void resetGrid(uint32_t gridId);
+	void resetShips(std::vector<uint32_t>& ships);
 private:
 	std::shared_ptr<gameUI> _ui;
 	uint32_t _playerGridId = -1;

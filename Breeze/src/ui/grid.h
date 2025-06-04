@@ -17,7 +17,7 @@ public:
 		~gridCell();
 		//todo move keys to grid
 		std::vector<std::string> _keys;
-		overtime::ref<themeManager::style> _style;
+		overtime::ref<style> _style;
 		bool _isOccupied = false;
 		void changeState(state newState);
 		state _currentState = state::normal;
@@ -26,6 +26,7 @@ public:
 
 	grid(const std::string& name, uint32_t rowCount, uint32_t columnCount, const glm::vec3& startPosition, const glm::vec2& gridCellSize, const std::vector<std::vector<std::string>>& keys);
 	~grid();
+	void reset();
 	virtual inline const glm::vec3& getPos() const override { return _pos; }
 	virtual inline const glm::vec2& getSize() const override { return _size; }
 	virtual inline void setPos(const glm::vec3& newPos) override { _pos = newPos; }
@@ -46,11 +47,11 @@ public:
 	void removePlacement(uint32_t itemId);
 	const std::pair<glm::i32vec2, glm::i32vec2>& getPlacement(uint32_t itemId) const;
 	uint32_t getItemAt(const glm::i32vec2& position) const;
+	std::vector<uint32_t> getAllItems() const;
 	inline bool isPlaced(uint32_t id) const { return (_placings.find(id) != _placings.end()) || (_tempPlacings.find(id) != _tempPlacings.end()); }
 	inline uint32_t placementCount() const { return (uint32_t)_placings.size(); }
 
 	bool addTempPlacement(uint32_t itemId, const glm::i32vec2& begin, const glm::i32vec2& end);
-	void removeTempPlacement(uint32_t itemId);
 	bool acceptPlacing(uint32_t itemId);
 	void rejectPlacing(uint32_t itemId);
 	inline uint32_t tempPlacementCount() const { return (uint32_t)_tempPlacings.size(); }
@@ -65,15 +66,10 @@ public:
 	gridCell::state getState(uint32_t cellIndex) const { return _storage[cellIndex]._currentState; }
 
 	virtual void onRender() override;
-	virtual void onEvent(overtime::event& event) override;
 	inline uint32_t getColumnCount() const noexcept { return _columnCount; }
 	inline uint32_t getRowCount() const noexcept { return _rowCount; }
 	ELEMENT_CLASS_TYPE(gridElement)
 private:
-	bool onWindowResize(overtime::windowResizeEvent& event);
-	bool onMouseMoved(overtime::mouseMovedEvent& event);
-	bool onMouseButtonPressed(overtime::mouseButtonPressedEvent& event);
-	bool onMouseButtonReleased(overtime::mouseButtonReleasedEvent& event);
 	uint32_t _columnCount;
 	uint32_t _rowCount;
 	std::vector<gridCell> _storage;

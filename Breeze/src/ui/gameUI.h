@@ -9,7 +9,7 @@
 
 
 
-class gameUI  {
+class gameUI {
 public:
 	gameUI();
 	~gameUI();
@@ -23,7 +23,7 @@ public:
 	{
 		return _pool.push(std::move(element));
 	}
-	
+
 	overtime::scope<interactElement> pop(uint32_t id);
 	interactElement& get(uint32_t id);
 
@@ -33,6 +33,17 @@ public:
 		auto& item = _pool.get(id);
 		if (item.getType() == T::getStaticType())
 			return static_cast<T&>(item);
+	}
+	template<typename T>
+	std::vector<T*> get(const std::vector<uint32_t>& ids)
+	{
+		std::vector<T*> items;
+		for (auto id : ids) {
+			auto& item = _pool.get(id);
+			if (item.getType() == T::getStaticType())
+				items.push_back(static_cast<T*>(&item));
+		}
+		return items;
 	}
 	void activate(const std::vector<uint32_t>& ids);
 	void activate(uint32_t id);
@@ -49,7 +60,7 @@ public:
 	inline bool isTypeCapReached(elementType type) const { return _pool.isTypeCapReached(type); }
 	inline bool isTypeActiveCapReached(elementType type) const { return _pool.isTypeActiveCapReached(type); }
 	inline uint32_t getTypeCap(elementType type) const { return _pool.getTypeCap(type); }
-	inline uint32_t getTypeActiveCap(elementType type) const { return  _pool.getTypeActiveCap(type);}
+	inline uint32_t getTypeActiveCap(elementType type) const { return  _pool.getTypeActiveCap(type); }
 
 	bool bind(uint32_t childId, uint32_t ParentId);
 	bool unBind(uint32_t childId, uint32_t ParentId);

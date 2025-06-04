@@ -34,7 +34,7 @@ private:
 	glm::vec2 _size;
 	glm::vec4 _bounds;
 	std::vector<std::string> _keys;
-	overtime::ref<themeManager::style> _style;
+	overtime::ref<style> _style;
 	state _currentState = state::idle;
 	std::function<bool(button*)> _funcOnPress;
 	std::function<bool(button*)> _funcOnRelease;
