@@ -19,5 +19,4 @@ private:
 	bool onWindowResize(overtime::windowResizeEvent& event);
 	stateMachine* _state;
 };
-
 #endif

@@ -18,5 +18,4 @@ public:
 	static void add(const std::string& id, style& newStyle);
 	static const overtime::ref<style> getStyle(const std::string& id);
 };
-
 #endif
