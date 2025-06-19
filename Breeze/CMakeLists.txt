@@ -5,7 +5,6 @@ project(${APP_NAME})
 
 set(GAME_SOURCE src/Breeze.cpp
 src/gameLayer.cpp
-src/player.cpp
 src/ui/gameUI.cpp
 src/cameraWrapper.cpp
 src/ui/button.cpp
@@ -21,7 +20,6 @@ src/gameStateMachine.cpp
 )
 set(GAME_HEADER 
 src/gameLayer.h
-src/player.h
 src/ui/gameUI.h
 src/cameraWrapper.h
 src/ui/button.h
@@ -38,32 +36,18 @@ src/stateMachine.h
 src/gameStateMachine.h
 )
 
-set(GAME_RES
-    "assets/resources/cherry.png" 
-    "assets/resources/frame.png"   
-    "assets/resources/play.png"   
-    "assets/resources/playHover.png"   
-    "assets/resources/playClicked.png"   
-    "assets/resources/five.png"   
-    "assets/resources/four.png"   
-    "assets/resources/three.png"   
-    "assets/resources/two.png"   
-    "assets/resources/one.png"   
-)
-set(GAME_SHADERS
-    "assets/shaders/texture.vert"
-    "assets/shaders/texture.frag"
-)
-
-list(APPEND GAME_RES ${GAME_SHADERS})
-
 list(APPEND GAME_SOURCE ${GAME_HEADER} ${GAME_RES})
 
 add_executable(${APP_NAME} ${GAME_SOURCE})
 
+file(GLOB_RECURSE GAME_RES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS 
+"assets/**/*.png" "assets/**/*.frag" "assets/**/*.vert" 
+)
+
 foreach(item IN LISTS GAME_RES)
          res_mgmt(${APP_NAME} ${item})
 endforeach()
+
 
 target_compile_definitions(${APP_NAME} PRIVATE
     "$<$<CONFIG:Debug>:OT_DEBUG>"
@@ -75,6 +59,7 @@ set_target_properties(${APP_NAME} PROPERTIES
                     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
                     FOLDER "Internal"
                     RESOURCE "${GAME_RES}" 
+                    CMAKE_CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/assets"
                     )
 
 target_link_libraries(${APP_NAME} PRIVATE overtime)

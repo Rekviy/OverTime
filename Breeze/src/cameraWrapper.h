@@ -14,5 +14,4 @@ public:
 private:
 	static overtime::orthographCamera _camera;
 };
-
 #endif

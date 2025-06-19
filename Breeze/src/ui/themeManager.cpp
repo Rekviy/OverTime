@@ -36,7 +36,6 @@ void themeManager::add(const std::string& id, style& newStyle)
 const ref<style> themeManager::getStyle(const std::string& id)
 {
 	auto it = storage->find(id);
-	OT_ASSERT(it != storage->end(), "Style already exists!");
+	OT_ASSERT(it != storage->end(), "Style not exists!");
 	return (*it).second;
 }
-

@@ -10,7 +10,7 @@
 class objectPool {
 public:
 	objectPool();
-	~objectPool();
+	~objectPool() = default;
 	std::map<uint32_t, overtime::scope<interactElement>>::const_iterator cbegin() { return _storage.cbegin(); }
 	std::map<uint32_t, overtime::scope<interactElement>>::const_iterator cend() { return _storage.cend(); }
 	std::map<uint32_t, overtime::scope<interactElement>>::iterator begin() { return _storage.begin(); }
@@ -23,10 +23,10 @@ public:
 	std::map<elementType, std::vector<uint32_t>>::iterator typeEnd() { return _typeKeys.end(); }
 	uint32_t push(overtime::scope<interactElement> element);
 	overtime::scope<interactElement> pop(uint32_t id);
-	interactElement& get(uint32_t id);
+	interactElement* get(uint32_t id);
 	std::map<uint32_t, overtime::scope<interactElement>>::iterator find(uint32_t id);
 	void activateAll();
-	void activate(uint32_t id);
+	bool activate(uint32_t id);
 	uint32_t activateFirst(elementType type);
 	void deactivateAll();
 	void deactivate(uint32_t id);
@@ -49,5 +49,4 @@ private:
 	std::vector<uint32_t> _typeActiveCaps;
 	uint32_t _idCounter = 0;
 };
-
 #endif 

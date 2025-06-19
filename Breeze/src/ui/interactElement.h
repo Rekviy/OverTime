@@ -16,7 +16,10 @@ public:
 	interactElement(const std::string& name);
 	virtual ~interactElement() = default;
 
+	virtual void reset() = 0;
+
 	virtual void onRender() {}
+	virtual void onImGui() {}
 	virtual void onEvent(overtime::event& event) {}
 
 	virtual const glm::vec3& getPos() const = 0;

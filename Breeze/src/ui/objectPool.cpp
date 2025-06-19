@@ -8,9 +8,6 @@ objectPool::objectPool()
 	_typeActiveCaps.resize(elementType::unknown + 1, UINT32_MAX);
 }
 
-objectPool::~objectPool()
-{}
-
 uint32_t objectPool::push(overtime::scope<interactElement> element)
 {
 	if (_storage.find(element->_id) != _storage.end())
@@ -35,20 +32,25 @@ uint32_t objectPool::push(overtime::scope<interactElement> element)
 
 overtime::scope<interactElement> objectPool::pop(uint32_t id)
 {
+	auto itToDelete = _storage.find(id);
+	if (itToDelete != _storage.end()) {
+		throw std::out_of_range("objectPool::pop: element with id: " + std::to_string(id) + "not found");
+	}
 	deactivate(id);
-	auto& it = _storage.extract(id);
-	auto& vec = _typeKeys.at(it.mapped()->getType());
+	auto& node = _storage.extract(id);
+	auto& vec = _typeKeys[node.mapped()->getType()];
 	auto& vecIt = std::find(vec.begin(), vec.end(), id);
-	//std::swap(vecIt, vec.end() - 1);
 	vec.erase(vecIt);
 
-	return std::move(it.mapped());
+	return std::move(node.mapped());
 }
 
-interactElement& objectPool::get(uint32_t id)
+interactElement* objectPool::get(uint32_t id)
 {
-	//todo add checking for is element == _storage.end before return
-	return *_storage.at(id);
+	auto it = _storage.find(id);
+	if (it != _storage.end())
+		return it->second.get();
+	return nullptr;
 }
 
 std::map<uint32_t, overtime::scope<interactElement>>::iterator objectPool::find(uint32_t id)
@@ -66,18 +68,21 @@ void objectPool::activateAll()
 		}
 	}
 }
-
-void objectPool::activate(uint32_t id)
+//todo rework activation/deactivation to work within op
+bool objectPool::activate(uint32_t id)
 {
-	if (!_storage.at(id)->checkFlag(elementFlags::active)) {
-		auto type = _storage.at(id)->getType();
+	auto itemIt = _storage.find(id);
+	if (itemIt != _storage.end() && !itemIt->second->checkFlag(elementFlags::active)) {
+		auto type = itemIt->second->getType();
 		if (_typeActiveKeys[type].size() < _typeActiveCaps[type]) {
-			_storage.at(id)->activate();
+			itemIt->second->activate();
 
 			_typeActiveKeys[type].push_back(id);
 			zSort(_typeActiveKeys[type].begin(), _typeActiveKeys[type].end());
+			return true;
 		}
 	}
+	return false;
 }
 
 uint32_t objectPool::activateFirst(elementType type)
@@ -95,7 +100,7 @@ uint32_t objectPool::activateFirst(elementType type)
 
 void objectPool::deactivateAll()
 {
-	for (auto& key: _typeActiveKeys) {
+	for (auto& key : _typeActiveKeys) {
 		for (auto id : key.second) {
 			_storage.at(id)->deactivate();
 		}
@@ -124,10 +129,11 @@ bool objectPool::isExist(uint32_t id)
 std::vector<overtime::scope<interactElement>> objectPool::setTypeCap(elementType type, uint32_t newCap)
 {
 	std::vector<overtime::scope<interactElement>> removed;
-	if (type > _typeCaps.size()) {
-		_typeCaps.reserve(type);
-	}
-	if (_typeActiveCaps.at(type) > newCap) setTypeActiveCap(type, newCap);
+	if (type >= _typeCaps.size())
+		throw std::out_of_range("objectPool::setTypeCap type not in enum range!");
+
+	if (_typeActiveCaps[type] > newCap) setTypeActiveCap(type, newCap);
+
 	if (_typeKeys[type].size() > newCap) {
 		uint32_t diff = (uint32_t)_typeKeys[type].size() - newCap;
 		removed.reserve(diff);
@@ -135,7 +141,7 @@ std::vector<overtime::scope<interactElement>> objectPool::setTypeCap(elementType
 
 		for (uint32_t i = diff; i > 0;) {
 			auto& it = vec.begin() + --i;
-			if (_storage.at(*it)->checkFlag(elementFlags::active)) deactivate(*it);
+			if (_storage[*it]->checkFlag(elementFlags::active)) deactivate(*it);
 
 			removed.push_back(std::move(_storage.extract(*it).mapped()));
 			vec.erase(it);
@@ -152,13 +158,14 @@ std::vector<uint32_t> objectPool::setTypeActiveCap(elementType type, uint32_t ne
 
 	if (_typeActiveKeys[type].size() > newCap) {
 		auto& activeVec = _typeActiveKeys[type];
-		auto& itStart = activeVec.begin(), itEnd = activeVec.begin() + (_typeActiveKeys[type].size() - newCap);
+		uint32_t diff = _typeActiveKeys[type].size() - newCap;
 
-		for (; itStart != itEnd; ++itStart) {
-			deactivated.push_back(*itStart);
-			_storage.at(*itStart)->deactivate();
+		for (uint32_t i = 0; i < diff; i++) {
+			uint32_t id = activeVec[i];
+			_storage[id]->deactivate();
+			deactivated.push_back(id);
 		}
-		activeVec.erase(itStart, itEnd);
+		activeVec.erase(activeVec.begin(), activeVec.begin() + diff);
 	}
 	else if (_typeCaps[type] < newCap)
 		setTypeCap(type, newCap);
@@ -168,16 +175,16 @@ std::vector<uint32_t> objectPool::setTypeActiveCap(elementType type, uint32_t ne
 
 uint32_t objectPool::checkTypeCap(elementType type) const
 {
-	if (type > _typeCaps.size()) {
-		OT_ASSERT(false, "Type doesn't exist!");
+	if (type >= _typeCaps.size()) {
+		throw std::out_of_range("objectPool::checkTypeCap: elementType out of range");
 	}
 	return (uint32_t)_typeKeys.at(type).size();
 }
 
 uint32_t objectPool::checkTypeActiveCap(elementType type) const
 {
-	if (type > _typeActiveCaps.size()) {
-		OT_ASSERT(false, "Type doesn't exist!");
+	if (type >= _typeActiveCaps.size()) {
+		throw std::out_of_range("objectPool::checkTypeActiveCap: elementType out of range");
 	}
 	return (uint32_t)_typeActiveKeys.at(type).size();
 }
@@ -185,10 +192,8 @@ uint32_t objectPool::checkTypeActiveCap(elementType type) const
 void objectPool::zSort(std::vector<uint32_t>::iterator begin, std::vector<uint32_t>::iterator end)
 {
 	std::sort(begin, end, [this](const uint32_t& idA, const uint32_t& idB)->bool {
-		if (_storage.at(idA)->getPos().z == _storage.at(idB)->getPos().z)
+		if (_storage[idA]->getPos().z == _storage[idB]->getPos().z)
 			return (idA > idB) ? true : false;
-		return (_storage.at(idA)->getPos().z < _storage.at(idB)->getPos().z) ? true : false;
+		return (_storage[idA]->getPos().z < _storage[idB]->getPos().z) ? true : false;
 	});
 }
-
-

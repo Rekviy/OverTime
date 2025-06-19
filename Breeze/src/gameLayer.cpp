@@ -49,6 +49,6 @@ void gameLayer::onEvent(event& event)
 
 bool gameLayer::onWindowResize(windowResizeEvent& event)
 {
-	cameraWrapper::updateCamera(event.getWidth(), event.getHeight());
+	cameraWrapper::updateCamera((float)event.getWidth(), (float)event.getHeight());
 	return false;
 }

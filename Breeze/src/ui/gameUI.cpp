@@ -7,13 +7,11 @@ gameUI::gameUI()
 
 }
 
-gameUI::~gameUI()
-{}
 overtime::scope<interactElement> gameUI::pop(uint32_t id)
 {
 	return _pool.pop(id);
 }
-interactElement& gameUI::get(uint32_t id)
+interactElement* gameUI::get(uint32_t id)
 {
 	return _pool.get(id);
 }
@@ -22,9 +20,9 @@ void gameUI::activate(const std::vector<uint32_t>& ids)
 	for (auto& item : ids)
 		_pool.activate(item);
 }
-void gameUI::activate(uint32_t id)
+bool gameUI::activate(uint32_t id)
 {
-	_pool.activate(id);
+	return _pool.activate(id);
 }
 uint32_t gameUI::activateFirst(elementType type)
 {
@@ -52,13 +50,13 @@ bool gameUI::isExist(uint32_t id)
 	return _pool.isExist(id);
 }
 
-void gameUI::setTypeCap(elementType type, uint32_t newCap)
+std::vector<overtime::scope<interactElement>> gameUI::setTypeCap(elementType type, uint32_t newCap)
 {
-	_pool.setTypeCap(type, newCap);
+	return _pool.setTypeCap(type, newCap);
 }
-void gameUI::setTypeActiveCap(elementType type, uint32_t newCap)
+std::vector<uint32_t> gameUI::setTypeActiveCap(elementType type, uint32_t newCap)
 {
-	_pool.setTypeActiveCap(type, newCap);
+	return _pool.setTypeActiveCap(type, newCap);
 }
 
 uint32_t gameUI::checkTypeCap(elementType type) const
@@ -73,7 +71,7 @@ uint32_t gameUI::checkTypeActiveCap(elementType type) const
 bool gameUI::bind(uint32_t childId, uint32_t ParentId)
 {
 	auto& child = _pool.find(childId), parent = _pool.find(ParentId);
-	if (child != _pool.end() || parent != _pool.end()) {
+	if (child != _pool.end() && parent != _pool.end()) {
 
 		_bindings[parent->first].push_back(child->first);
 		_parents[child->first].push_back(parent->first);
@@ -115,20 +113,24 @@ bool gameUI::unBindAll(uint32_t unBindFrom)
 	}
 	return false;
 }
-const std::vector<uint32_t>& gameUI::getBindings(uint32_t ParentId)
+const std::vector<uint32_t> gameUI::getBindings(uint32_t ParentId)
 {
-	//auto& it = _bindings.find(ParentId);
-	//temp
-	//OT_ASSERT(it != _bindings.end(), "Element doesn't binded!");
-	return _bindings[ParentId];
+	std::vector<uint32_t> returnVec;
+	auto& it = _bindings.find(ParentId);
+	if (it != _bindings.end())
+		returnVec = it->second;
+
+	return returnVec;
 }
 
-const std::vector<uint32_t>& gameUI::getParents(uint32_t childId)
+const std::vector<uint32_t> gameUI::getParents(uint32_t childId)
 {
+	std::vector<uint32_t> returnVec;
 	auto& it = _parents.find(childId);
 
-	OT_ASSERT(it != _parents.end(), "Element doesn't binded!");
-	return it->second;
+	if (it != _parents.end())
+		returnVec = it->second;
+	return returnVec;
 }
 
 void gameUI::onRender()
@@ -138,17 +140,24 @@ void gameUI::onRender()
 	}
 }
 
+struct itemsOnImGui {
+	std::function<void(const char*, itemsOnImGui*)>func;
+	bool _opened = true;
+	int item_selected = 0;
+};
+
 void gameUI::onImGuiRender()
 {
-	ImGui::Begin("UI interactive elems settings");
-	float spacing = ImGui::GetStyle().ItemInnerSpacing.x;
-	ImGui::PushItemFlag(ImGuiItemFlags_ButtonRepeat, true);
+	static std::vector<itemsOnImGui*> activeWindows;
+	static auto imGuiFunc = [this](const char* title, itemsOnImGui* items) {
+		const char* preview_value = _pool.get(items->item_selected)->getName().c_str();
 
-	static int item_selected = _pool.begin()->second->getId();
-
-	if (_pool.size() > 0) {
-		const char* preview_value = _pool.get(item_selected).getName().c_str();
-		if (ImGui::BeginCombo("combo 2 (w/ filter)", preview_value)) {
+		ImGui::SetNextWindowSize(ImVec2(480.0f, 360.0f), ImGuiCond_FirstUseEver);
+		if (!ImGui::Begin(title, &items->_opened, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoSavedSettings)) {
+			ImGui::End();
+			return;
+		}
+		if (ImGui::BeginCombo("combo (w/filter)", preview_value)) {
 			static ImGuiTextFilter filter;
 			if (ImGui::IsWindowAppearing()) {
 				ImGui::SetKeyboardFocusHere();
@@ -156,20 +165,39 @@ void gameUI::onImGuiRender()
 			}
 			ImGui::SetNextItemShortcut(ImGuiMod_Ctrl | ImGuiKey_F);
 			filter.Draw("##Filter", -FLT_MIN);
-			uint32_t i = 0;
-			for (auto& it = _pool.begin(); it != _pool.end(); ++it) {
-				const char* name = it->second->getName().c_str();
-				const bool is_selected = (_pool.begin()->first == it->second->getId());
-				if (filter.PassFilter(name))
-					if (ImGui::Selectable(name, is_selected))
-						item_selected = it->second->getId();
-			}
 
+			for (auto& it = _pool.begin(); it != _pool.end(); ++it) {
+				std::string name = it->second->getName() + " id: " + std::to_string(it->second->getId());
+				const bool is_selected = (_pool.begin()->first == it->second->getId());
+				if (filter.PassFilter(name.c_str()))
+					if (ImGui::Selectable(name.c_str(), is_selected))
+						items->item_selected = it->second->getId();
+			}
 			ImGui::EndCombo();
 		}
-		auto& item = _pool.get(item_selected);
-		ImGui::Text("Item id: %u", item.getId());
+		auto& item = *_pool.get(items->item_selected);
 
+		float spacing = ImGui::GetStyle().ItemInnerSpacing.x;
+
+		ImGui::Text("Item id: %u, name: %s", item.getId(), item.getName().c_str());
+		ImGui::NewLine();
+
+		ImGui::Text("Binded to ");
+		auto it = _parents.find(items->item_selected);
+		if (it != _parents.end())
+			for (auto iter = it->second.cbegin(); iter != it->second.cend(); ++iter) {
+				ImGui::Text("%d, ", *iter);
+				ImGui::SameLine();
+			}
+		ImGui::NewLine();
+
+		ImGui::Text("Parent to ");
+		it = _bindings.find(items->item_selected);
+		if (it != _bindings.end())
+			for (auto iter = it->second.cbegin(); iter != it->second.cend(); ++iter){
+				ImGui::Text("%d, ", *iter);
+				ImGui::SameLine();
+			}
 		ImGui::NewLine();
 
 		ImGui::Text("Visibility: %s", item.checkFlag(elementFlags::visible) ? "True" : "False");
@@ -198,43 +226,29 @@ void gameUI::onImGuiRender()
 		if (ImGui::Button("Deactivate"))
 			_pool.deactivate(item.getId());
 		ImGui::NewLine();
-		glm::vec3 pos = item.getPos();
 
-		ImGui::Text("Position: x=%f y=%f z=%f", pos.x, pos.y, pos.z);
+		item.onImGui();
 
-		ImGui::NewLine();
+		ImGui::End();
+	};
 
-		if (ImGui::ArrowButton("##posLeft", ImGuiDir_Left)) { item.setPos({ pos.x - 1.0f,pos.y,pos.z }); }
-		ImGui::SameLine(0.0f, spacing);
-		if (ImGui::ArrowButton("##posUp", ImGuiDir_Up)) { item.setPos({ pos.x ,pos.y + 1.0f,pos.z }); }
-		ImGui::SameLine(0.0f, spacing);
-		if (ImGui::ArrowButton("##posDown", ImGuiDir_Down)) { item.setPos({ pos.x ,pos.y - 1.0f,pos.z }); }
-		ImGui::SameLine(0.0f, spacing);
-		if (ImGui::ArrowButton("##posRight", ImGuiDir_Right)) { item.setPos({ pos.x + 1.0f,pos.y,pos.z }); }
-		ImGui::SameLine(0.0f, spacing + 5.0f);
-		if (ImGui::ArrowButton("##posTo", ImGuiDir_Up)) { item.setPos({ pos.x, pos.y,pos.z + 0.1f }); }
-		ImGui::SameLine(0.0f, spacing);
-		if (ImGui::ArrowButton("##posFrom", ImGuiDir_Down)) { item.setPos({ pos.x,pos.y,pos.z - 0.1f }); }
-
-		ImGui::NewLine();
-
-		glm::vec2 size = item.getSize();
-
-		ImGui::Text("Size: x=%f y=%f", size.x, size.y);
-
-		ImGui::NewLine();
-
-		if (ImGui::ArrowButton("##xInc", ImGuiDir_Left)) { item.setSize({ size.x + 1.0f ,size.y }); }
-		ImGui::SameLine(0.0f, spacing);
-		if (ImGui::ArrowButton("##xDec", ImGuiDir_Right)) { item.setSize({ size.x - 1.0f,size.y }); }
-		ImGui::SameLine(0.0f, spacing);
-		if (ImGui::ArrowButton("##yInc", ImGuiDir_Up)) { item.setSize({ size.x  ,size.y + 1.0f }); }
-		ImGui::SameLine(0.0f, spacing);
-		if (ImGui::ArrowButton("##yDec", ImGuiDir_Down)) { item.setSize({ size.x ,size.y - 1.0f }); }
-
+	static std::string title = "UI interactive elems settings #";
+	if (_pool.size() > 0) {
+		if (ImGui::Button("Open UI debug window")) {
+			auto* item = new itemsOnImGui();
+			item->item_selected = _pool.begin()->second->getId();
+			item->func = imGuiFunc;
+			activeWindows.push_back(item);
+		}
+		for (uint32_t i = activeWindows.size(); i > 0;) {
+			if (activeWindows[--i]->_opened)
+				activeWindows[i]->func((title + std::to_string(i)).c_str(), activeWindows[i]);
+			else {
+				delete activeWindows[i];
+				activeWindows.erase(activeWindows.begin() + i);
+			}
+		}
 	}
-	ImGui::PopItemFlag();
-	ImGui::End();
 }
 
 void gameUI::onEvent(overtime::event& event)
@@ -242,12 +256,9 @@ void gameUI::onEvent(overtime::event& event)
 	eventDispatcher dispatcher(event);
 	for (auto it = _pool.activeBegin(); it != _pool.activeEnd(); ++it) {
 		for (auto vecIt = it->second.end(); vecIt != it->second.begin();) {
-			_pool.get(*(--vecIt)).onEvent(event);
+			_pool.get(*(--vecIt))->onEvent(event);
 			if (event.isHandled())
 				break;
 		}
 	}
 }
-
-
-

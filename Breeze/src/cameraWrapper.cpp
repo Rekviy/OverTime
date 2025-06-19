@@ -36,4 +36,3 @@ glm::vec2 cameraWrapper::screenToWorld(const glm::vec2& screenPos)
 
 	return glm::vec2(worldPos.x, worldPos.y);
 }
-

@@ -21,6 +21,4 @@ public:
 	virtual void onImGuiRender() = 0;
 	virtual void onEvent(overtime::event& event) = 0;
 };
-
-
 #endif
