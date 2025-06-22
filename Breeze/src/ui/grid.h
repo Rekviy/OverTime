@@ -75,7 +75,7 @@ public:
 
 	bool addTempPlacement(uint32_t itemId, const glm::i32vec2& begin, const glm::i32vec2& end);
 	bool addTempPlacement(uint32_t itemId, const std::pair<glm::i32vec2, glm::i32vec2>& position);
-	bool acceptPlacing(uint32_t itemId) noexcept;
+	bool acceptPlacing(uint32_t itemId);
 	void rejectPlacing(uint32_t itemId) noexcept;
 	uint32_t getTempItemAt(const glm::i32vec2& position) const noexcept;
 	uint32_t getTempItemAt(uint32_t index) const noexcept;
@@ -105,4 +105,28 @@ private:
 	glm::vec3 _pos;
 	glm::vec2 _size;
 };
+
+class gridException : public std::exception {
+public:
+	gridException(const char* const message)
+		: exception(message)
+	{}
+	virtual ~gridException() = default;
+};
+
+class gridOutOfRange : public gridException {//, public std::out_of_range???
+public:
+	gridOutOfRange(const char* const message, const glm::i32vec2& begin, const glm::i32vec2& end)
+		: gridException(message), _rangeBegin(begin), _rangeEnd(end)
+	{}
+	virtual ~gridOutOfRange() = default;
+	std::pair< glm::i32vec2, glm::i32vec2> getRange()
+	{
+		return { _rangeBegin , _rangeEnd };
+	}
+private:
+	glm::i32vec2 _rangeBegin;
+	glm::i32vec2 _rangeEnd;
+};
+
 #endif

@@ -94,4 +94,28 @@ public:
 		std::function<bool(ship*)>&& funcOnPress, std::function<bool(ship*)>&& funcOnRelease, std::function<bool(ship*)>&& funcOnMoving = [](ship* btn) {return true; }, bool isActive = false);
 	ELEMENT_CLASS_TYPE(ship4Element)
 };
+
+class shipException : public std::exception {
+public:
+	shipException(const char* const message)
+		: exception(message)
+	{}
+	virtual ~shipException() = default;
+};
+
+class shipOutOfRange : public shipException {
+public:
+	shipOutOfRange(const char* const message, uint32_t begin, uint32_t end)
+		: shipException(message), _rangeBegin(begin), _rangeEnd(end)
+	{}
+	virtual ~shipOutOfRange() = default;
+	std::pair<uint32_t, uint32_t> getRange()
+	{
+		return { _rangeBegin , _rangeEnd };
+	}
+private:
+	uint32_t _rangeBegin;
+	uint32_t _rangeEnd;
+};
+
 #endif

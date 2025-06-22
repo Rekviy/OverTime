@@ -9,7 +9,13 @@ gameUI::gameUI()
 
 overtime::scope<interactElement> gameUI::pop(uint32_t id)
 {
-	return _pool.pop(id);
+	try {
+		return _pool.pop(id);
+	}
+	catch (const std::out_of_range& ex) {
+		throw UIOutOfRange(ex.what(), id, _pool.size());
+	}
+	
 }
 interactElement* gameUI::get(uint32_t id)
 {
@@ -52,20 +58,41 @@ bool gameUI::isExist(uint32_t id)
 
 std::vector<overtime::scope<interactElement>> gameUI::setTypeCap(elementType type, uint32_t newCap)
 {
-	return _pool.setTypeCap(type, newCap);
+	try {
+		return _pool.setTypeCap(type, newCap);
+	}
+	catch (const std::out_of_range& ex) {
+		throw UIOutOfRange(ex.what(), type, elementType::unknown);
+	}
+	
 }
 std::vector<uint32_t> gameUI::setTypeActiveCap(elementType type, uint32_t newCap)
 {
-	return _pool.setTypeActiveCap(type, newCap);
+	try {
+		return _pool.setTypeActiveCap(type, newCap);
+	}
+	catch (const std::out_of_range& ex) {
+		throw UIOutOfRange(ex.what(), type, elementType::unknown);
+	}
 }
 
 uint32_t gameUI::checkTypeCap(elementType type) const
 {
-	return _pool.checkTypeCap(type);
+	try {
+		return _pool.checkTypeCap(type);
+	}
+	catch (const std::out_of_range& ex) {
+		throw UIOutOfRange(ex.what(), type, elementType::unknown);
+	}
 }
 uint32_t gameUI::checkTypeActiveCap(elementType type) const
 {
-	return _pool.checkTypeActiveCap(type);
+	try {
+		return _pool.checkTypeActiveCap(type);
+	}
+	catch (const std::out_of_range& ex) {
+		throw UIOutOfRange(ex.what(), type, elementType::unknown);
+	}
 }
 
 bool gameUI::bind(uint32_t childId, uint32_t ParentId)

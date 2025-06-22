@@ -18,6 +18,9 @@ maskLayer::maskLayer(const std::string& name, uint32_t rowCount, uint32_t column
 	if (count < 0) throw std::invalid_argument("MaskLayer cells count cannot be lesser than 0!");
 	if (_keys.empty()) throw std::invalid_argument("MaskLayer keys cannot be empty!");
 
+	if (!themeManager::isKeysValid(std::vector<std::string>(_keys.cbegin(), _keys.cend())))
+		throw std::invalid_argument("Style keys not valid! Name: " + _name);
+
 	_storage.reserve(count);
 	for (uint32_t i = 0; i < count; ++i)
 		_storage.emplace_back(maskCell(themeManager::getStyle(_keys[(uint32_t)maskCellState::idle])));
@@ -236,8 +239,17 @@ void maskLayer::updateBounds()
 	};
 }
 
+void maskLayer::setCellVisibility(uint32_t cell, bool newVisibility)
+{
+	if (cell<(uint32_t)0 || cell > _storage.size()) throw maskLayerOutOfRange("SetCellVisibility, index out of range!",
+		{ cell % _rowCount ,cell / _rowCount }, { cell % _rowCount ,cell / _rowCount });
+	_storage[cell]._isVisible = newVisibility;
+}
+
 void maskLayer::setCellVisibility(const glm::i32vec2& begin, const glm::i32vec2& end, bool newVisibility)
 {
+	if (begin.x < (uint32_t)0 || begin.y <  (uint32_t)0 || end.x > _columnCount || end.y > _rowCount)
+		throw maskLayerOutOfRange("SetCellVisibility, indices out of range!", begin, end);
 	for (int i = begin.y; i <= end.y; i++)
 		for (int j = begin.x; j <= end.x; j++)
 			_storage.at(i * _columnCount + j)._isVisible = newVisibility;

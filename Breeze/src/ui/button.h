@@ -10,7 +10,6 @@ enum class buttonState {
 };
 class button : public interactElement {
 public:
-
 	button(const std::string& name, const glm::vec3& position, const glm::vec2& size, std::array<std::string, (size_t)buttonState::stateCount>&& keys,
 		std::function<bool(button*)>&& funcOnRelease, std::function<bool(button*)>&& funcOnPress = [](button* btn) {return true; }, bool isActive = false);
 	virtual ~button() = default;
@@ -46,5 +45,4 @@ private:
 	std::function<bool(button*)> _funcOnPress;
 	std::function<bool(button*)> _funcOnRelease;
 };
-
 #endif

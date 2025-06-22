@@ -14,7 +14,9 @@ public:
 	template<typename T, typename... Args>
 	uint32_t push(Args&&... args)
 	{
-		OT_ASSERT((std::is_base_of<interactElement, T>::value), "class is not derived from interactElement!");
+		if (!std::is_base_of<interactElement, T>::value)
+			throw UIInvalidElementType("Class is not derived from expected class!", typeid(interactElement), typeid(T));
+			OT_ASSERT((std::is_base_of<interactElement, T>::value), "Class is not derived from expected class!");
 		return _pool.push(std::make_unique<T>(std::forward<Args>(args)...));
 	}
 	uint32_t push(overtime::scope<interactElement> element)
@@ -79,4 +81,48 @@ private:
 	std::unordered_map<uint32_t, std::vector<uint32_t>> _parents;
 
 };
+
+class UIException : public std::exception {
+public:
+	UIException(const char* const message)
+		:exception(message)
+	{}
+	virtual ~UIException() = default;
+
+};
+
+class UIInvalidElementType : public UIException {
+public:
+	UIInvalidElementType(const char* const message, const std::type_info& expected, const std::type_info& actual)
+		: UIException(message), _expected(expected), _actual(actual)
+	{}
+	virtual ~UIInvalidElementType() = default;
+
+	inline const std::type_info& expectedType() const noexcept { return _expected; }
+	inline const std::type_info& actualType()   const noexcept { return _actual; }
+private:
+	std::type_info const& _expected;
+	std::type_info const& _actual;
+};
+
+class UIOutOfRange : public UIException {
+public:
+	UIOutOfRange(const char* const message, const uint32_t index, const uint32_t range)
+		: UIException(message), _index(index), _range(range)
+	{}
+	virtual ~UIOutOfRange() = default;
+	uint32_t getRange()
+	{
+		return _range;
+	}
+
+	uint32_t getIndex()
+	{
+		return _index;
+	}
+private:
+	uint32_t _range;
+	uint32_t _index;
+};
+
 #endif

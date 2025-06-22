@@ -12,10 +12,10 @@ struct style {
 };
 class themeManager {
 public:
-	
 	static void init();
 	static void shutdown();
 	static void add(const std::string& id, style& newStyle);
 	static const overtime::ref<style> getStyle(const std::string& id);
+	static bool isKeysValid(const std::vector<std::string>& idsToValidate);
 };
 #endif

@@ -16,7 +16,7 @@ bool gridManager::gridCalculate(ship* s)
 	uint32_t rows = playerGrid.getRowCount(), columns = playerGrid.getColumnCount();
 	const glm::vec2& size = playerGrid.getSize();
 	if (size.x == 0.0f || size.y == 0.0f)
-		throw std::runtime_error("gridCalculate: playerGrid cellSize = 0!");
+		return false;//throw std::runtime_error("gridCalculate: playerGrid cellSize = 0!");
 
 	const glm::vec3& gridPos = playerGrid.getPos();
 	bool swapped = false;
@@ -62,27 +62,18 @@ bool gridManager::placeShip(ship* s)
 	auto* playerGrid = _ui->get<grid>(_playerGridId);
 	if (playerGrid != nullptr) {
 		uint32_t shipId = s->getId();
-		counter* count = nullptr;
-		try {
-			auto& bindVec = _ui->getBindings(shipId);
-			count = *(_ui->get<counter>(bindVec).begin());
-		}
-		catch (const std::exception& e) {
-			OT_ERROR(e.what());
-		}
-
+		auto countVec = _ui->get<counter>(_ui->getBindings(shipId));
+		
 		if (!playerGrid->isPlaced(shipId) || s->getState() == shipCellState::placingDenied) {
 			playerGrid->rejectPlacing(shipId);
 			_ui->deactivate(shipId);
-			if (count != nullptr)
-				--(*count);
+			if (!countVec.empty())
+				--(*countVec.front());
 		}
 		else {
 			const auto& shipPos = s->getPos();
 			s->setPos({ shipPos.x, shipPos.y, playerGrid->getPos().z + 0.1f });
 			playerGrid->acceptPlacing(shipId);
-			//if (count != nullptr)
-				//++(*count);
 		}
 		s->changeState(shipCellState::normal);
 		return true;
@@ -225,17 +216,14 @@ void gridManager::autoPlace(uint32_t gridId)
 					item->setRotation(rotation);
 					item->setPos({ gridPos.x + startIdx.x * size.x, gridPos.y - startIdx.y * size.y, gridPos.z + 0.1f });
 					curGrid->addPlacement(id, startIdx, endIdx);
-					try {
-						auto& bindVec = _ui->getBindings(id);
-						auto count = (_ui->get<counter>(bindVec));
-						if (!count.empty())
-							++(*count.front());
-					}
-					catch (const std::exception&) {}
+
+					auto& bindVec = _ui->getBindings(id);
+					auto count = (_ui->get<counter>(bindVec));
+					if (!count.empty())
+						++(*count.front());
 				}
-				else {
+				else
 					_ui->deactivate(id);
-				}
 			}
 			_ui->unBind(id, gridId);
 		}
@@ -260,8 +248,8 @@ bool gridManager::attack(uint32_t gridId, uint32_t maskId, uint32_t x, uint32_t 
 		auto& attackedShip = static_cast<ship&>(*_ui->get(shipId));
 
 		auto& [shipStart, shipEnd] = *curGrid->getPlacement(shipId);
-
 		attackedShip.changeState(x - shipStart.x + y - shipStart.y, shipCellState::shot);
+		
 		if (attackedShip.getShipState() == shipState::destroyed && curMask != nullptr) {
 			uint32_t rows = curGrid->getRowCount();
 			uint32_t columns = curGrid->getColumnCount();
@@ -308,17 +296,11 @@ void gridManager::resetShips(std::vector<uint32_t>& ships)
 	for (auto id : ships) {
 		auto& curShip = static_cast<ship&>(*_ui->get(id));
 		curShip.reset();
-		counter* count = nullptr;
-		try {
-			auto& bindVec = _ui->getBindings(id);
-			if (!bindVec.empty()) {
-				count = *(_ui->get<counter>(bindVec).begin());
-				count->reset();
-			}
-		}
-		catch (const std::exception& e) {
-			OT_WARN(e.what());
-		}
+
+		auto countVec = _ui->get<counter>(_ui->getBindings(id));
+		if (!countVec.empty()) 
+			countVec.front()->reset();
+
 		_ui->deactivate(id);
 	}
 }

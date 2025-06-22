@@ -31,6 +31,10 @@ ship::ship(const std::string& name, const glm::vec3& position, uint32_t length, 
 	if (length < 0)
 		throw std::invalid_argument("Ship length must be > 0");
 
+	for (auto& inner_keys : keys)
+		if (!themeManager::isKeysValid(inner_keys))
+			throw std::invalid_argument("Style keys not valid! Name: " + _name);
+
 	_storage.reserve(length);
 
 	for (uint32_t i = 0, style = 0; i < length; ++i, ++style) {
@@ -302,13 +306,11 @@ void ship::changeState(shipCellState newState)
 }
 void ship::changeState(uint32_t cell, shipCellState newState)
 {
-	try {
-		_storage.at(cell).changeState(newState);
-	}
-	catch (const std::exception& ex) {
-		OT_ERROR("ship::changeState Error: {0}", ex.what());
-		return;
-	}
+	if(cell >= _storage.size())
+		throw shipOutOfRange("changeState, index out of range!", cell, cell);
+
+	_storage[cell].changeState(newState);
+
 	if (_currentState == shipState::normal) {
 		uint32_t tempState = (uint32_t)shipCellState::shot;
 		for (auto& cell : _storage)
@@ -391,7 +393,7 @@ bool ship::onMouseButtonPressed(mouseButtonPressedEvent& event)
 
 		delta = abs(round(rotatedClickPos / _size));
 		_cellClicked = (uint32_t)delta.x;
-		//_clickOffset = { _storage.at(_cellClicked)._pos.x - mousePos.x,_storage.at(_cellClicked)._pos.y - mousePos.y };
+		
 		_currentState = shipState::dragging;
 		return _funcOnPress(this);
 	}

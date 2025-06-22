@@ -7,8 +7,12 @@ counter::counter(const std::string& name, const glm::vec3& position, const glm::
 	:interactElement(name), _pos(position), _size(size), _start(startNumber), _end(endNumber), _keys(keys)
 {
 	if (_end < _start) std::swap(_end, _start);
+
 	if (_keys.size() < _end - _start)
 		throw std::invalid_argument("Counter keys count cannot be lesser than counter range!");
+	if (!themeManager::isKeysValid(_keys))
+		throw std::invalid_argument("Style keys not valid! Name: " + _name);
+
 	_keys.resize(_end - _start + 1);
 	_count = _start;
 	_offset = abs((long)(0 - _start));
