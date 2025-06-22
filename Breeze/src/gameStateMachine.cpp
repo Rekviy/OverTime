@@ -162,7 +162,16 @@ gsm::gsm()
 		{ "fog","fogHover","fogClicked" },
 		[this](maskLayer* mask) {
 		uint32_t cellAttacked = mask->getCellClicked(), maskId = mask->getId(), rowCount = mask->getRowCount();
-		_isPlayerMove = (bool)_gridManager.attack(*_ui->getParents(maskId).begin(), maskId, cellAttacked % rowCount, cellAttacked / rowCount);
+		try {
+			_isPlayerMove = _gridManager.attack(_ui->getParents(maskId).front(), maskId, cellAttacked % rowCount, cellAttacked / rowCount);
+		}
+		catch (const std::runtime_error& ex) {
+			OT_ERROR(ex.what());
+		}
+		catch (const std::exception& ex) {
+			OT_ERROR(ex.what());
+			_isPlayerMove = false;
+		}
 		if (_gridManager.isAllDestroyed(_gridManager.getEnemyGrid())) {
 			_winningTitle = themeManager::getStyle("playerWon");
 			pushState(gameState::gameOver);

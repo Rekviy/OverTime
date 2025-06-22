@@ -30,14 +30,14 @@ public:
 
 	virtual inline const glm::vec3& getPos() const override { return _pos; }
 	virtual inline const glm::vec2& getSize() const override { return _size; }
-	virtual inline void setPos(const glm::vec3& newPos) override { _pos = newPos; updateBounds();}
-	virtual inline void setSize(const glm::vec2& newSize) override { _size = newSize; updateBounds();}
-	
+	virtual inline void setPos(const glm::vec3& newPos) override { _pos = newPos; updateBounds(); }
+	virtual inline void setSize(const glm::vec2& newSize) override { _size = newSize; updateBounds(); }
+
 	virtual void activate() override { interactElement::activate(); updateBounds(); }
 
 	void reset();
 
-	inline void setCellVisibility(uint32_t cell, bool newVisibility) { _storage.at(cell)._isVisible = newVisibility; }
+	void setCellVisibility(uint32_t cell, bool newVisibility);
 	void setCellVisibility(const glm::i32vec2& begin, const glm::i32vec2& end, bool newVisibility);
 	bool isCellVisible(uint32_t cell) const { return _storage.at(cell)._isVisible; }
 
@@ -61,5 +61,30 @@ private:
 	std::vector<maskCell> _storage;
 	std::array<std::string, (uint32_t)maskCellState::stateCount> _keys;
 	std::function<bool(maskLayer*)> _funcOnRelease;
+};
+
+class maskLayerException : public std::exception {
+public:
+	maskLayerException(const char* const message)
+		: exception(message)
+	{}
+	virtual ~maskLayerException() = default;
+
+};
+
+class maskLayerOutOfRange : public maskLayerException {
+public:
+	maskLayerOutOfRange(const char* const message, const glm::i32vec2& begin, const glm::i32vec2& end)
+		: maskLayerException(message), _rangeBegin(begin), _rangeEnd(end)
+	{}
+	virtual ~maskLayerOutOfRange() = default;
+
+	std::pair< glm::i32vec2, glm::i32vec2> getRange()
+	{
+		return { _rangeBegin , _rangeEnd };
+	}
+private:
+	glm::i32vec2 _rangeBegin;
+	glm::i32vec2 _rangeEnd;
 };
 #endif

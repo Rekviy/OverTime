@@ -24,6 +24,11 @@ grid::grid(const std::string& name, uint32_t rowCount, uint32_t columnCount, con
 	if (keys.empty()) throw std::invalid_argument("Grid keys cannot be empty!");
 	if (keys.front().size() < (uint32_t)gridCellState::stateCount) throw std::invalid_argument("Grid cell keys cannot be lesser than gridCellState::stateCount!");
 
+	for (auto& inner_keys : keys)
+		if (!themeManager::isKeysValid(std::vector<std::string>(inner_keys.cbegin(), inner_keys.cend())))
+			throw std::invalid_argument("Style keys not valid! Name: " + _name);
+
+
 	_storage.reserve(count);
 
 	for (uint32_t i = 0, style = 0; i < count; ++i, ++style) {
@@ -252,13 +257,13 @@ void grid::onImGui() noexcept
 
 void grid::setOccupation(std::vector<gridCell>::iterator& begin, std::vector<gridCell>::iterator& end, bool newOccupation)
 {
-	for (; begin != end; ++begin)
+	for (; begin < end; ++begin)
 		begin->_isOccupied = true;
 }
 void grid::setOccupation(const glm::i32vec2& begin, const glm::i32vec2& end, bool newOccupation)
 {
 	if (begin.x < (uint32_t)0 || begin.y <  (uint32_t)0 || end.x > _columnCount || end.y > _rowCount)
-		throw std::out_of_range("Indices out of range!");
+		throw gridOutOfRange("SetOccupation, indices out of range!", begin, end);
 	for (uint32_t i = begin.y; i <= end.y; i++)
 		for (uint32_t j = begin.x; j <= end.x; j++)
 			_storage[i * _columnCount + j]._isOccupied = newOccupation;
@@ -266,29 +271,27 @@ void grid::setOccupation(const glm::i32vec2& begin, const glm::i32vec2& end, boo
 
 bool grid::isOccupied(std::vector<gridCell>::iterator& begin, std::vector<gridCell>::iterator& end) noexcept
 {
-	for (; begin != end; ++begin)
+	for (; begin < end; ++begin)
 		if (begin->_isOccupied)
 			return true;
 	return false;
 }
 bool grid::isOccupied(const glm::i32vec2& begin, const glm::i32vec2& end) noexcept
 {
-	if (!(begin.x <  (uint32_t)0 || begin.y <  (uint32_t)0 || end.x > _columnCount || end.y > _rowCount)) {
-		for (uint32_t i = begin.y; i <= end.y; i++) {
-			for (uint32_t j = begin.x; j <= end.x; j++) {
+	if (!(begin.x <  (uint32_t)0 || begin.y <  (uint32_t)0 || end.x > _columnCount || end.y > _rowCount)) 
+		for (uint32_t i = begin.y; i <= end.y; i++) 
+			for (uint32_t j = begin.x; j <= end.x; j++) 
 				if (_storage[i * _columnCount + j]._isOccupied)
 					return true;
-			}
-		}
-	}
+
 	return false;
 }
 
 bool grid::addPlacement(uint32_t itemId, const glm::i32vec2& begin, const glm::i32vec2& end)
 {
 	if (!isOccupied(begin, end)) {
-		_placings[itemId] = { begin,end };
 		setOccupation(begin, end, true);
+		_placings[itemId] = { begin,end };
 		return true;
 	}
 	return false;
@@ -355,7 +358,7 @@ bool grid::addTempPlacement(uint32_t itemId, const std::pair<glm::i32vec2, glm::
 {
 	return addTempPlacement(itemId, position.first, position.second);
 }
-bool grid::acceptPlacing(uint32_t itemId) noexcept
+bool grid::acceptPlacing(uint32_t itemId)
 {
 	auto it = _tempPlacings.find(itemId);
 	if (it != _tempPlacings.end()) {
@@ -388,13 +391,13 @@ uint32_t grid::getTempItemAt(uint32_t index) const noexcept
 
 void grid::changeState(std::vector<gridCell>::iterator& begin, std::vector<gridCell>::iterator& end, gridCellState newState)
 {
-	for (; begin != end; ++begin)
+	for (; begin < end; ++begin)
 		begin->changeState(newState);
 }
 void grid::changeState(const glm::i32vec2& begin, const glm::i32vec2& end, gridCellState newState)
 {
 	if (begin.x <  (uint32_t)0 || begin.y <  (uint32_t)0 || end.x > _columnCount || end.y > _rowCount)
-		throw std::out_of_range("Indices out of range!");
+		throw gridOutOfRange("ChangeState, indices out of range!", begin,end);
 	for (uint32_t i = begin.y; i <= end.y; i++)
 		for (uint32_t j = begin.x; j <= end.x; j++)
 			_storage[i * _columnCount + j].changeState(newState);
@@ -402,9 +405,14 @@ void grid::changeState(const glm::i32vec2& begin, const glm::i32vec2& end, gridC
 }
 void grid::changeState(const glm::i32vec2& cellPos, gridCellState newState)
 {
-	_storage.at(cellPos.y * _columnCount + cellPos.x).changeState(newState);
+	if(cellPos.x < (uint32_t)0|| cellPos.y < (uint32_t)0|| cellPos.x > _columnCount || cellPos.y > _rowCount)
+		throw gridOutOfRange("ChangeState, indices out of range!", cellPos, cellPos);
+	_storage[cellPos.y * _columnCount + cellPos.x].changeState(newState);
 }
 void grid::changeState(uint32_t cellIndex, gridCellState newState)
 {
-	_storage.at(cellIndex).changeState(newState);
+	if(cellIndex<(uint32_t)0|| cellIndex > _storage.size())
+		throw gridOutOfRange("SetCellVisibility, index out of range!",
+			{ cellIndex % _rowCount ,cellIndex / _rowCount }, { cellIndex % _rowCount ,cellIndex / _rowCount });
+	_storage[cellIndex].changeState(newState);
 }

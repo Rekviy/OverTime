@@ -11,7 +11,11 @@ button::button(const std::string& name, const glm::vec3& position, const glm::ve
 	std::function<bool(button*)>&& funcOnRelease, std::function<bool(button*)>&& funcOnPress, bool isActive)
 	:interactElement(name), _pos(position), _size(size), _keys(keys), _funcOnRelease(funcOnRelease), _funcOnPress(funcOnPress)
 {
-	if (keys.empty()) throw std::invalid_argument("Button keys cannot be empty!");
+	if (_keys.empty()) throw std::invalid_argument("Button keys cannot be empty! Name: " + _name);
+
+	if(!themeManager::isKeysValid(std::vector<std::string>(_keys.cbegin(), _keys.cend())))
+		throw std::invalid_argument("Style keys not valid! Name: " + _name);
+
 	_currentState = buttonState::idle;
 	_style = themeManager::getStyle(_keys[(uint32_t)_currentState]);
 	updateBounds();

@@ -36,6 +36,16 @@ void themeManager::add(const std::string& id, style& newStyle)
 const ref<style> themeManager::getStyle(const std::string& id)
 {
 	auto it = storage->find(id);
-	OT_ASSERT(it != storage->end(), "Style not exists!");
+	if (it == storage->end()) 
+		throw std::runtime_error("Style not exists. Id: "+ id);
+
 	return (*it).second;
+}
+
+bool themeManager::isKeysValid(const std::vector<std::string>& idsToValidate)
+{
+	for (auto& id : idsToValidate)
+		if (storage->find(id) == storage->end())
+			return false;
+	return true;
 }

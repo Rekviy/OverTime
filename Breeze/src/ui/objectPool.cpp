@@ -106,7 +106,6 @@ void objectPool::deactivateAll()
 		}
 		key.second.clear();
 	}
-
 }
 
 void objectPool::deactivate(uint32_t id)
@@ -115,7 +114,6 @@ void objectPool::deactivate(uint32_t id)
 		_storage.at(id)->deactivate();
 		auto& activeVec = _typeActiveKeys[_storage.at(id)->getType()];
 		auto& vecIt = std::find(activeVec.begin(), activeVec.end(), id);
-		//std::swap(vecIt, vec.end() - 1);
 		activeVec.erase(vecIt);
 	}
 }
@@ -146,7 +144,6 @@ std::vector<overtime::scope<interactElement>> objectPool::setTypeCap(elementType
 			removed.push_back(std::move(_storage.extract(*it).mapped()));
 			vec.erase(it);
 		}
-
 	}
 	_typeCaps[type] = newCap;
 	return removed;
@@ -155,6 +152,9 @@ std::vector<overtime::scope<interactElement>> objectPool::setTypeCap(elementType
 std::vector<uint32_t> objectPool::setTypeActiveCap(elementType type, uint32_t newCap)
 {
 	std::vector<uint32_t> deactivated;
+
+	if (type >= _typeActiveCaps.size())
+		throw std::out_of_range("objectPool::setTypeActiveCap type not in enum range!");
 
 	if (_typeActiveKeys[type].size() > newCap) {
 		auto& activeVec = _typeActiveKeys[type];
