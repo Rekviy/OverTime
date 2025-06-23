@@ -2,25 +2,25 @@
 #include "ui/themeManager.h"
 
 #include <core/entryPoint.h>
+namespace breeze {
+	class breeze : public overtime::application {
+	public:
+		breeze()
+		{
+			srand(time(NULL));
+			themeManager::init();
+			pushLayer(new gameLayer());
+		}
+		~breeze()
+		{
+			themeManager::shutdown();
+		}
 
-class Breeze : public overtime::application {
-public:
-	Breeze()
-	{
-		srand(time(NULL)); 
-		themeManager::init();
-		pushLayer(new gameLayer());
-	}
-	~Breeze()
-	{
-		themeManager::shutdown();
-	}
+	private:
 
-private:
-
-};
-
-overtime::application* overtime::createApplication()
-{
-	return new Breeze();
+	};
 }
+	overtime::application* overtime::createApplication()
+	{
+		return new breeze::breeze();
+	}
