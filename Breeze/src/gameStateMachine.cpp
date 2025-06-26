@@ -373,7 +373,7 @@ namespace breeze {
 				break;
 			case gameState::gameOver:
 				renderer2D::drawSquad({ 0.0f,0.0f,0.9f }, { application::getInst().getWindow().getWidth(),application::getInst().getWindow().getHeight() }, { 0.7f,0.7f,0.7f,0.5f });
-				renderer2D::drawSquad({ 0.0f,0.0f,1.0f }, { 200.0f, 50.0f }, _winningTitle->_color, _winningTitle->_texture, _winningTitle->_textureSize);
+				renderer2D::drawSquad({ 0.0f,300.0f,1.0f }, { 200.0f, 50.0f }, _winningTitle->_color, _winningTitle->_texture, _winningTitle->_textureSize);
 				break;
 			default:
 				break;
