@@ -25,7 +25,7 @@ if(WINDOWS OR MACOSX OR LINUX)
 endif()
 
 if(BUILD_IMGUI)
-add_subdirectory(imgui)
+include(imgui.cmake)
 target_link_libraries(imgui glfw OpenGL::GL)
 target_link_libraries(overtime imgui)
 set_target_properties(imgui PROPERTIES FOLDER "External")
