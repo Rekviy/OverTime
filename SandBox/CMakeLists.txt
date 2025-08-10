@@ -1,5 +1,5 @@
 # application
-set(APP_NAME clientSideTest)
+set(APP_NAME SandBox)
 
 project(${APP_NAME})
 
