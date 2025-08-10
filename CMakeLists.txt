@@ -7,7 +7,7 @@ set(BUILD_SANDBOX OFF)
 
 set(OVERTIME_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
-set(CMAKE_MODULE_PATH ${OVERTIME_ROOT_PATH}/cmake/Modules/)
+list(APPEND CMAKE_MODULE_PATH ${OVERTIME_ROOT_PATH}/cmake/Modules/)
 include(OverTimeConfigDefine)
 
 add_subdirectory(OverTime)
